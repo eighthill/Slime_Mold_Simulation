@@ -1,1 +1,3 @@
-# Slime_Mold_Simulation
+# Slime Mold Simulation
+
+Development of a python software, simulating slime mold.
