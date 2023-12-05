@@ -1,6 +1,6 @@
-"""Tests for the slime_mold_simulation.my_module module.
-"""
+"""Tests for the slime_mold_simulation.my_module module."""
 import pytest
+
 from slime_mold_simulation.my_module import hello
 
 
