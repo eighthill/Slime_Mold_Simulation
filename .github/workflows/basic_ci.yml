@@ -39,12 +39,13 @@ jobs:
       - name: Show pip list
         run: |
           pip list
+      - name: Install PyQt dependency
+        run: sudo apt-get install libxcb-xinerama0
       # - name: Run ModernGL Script
         # run: python moderngl_example.py
         # working-directory: slime_mold_simulation
       - name: Run Vispy (GUI)
         run: |
-          sudo apt-get install libxcb-xinerama0
           python FirstAgent.py
         working-directory: slime_mold_simulation
       - name: Run Black (check formatting)
