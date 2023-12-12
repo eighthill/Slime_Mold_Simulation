@@ -40,6 +40,9 @@ jobs:
       # - name: Run ModernGL Script
         # run: python moderngl_example.py
         # working-directory: slime_mold_simulation
+      - name: Run Vispy (GUI)
+        run: python FirstAgent.py
+        working-directory: slime_mold_simulation
       - name: Run Black (check formatting)
         run: black --check .
       - name: Run isort (check import sorting)
@@ -49,6 +52,3 @@ jobs:
           ruff check .
       - name: Run tests
         run: pytest
-      - name: Run Vispy (GUI)
-        run: python FirstAgent.py
-        working-directory: slime_mold_simulation
