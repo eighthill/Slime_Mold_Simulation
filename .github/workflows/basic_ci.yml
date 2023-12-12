@@ -36,7 +36,7 @@ jobs:
           pip list
       - name: Run ModernGL Script
         run: python moderngl_example.py
-        working-directory: ../../slime_mold_simulation
+        working-directory: slime_mold_simulation
       - name: Run Black (check formatting)
         run: black --check .
       - name: Run isort (check import sorting)
