@@ -40,3 +40,7 @@ jobs:
           ruff check .
       - name: Run tests
         run: pytest
+      - name: Run Vispy (GUI)
+	run: vispy
+      - name: Run modernGL (GUI)
+	run: moderngl
