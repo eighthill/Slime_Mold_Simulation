@@ -31,6 +31,10 @@ jobs:
       - name: Show pip list
         run: |
           pip list
+      - name: Install Vispy and ModernGL
+        run: |
+          pip install vispy
+          pip install moderngl
       - name: Run Black (check formatting)
         run: black --check .
       - name: Run isort (check import sorting)
