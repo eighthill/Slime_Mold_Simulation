@@ -34,7 +34,8 @@ jobs:
           # pip install numpy
           # pip install pillow
           pip install vispy
-          pip install PyQT5
+          # pip install PyQT5
+          pip install webgl
       - name: Show pip list
         run: |
           pip list
