@@ -30,15 +30,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
-          pip install moderngl
-          pip install numpy
-          pip install pillow
+          # pip install moderngl
+          # pip install numpy
+          # pip install pillow
+          pip install vispy
       - name: Show pip list
         run: |
           pip list
-      - name: Run ModernGL Script
-        run: python moderngl_example.py
-        working-directory: slime_mold_simulation
+      # - name: Run ModernGL Script
+        # run: python moderngl_example.py
+        # working-directory: slime_mold_simulation
       - name: Run Black (check formatting)
         run: black --check .
       - name: Run isort (check import sorting)
@@ -48,5 +49,6 @@ jobs:
           ruff check .
       - name: Run tests
         run: pytest
-      # - name: Run Vispy (GUI)
-      #   run: vispy
+      - name: Run Vispy (GUI)
+        run: python FirstAgent.py
+        working_directory: slime_mold_simulation
