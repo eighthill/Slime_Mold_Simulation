@@ -40,7 +40,8 @@ jobs:
         run: |
           pip list
       - name: Install PyQt dependency
-        run: sudo apt-get install libxcb-xinerama0
+        run: |
+          sudo apt-get install libxcb-xinerama0
       # - name: Run ModernGL Script
         # run: python moderngl_example.py
         # working-directory: slime_mold_simulation
