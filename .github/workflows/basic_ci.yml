@@ -34,7 +34,7 @@ jobs:
           # pip install numpy
           # pip install pillow
           pip install vispy
-          pip install PyQT6
+          pip install PyQt6
       - name: Show pip list
         run: |
           pip list
