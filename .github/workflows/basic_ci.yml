@@ -51,4 +51,4 @@ jobs:
         run: pytest
       - name: Run Vispy (GUI)
         run: python FirstAgent.py
-        working_directory: slime_mold_simulation
+        working-directory: slime_mold_simulation
