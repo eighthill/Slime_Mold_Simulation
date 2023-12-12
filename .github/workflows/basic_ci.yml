@@ -41,6 +41,6 @@ jobs:
       - name: Run tests
         run: pytest
       - name: Run Vispy (GUI)
-        run: vispy
+	run: vispy
       - name: Run modernGL (GUI)
-        run: moderngl
+	run: moderngl
