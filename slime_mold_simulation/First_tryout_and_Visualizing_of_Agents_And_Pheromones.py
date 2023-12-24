@@ -16,6 +16,8 @@ the PheromoneArray on the other side gets multiplied by the factor 0.99 team it 
 the Value 1 for update_agent_position and 50 for update_pheromone are choosen randomly, 
 here we should think about what values would make sense.
 """
+
+
 class AgentArray:
     def __init__(self, x_len, y_len):
         self.array = np.zeros((x_len, y_len), dtype=int)
@@ -32,10 +34,11 @@ class PheromoneArray:
         self.array = np.zeros((x_len, y_len), dtype=int)
 
     def update_pheromone(self, Agents_list):
-        self.array = (self.array*0.99).astype(int)
+        self.array = (self.array * 0.99).astype(int)
         for agent in Agents_list:
             x, y, direction = agent[0], agent[1], agent[2]
             self.array[x, y] = 50
+
 
 """
 the Agents here have a radius, direction, position and num_agents
@@ -48,6 +51,7 @@ I've realized that we have to find a way to store the direction of each agent
 so that we know at each time in what direction an agent is looking
 """
 
+
 class Agent:
     def __init__(self, radius, agent_array, num_agents=10):
         self.radius = radius
@@ -58,17 +62,17 @@ class Agent:
             y_pos = randint(0, agent_array.array.shape[1] - 1)
             self.Agents_list.append([x_pos, y_pos, self.direction])
 
-
     def move_Agents(self, Agents_list, array):
         for agent in Agents_list:
             x, y, direction = agent[0], agent[1], agent[2]
-            moves = [(x, y), (x - 1, y - 1), (x + 1, y - 1)] 
+            moves = [(x, y), (x - 1, y - 1), (x + 1, y - 1)]
 
             # Find the move with the maximum value in the pheromone array or a random move
             max_move = random.choice(moves)
 
             # Update the agent's position based on the chosen move
             agent[0], agent[1] = max_move
+
 
 """
 this method move_Agents was almost completly done by ChatGPT
@@ -78,18 +82,17 @@ it just choose random a next move out of 3 options
 there has to be a method implemented that compares all possible next moves depending on 
 the direction the agent is facing, angle and radius, to decide the next move
 """
-        
+
 
 # This code is only to visualize an given array
 def plot_large_array_with_colors(array):
-    plt.imshow(array, interpolation='none', cmap='viridis')  
+    plt.imshow(array, interpolation="none", cmap="viridis")
     plt.show()
+
 
 # this is the main programm where all the objects are created and methods are called
 def main():
-
-
-    # maybe we will here need a variables that are given from outside to the main method 
+    # maybe we will here need a variables that are given from outside to the main method
     # so that it is easier to combine code and GUI
     x_len = 100
     y_len = 100
@@ -97,7 +100,7 @@ def main():
     pheromone_array = PheromoneArray(x_len, y_len)
     agent_array = AgentArray(x_len, y_len)
 
-    agents = Agent(1, agent_array, 10) 
+    agents = Agent(1, agent_array, 10)
 
     # this is actually initializing both arrays I'm sure there is a better way
     pheromone_array.update_pheromone(agents.Agents_list)
@@ -105,8 +108,8 @@ def main():
 
     # here the agent array is plotted to see how the agents are distributed after initializing
     plot_large_array_with_colors(agent_array.array)
-    
-    # here we would definitly need sth else than a for loop through a range, 
+
+    # here we would definitly need sth else than a for loop through a range,
     # we have to work with time and update every second or ever 10 ms latest by creating the GUI
     # but for the try out this was really helpful
 
@@ -115,11 +118,12 @@ def main():
 
         pheromone_array.update_pheromone(agents.Agents_list)
         agent_array.update_agent_position(agents.Agents_list)
-    
-    # Here the PheromoneArray is shown instead of the array with the agents, 
+
+    # Here the PheromoneArray is shown instead of the array with the agents,
     # because it gives a better overview on what has happend over the last iterations
-        
+
     plot_large_array_with_colors(pheromone_array.array)
+
 
 if __name__ == "__main__":
     main()
