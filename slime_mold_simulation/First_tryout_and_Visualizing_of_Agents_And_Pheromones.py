@@ -24,7 +24,10 @@ class AgentArray:
         self.array = np.zeros_like(self.array, dtype=int)
         for agent in Agents_list:
             x, y, direction = agent[0], agent[1], agent[2]
-            self.array[x, y] = 1
+            if direction == [1, 1]:
+                self.array[x, y] += 1
+            else:
+                self.array[x, y] -= 1
 
 
 class PheromoneArray:
@@ -35,7 +38,10 @@ class PheromoneArray:
         self.array = (self.array * 0.99).astype(int)
         for agent in Agents_list:
             x, y, direction = agent[0], agent[1], agent[2]
-            self.array[x, y] = 50
+            if direction == [1, 1]:
+                self.array[x, y] = 30
+            else:
+                self.array[x, y] = 60
 
 
 # the Agents here have a radius, direction, position and num_agents
@@ -61,6 +67,32 @@ class Agent:
     def move_Agents(self, Agents_list, array):
         for agent in Agents_list:
             x, y, direction = agent[0], agent[1], agent[2]
+
+            # Example: Considering the direction to influence the movement
+            possible_moves = []
+            # Here, generate possible moves based on direction
+            if direction == [1, 1]:
+                possible_moves = [(x + 1, y), (x, y + 1), (x + 1, y + 1)]
+            elif direction == [1, -1]:
+                possible_moves = [(x + 1, y), (x, y - 1), (x + 1, y - 1)]
+
+            # Filter out moves that are out of bounds
+            possible_moves = [
+                (new_x, new_y)
+                for new_x, new_y in possible_moves
+                if 0 <= new_x < array.shape[0] and 0 <= new_y < array.shape[1]
+            ]
+
+            # If no valid moves are possible, do nothing
+            if not possible_moves:
+                continue
+
+            # Randomly select a valid move
+            new_x, new_y = random.choice(possible_moves)
+
+            # Update the agent's position
+            agent[0], agent[1] = new_x, new_y
+            """
             moves = [(x, y), (x - 1, y - 1), (x + 1, y - 1)]
 
             # Find the move with the maximum value in the pheromone array or a random move
@@ -68,6 +100,7 @@ class Agent:
 
             # Update the agent's position based on the chosen move
             agent[0], agent[1] = max_move
+            """
 
 
 # this method move_Agents was almost completly done by ChatGPT
