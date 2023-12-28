@@ -3,10 +3,11 @@
 # for example if the agents get a random startposition close to the edges it can happen, that the code will raise an error
 
 
+import random
+from random import randint
+
 import matplotlib.pyplot as plt
 import numpy as np
-from random import randint
-import random
 
 """
 Here are two classes AgentArray and PheromoneArray, maybe it would be a good idea to give them the same Parent Class 
