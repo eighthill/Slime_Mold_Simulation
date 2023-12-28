@@ -1,8 +1,8 @@
+import random
+from random import randint
+
 import matplotlib.pyplot as plt
 import numpy as np
-from random import randint
-import random
-
 
 # This code is a first try out to identify what classes and methods are needed
 # It is does not work userfriendly without any errors
