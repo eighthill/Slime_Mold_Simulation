@@ -1,22 +1,19 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from random import randint
+import random
+
+
 # This code is a first try out to identify what classes and methods are needed
 # It is does not work userfriendly without any errors
 # for example if the agents get a random startposition close to the edges it can happen, that the code will raise an error
 
-
-import random
-from random import randint
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-"""
-Here are two classes AgentArray and PheromoneArray, maybe it would be a good idea to give them the same Parent Class 
-the entrie for the new positions of the Agents are the same for each of those arrays
-the diffrence is that the AgentArray always only contains a value at the positions of the agents
-the PheromoneArray on the other side gets multiplied by the factor 0.99 team it gets updated so that older values get smaller.
-the Value 1 for update_agent_position and 50 for update_pheromone are choosen randomly, 
-here we should think about what values would make sense.
-"""
+# Here are two classes AgentArray and PheromoneArray, maybe it would be a good idea to give them the same Parent Class
+# the entrie for the new positions of the Agents are the same for each of those arrays
+# the diffrence is that the AgentArray always only contains a value at the positions of the agents
+# the PheromoneArray on the other side gets multiplied by the factor 0.99 team it gets updated so that older values get smaller.
+# the Value 1 for update_agent_position and 50 for update_pheromone are choosen randomly,
+# here we should think about what values would make sense.
 
 
 class AgentArray:
@@ -41,16 +38,14 @@ class PheromoneArray:
             self.array[x, y] = 50
 
 
-"""
-the Agents here have a radius, direction, position and num_agents
-num_agents says how many agent shoud be initiated
-the position is choosen randomly for each agent in the beginning and stored in the list Agents_list
-the angle and the direction are not implemented yet, there is a value for the direction in the Agents_list, 
-but it is not used in the code yet.
-also the angle should be implemented, but this was too complicated for a quick tryout
-I've realized that we have to find a way to store the direction of each agent 
-so that we know at each time in what direction an agent is looking
-"""
+# the Agents here have a radius, direction, position and num_agents
+# num_agents says how many agent shoud be initiated
+# the position is choosen randomly for each agent in the beginning and stored in the list Agents_list
+# the angle and the direction are not implemented yet, there is a value for the direction in the Agents_list,
+# but it is not used in the code yet.
+# also the angle should be implemented, but this was too complicated for a quick tryout
+# I've realized that we have to find a way to store the direction of each agent
+# so that we know at each time in what direction an agent is looking
 
 
 class Agent:
@@ -75,14 +70,12 @@ class Agent:
             agent[0], agent[1] = max_move
 
 
-"""
-this method move_Agents was almost completly done by ChatGPT
-here it is important to know that the method does not really find out what move would be the best next move, 
-like where the most pheromones are
-it just choose random a next move out of 3 options
-there has to be a method implemented that compares all possible next moves depending on 
-the direction the agent is facing, angle and radius, to decide the next move
-"""
+# this method move_Agents was almost completly done by ChatGPT
+# here it is important to know that the method does not really find out what move would be the best next move,
+# like where the most pheromones are
+# it just choose random a next move out of 3 options
+# there has to be a method implemented that compares all possible next moves depending on
+# the direction the agent is facing, angle and radius, to decide the next move
 
 
 # This code is only to visualize an given array
