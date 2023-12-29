@@ -69,12 +69,17 @@ class Agent:
             x, y, direction = agent[0], agent[1], agent[2]
 
             # Example: Considering the direction to influence the movement
-            possible_moves = []
-            # Here, generate possible moves based on direction
-            if direction == [1, 1]:
-                possible_moves = [(x + 1, y), (x, y + 1), (x + 1, y + 1)]
-            elif direction == [1, -1]:
-                possible_moves = [(x + 1, y), (x, y - 1), (x + 1, y - 1)]
+            # Here, generate random possible moves
+            possible_moves = [
+                (x + direction[0], y + direction[1]),
+                (x - direction[0], y - direction[1]),
+                (x + direction[1], y - direction[0]),
+                (x - direction[1], y + direction[0]),
+                (x + direction[0], y - direction[0]),
+                (x - direction[0], y + direction[0]),
+                (x + direction[1], y - direction[1]),
+                (x - direction[1], y + direction[1]),
+            ]
 
             # Filter out moves that are out of bounds
             possible_moves = [
