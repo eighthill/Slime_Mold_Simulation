@@ -71,14 +71,14 @@ class Agent:
             # Example: Considering the direction to influence the movement
             # Here, generate random possible moves
             possible_moves = [
-                (x + 1, y),
-                (x - 1, y),
-                (x, y + 1),
-                (x, y - 1),
-                (x + 1, y + 1),
-                (x - 1, y + 1),
-                (x + 1, y - 1),
-                (x - 1, y - 1),
+                (x + direction[0], y + direction[1]),
+                (x - direction[0], y - direction[1]),
+                (x + direction[1], y - direction[0]),
+                (x - direction[1], y + direction[0]),
+                (x + direction[0], y - direction[0]),
+                (x - direction[0], y + direction[0]),
+                (x + direction[1], y - direction[1]),
+                (x - direction[1], y + direction[1]),
             ]
 
             # Filter out moves that are out of bounds
