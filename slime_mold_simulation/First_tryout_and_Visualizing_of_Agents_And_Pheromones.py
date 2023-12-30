@@ -44,18 +44,13 @@ class PheromoneArray:
                 self.array[x, y] = 60
 
 
-# the Agents here have a radius, direction, position and num_agents
-# num_agents says how many agent shoud be initiated
-# the position is choosen randomly for each agent in the beginning and stored in the list Agents_list
-# the angle and the direction are not implemented yet, there is a value for the direction in the Agents_list,
-# but it is not used in the code yet.
-# also the angle should be implemented, but this was too complicated for a quick tryout
-# I've realized that we have to find a way to store the direction of each agent
-# so that we know at each time in what direction an agent is looking
+# the Parameters here are adjusted but the angle/direction has to be adjusted,
+# right now the code will run an error
 
 
 class Agent:
-    def __init__(self, radius, agent_array, num_agents=10):
+    def __init__(self, pheromone_array, num_agents=10, sensor_angle=15, radius=1):
+        """
         self.radius = radius
         self.Agents_list = []
         self.direction = [1, 1]
@@ -63,7 +58,27 @@ class Agent:
             x_pos = randint(0, agent_array.array.shape[0] - 1)
             y_pos = randint(0, agent_array.array.shape[1] - 1)
             self.Agents_list.append([x_pos, y_pos, self.direction])
+        """
 
+        self.num_agents = num_agents
+        self.sensor_angle = sensor_angle
+        self.radius = radius
+
+        self.Agents_list = []  # name has been changed
+
+        for idx in range(num_agents):
+            x_pos = randint(0, pheromone_array.array.shape[0] - 1)
+            y_pos = randint(0, pheromone_array.array.shape[1] - 1)
+
+            # self.direction = [1, 1]  has to be changed to angle instead of list,
+            # here we have a problem now because the direction was safed within the list now it is a list with dictionaryis
+            movement_angle = randint(0, 360)  # degree
+            agent_dict = {"x_pos": x_pos, "y_pos": y_pos, "angle_of_movement": movement_angle}
+
+            # self.Agents_list.append([x_pos, y_pos, self.direction])
+            self.Agents_list.append(agent_dict)
+
+    # This method does not work anymore
     def move_Agents(self, Agents_list, array):
         for agent in Agents_list:
             x, y, direction = agent[0], agent[1], agent[2]
