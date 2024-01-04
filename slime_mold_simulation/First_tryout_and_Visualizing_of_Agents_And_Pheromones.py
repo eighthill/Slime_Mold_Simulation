@@ -6,7 +6,7 @@ import numpy as np
 
 
 class PheromoneArray:
-    def __init__(self, x_len, y_len, fading=0.5, pheromone_value=10):
+    def __init__(self, x_len=100, y_len=100, fading=0.3, pheromone_value=10):
         self.world = np.zeros((x_len, y_len), dtype=int)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -20,7 +20,7 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=10, sensor_angle=50, radius=0.2):
+    def __init__(self, array, num_agents=300, sensor_angle=10, radius=0.1):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
 
@@ -144,43 +144,17 @@ def plot_large_array_with_colors(array):
     plt.show()
 
 
-"""
-
-# this is the main programm where all the objects are created and methods are called
 def main():
-    # maybe we will here need a variables that are given from outside to the main method
-    # so that it is easier to combine code and GUI
-    x_len = 100
-    y_len = 100
+    Pheromone = PheromoneArray()
+    Agenten = Agent(Pheromone)
 
-    pheromone_array = PheromoneArray(x_len, y_len)
-    agent_array = AgentArray(x_len, y_len)
-
-    agents = Agent(1, agent_array, 10)
-
-    # this is actually initializing both arrays I'm sure there is a better way
-    pheromone_array.update_pheromone(agents.Agents_list)
-    agent_array.update_agent_position(agents.Agents_list)
-
-    # here the agent array is plotted to see how the agents are distributed after initializing
-    plot_large_array_with_colors(agent_array.array)
-
-    # here we would definitly need sth else than a for loop through a range,
-    # we have to work with time and update every second or ever 10 ms latest by creating the GUI
-    # but for the try out this was really helpful
-
-    for _ in range(50):
-        agents.move_Agents(agents.Agents_list, pheromone_array.array)
-
-        pheromone_array.update_pheromone(agents.Agents_list)
-        agent_array.update_agent_position(agents.Agents_list)
-
-    # Here the PheromoneArray is shown instead of the array with the agents,
-    # because it gives a better overview on what has happend over the last iterations
-
-    plot_large_array_with_colors(pheromone_array.array)
+    # this loop is to visualize the array after every 10th iteration
+    for _ in range(100):
+        Pheromone.update_pheromone(Agenten.Agents_list)
+        Agenten.make_move(Pheromone)
+        if _ % 5 == 0:
+            plot_large_array_with_colors(Pheromone)
 
 
 if __name__ == "__main__":
     main()
-"""
