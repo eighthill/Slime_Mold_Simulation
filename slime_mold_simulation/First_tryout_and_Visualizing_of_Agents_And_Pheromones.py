@@ -31,17 +31,16 @@ class AgentArray:
 
 
 class PheromoneArray:
-    def __init__(self, x_len, y_len):
-        self.array = np.zeros((x_len, y_len), dtype=int)
+    def __init__(self, x_len, y_len, fading=0.5, pheromone_value=10):
+        self.world = np.zeros((x_len, y_len), dtype=int)
+        self.fading = fading
+        self.pheromone_value = pheromone_value
 
-    def update_pheromone(self, Agents_list):
-        self.array = (self.array * 0.99).astype(int)
-        for agent in Agents_list:
-            x, y, direction = agent[0], agent[1], agent[2]
-            if direction == [1, 1]:
-                self.array[x, y] = 30
-            else:
-                self.array[x, y] = 60
+    def update_pheromone(self, Agents):
+        self.world = (self.world * self.fading).astype(int)
+        for agent in Agents:
+            x, y = agent["int_x_pos"], agent["int_y_pos"]
+            self.world[x, y] = self.pheromone_value
 
 """
 
