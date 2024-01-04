@@ -1,7 +1,8 @@
-from random import randint
-import numpy as np
-import matplotlib.pyplot as plt
 import math
+from random import randint
+
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class PheromoneArray:
