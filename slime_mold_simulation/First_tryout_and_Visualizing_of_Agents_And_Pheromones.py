@@ -30,9 +30,8 @@ class AgentArray:
                 self.array[x, y] -= 1
 
 
-
 class PheromoneArray:
-    def __init__(self, x_len, y_len,fading=0.5, pheromone_value = 10):
+    def __init__(self, x_len, y_len, fading=0.5, pheromone_value=10):
         self.world = np.zeros((x_len, y_len), dtype=int)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -40,7 +39,7 @@ class PheromoneArray:
     def update_pheromone(self, Agents):
         self.world = (self.world * self.fading).astype(int)
         for agent in Agents:
-            x, y = agent['int_x_pos'],agent['int_y_pos']
+            x, y = agent["int_x_pos"], agent["int_y_pos"]
             self.world[x, y] = self.pheromone_value
 
 
