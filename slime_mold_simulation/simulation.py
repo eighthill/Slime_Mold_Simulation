@@ -4,7 +4,7 @@ import numpy as np
 
 
 class PheromoneArray:
-    def __init__(self, x_len=1900, y_len=1080, fading=0.2, pheromone_value=5):
+    def __init__(self, x_len=500, y_len=500, fading=1, pheromone_value=100):
         self.world = np.zeros((x_len, y_len), dtype=int)
         self.fading = fading
         self.pheromone_value = pheromone_value
