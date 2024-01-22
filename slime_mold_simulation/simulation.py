@@ -4,7 +4,7 @@ import numpy as np
 
 
 class PheromoneArray:
-    def __init__(self, x_len=500, y_len=500, fading=0.5, pheromone_value=100):
+    def __init__(self, x_len=1900, y_len=1080, fading=0.2, pheromone_value=5):
         self.world = np.zeros((x_len, y_len), dtype=int)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -18,9 +18,12 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=100, sensor_angle=15, radius=0.1):
+    def __init__(self, array, num_agents=1000, sensor_angle=0.33, radius=0.2, speed=0.02):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
+        self.radius = radius
+        self.speed = speed  # Neuer Parameter für die Geschwindigkeit
+        self.Agents_list = []
 
         # since the radius is now used as distance, maybe the variables name should be changed to distance
         # if we still want the sensors to look within a given radius we should
@@ -39,6 +42,7 @@ class Agent:
                 "float_x_pos": float_x_pos,
                 "float_y_pos": float_y_pos,
                 "movement_angle": movement_angle,
+                "speed": speed,  # Neues Attribut für die Geschwindigkeit
             }
 
             self.Agents_list.append(agent_dict)
@@ -88,8 +92,9 @@ class Agent:
         angles = [-self.sensor_angle, 0, self.sensor_angle]
         for angle in angles:
             angle += agent["movement_angle"]
-            x_new = agent["float_x_pos"] + self.radius * math.cos(angle)
-            y_new = agent["float_y_pos"] + self.radius * math.sin(angle)
+            x_new = agent["float_x_pos"] + self.speed * self.radius * math.cos(angle)
+            y_new = agent["float_y_pos"] + self.speed * self.radius * math.sin(angle)
+
 
             if x_new > 1 or x_new < -1 or y_new > 1 or y_new < -1:
                 # since agents can't leave the array, those lines calulate another angle and coordinates

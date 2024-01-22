@@ -17,7 +17,7 @@ class SimulationGUI(app.Canvas):
         self.timer = app.Timer(connect=self.on_timer, start=True)
         self.pheromone = PheromoneArray()
         self.agents = Agent(self.pheromone)
-        self.view = scene.SceneCanvas(keys="interactive", size=(1200, 720), show=True)
+        self.view = scene.SceneCanvas(keys="interactive", size=(1900, 1080), show=True)
         self.view.events.draw.connect(self.on_draw)
         self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
 
