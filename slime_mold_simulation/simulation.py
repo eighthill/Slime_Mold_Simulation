@@ -134,5 +134,3 @@ class Agent:
             coordinate = -1 + (float_world_size * val / array.world.shape[idx])
             new_coordinates.append(coordinate)
         return new_coordinates
-
-
