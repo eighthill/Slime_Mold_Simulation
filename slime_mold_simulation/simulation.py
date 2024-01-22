@@ -1,12 +1,10 @@
 import math
 from random import randint
-
-import matplotlib.pyplot as plt
 import numpy as np
 
 
 class PheromoneArray:
-    def __init__(self, x_len=100, y_len=100, fading=0.3, pheromone_value=10):
+    def __init__(self, x_len=500, y_len=500, fading=0.5, pheromone_value=100):
         self.world = np.zeros((x_len, y_len), dtype=int)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -20,7 +18,7 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=300, sensor_angle=10, radius=0.1):
+    def __init__(self, array, num_agents=100, sensor_angle=15, radius=0.1):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
 
@@ -138,23 +136,3 @@ class Agent:
         return new_coordinates
 
 
-# this method is only to visualize the current array
-def plot_large_array_with_colors(array):
-    plt.imshow(array.world, interpolation="none", cmap="viridis")
-    plt.show()
-
-
-def main():
-    Pheromone = PheromoneArray()
-    Agenten = Agent(Pheromone)
-
-    # this loop is to visualize the array after every 10th iteration
-    for _ in range(100):
-        Pheromone.update_pheromone(Agenten.Agents_list)
-        Agenten.make_move(Pheromone)
-        if _ % 5 == 0:
-            plot_large_array_with_colors(Pheromone)
-
-
-if __name__ == "__main__":
-    main()
