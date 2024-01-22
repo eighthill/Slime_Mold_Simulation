@@ -24,7 +24,7 @@ class SimulationGUI(app.Canvas):
         self.pheromone = PheromoneArray()
         self.agents = Agent(self.pheromone)
         # Create a Vispy SceneCanvas with interactive keys, size, and display it
-        self.view = scene.SceneCanvas(keys="interactive", size=(1200, 720), show=True)
+        self.view = scene.SceneCanvas (size=(1200, 720), show=True)
         # Connect the draw event to the on_draw method
         self.view.events.draw.connect(self.on_draw)
          # Create an image visual representing the pheromone array
