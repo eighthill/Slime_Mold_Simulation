@@ -1,10 +1,11 @@
 import math
 from random import randint
 import numpy as np
+import random
 
 
 class PheromoneArray:
-    def __init__(self, x_len=1900, y_len=1080, fading=0.2, pheromone_value=5):
+    def __init__(self, x_len=1000, y_len=1000, fading=0.5, pheromone_value=50):
         self.world = np.zeros((x_len, y_len), dtype=int)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -18,7 +19,7 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=1000, sensor_angle=0.33, radius=0.2, speed=0.02):
+    def __init__(self, array, num_agents=10000, sensor_angle=0.33, radius=0.5, speed=0.02):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
         self.radius = radius
@@ -62,7 +63,7 @@ class Agent:
             [agent["int_x_pos"], agent["int_y_pos"]] = self.mapping_float_to_int(next_position[0], array)
 
             # this is the direction the agent is looking at after the move
-            agent["movement_angle"] = next_position[1]
+            agent["movement_angle"] = next_position[1] + randint(-5,5)
 
     # this method compares all possible next positions for an agent to find the best option
     def get_best_move(self, array, agent):
@@ -92,6 +93,7 @@ class Agent:
         angles = [-self.sensor_angle, 0, self.sensor_angle]
         for angle in angles:
             angle += agent["movement_angle"]
+            
             x_new = agent["float_x_pos"] + self.speed * self.radius * math.cos(angle)
             y_new = agent["float_y_pos"] + self.speed * self.radius * math.sin(angle)
 

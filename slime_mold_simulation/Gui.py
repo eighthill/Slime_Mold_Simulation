@@ -21,7 +21,7 @@ class SimulationGUI(app.Canvas):
         # Initialize the PheromoneArray and Agent instances
         self.pheromone = PheromoneArray()
         self.agents = Agent(self.pheromone)
-        self.view = scene.SceneCanvas(keys="interactive", size=(1900, 1080), show=True)
+        self.view = scene.SceneCanvas(keys="interactive", size=(800, 600), show=True)
         self.view.events.draw.connect(self.on_draw)
          # Create an image visual representing the pheromone array
         self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
@@ -36,7 +36,7 @@ class SimulationGUI(app.Canvas):
         # Set the data of the image visual to the current pheromone array
         self.image.set_data(self.pheromone.world)
 
-    def on_timer(self, event):
+    def on_timer(self,event ):
         """
         Event handler for the timer.
 
