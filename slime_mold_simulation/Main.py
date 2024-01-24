@@ -101,20 +101,24 @@ class Agent:
             possible_moves.append([[x_new, y_new], angle])
         return possible_moves
 
-    # this method is from ChatGPT as a help for now, but it has to be adjusted later in another issue
+    # method to reflect the object from the edge of the square
     def reflect_at_boundary(self, x, y, x_pos, y_pos):
-        if x > 1:
-            x = 2 - x
-        elif x < -1:
-            x = -2 - x
-        if y > 1:
-            y = 2 - y
-        elif y < -1:
-            y = -2 - y
-        # calculating new angle
-        angle = math.atan2(y - y_pos, x - x_pos)
-        return x, y, angle
+        #check if absolute value is greater than 1
+        #if true, reflect point from subtracting *2 the result of a comparison (if statements)
+        if abs(x) > 1:
+            x = 2 * (x > 0) - x
 
+        if abs(y) > 1:
+            y = 2 * (y > 0) - y
+            
+        dx = x - x_pos
+        dy = y - y_pos
+    
+        # Calculate new angle
+        angle = math.atan2(dy, dx)
+    
+        return x, y, angle
+    
     # this method needs a list with 2 float coordinates and calculates them to integer indicies for an given array
     def mapping_float_to_int(self, coordinates, array):
         # 2 because of float has to be in [-1,1]
@@ -122,7 +126,11 @@ class Agent:
         new_coordinates = []
 
         for idx, val in enumerate(coordinates):
-            coordinate = int(int((val + 1) / float_world_size * array.world.shape[idx])) - 1
+            
+            coordinate = int((val + 1) / float_world_size * array.world.shape[idx])
+            
+            #ensure coordinate is within bounds
+            coordinate = max(0, min(array.world.shape[idx] - 1, coordinate))
             new_coordinates.append(coordinate)
         return new_coordinates
 
@@ -131,7 +139,8 @@ class Agent:
         # 2 because of float has to be in [-1,1]
         float_world_size = 2
         new_coordinates = []
-
+        
+        #boundary-checking to ensure calculated indices are in range
         for idx, val in enumerate(coordinates):
             coordinate = -1 + (float_world_size * val / array.world.shape[idx])
             new_coordinates.append(coordinate)
