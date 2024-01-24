@@ -140,7 +140,7 @@ class Agent:
         float_world_size = 2
         new_coordinates = []
 
-        # boundary-checking to ensure calculated indices are in range
+        # boundary-checking to ensure calculated indices are in correct range
         for idx, val in enumerate(coordinates):
             coordinate = -1 + (float_world_size * val / array.world.shape[idx])
             new_coordinates.append(coordinate)
