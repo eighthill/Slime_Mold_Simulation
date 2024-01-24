@@ -126,7 +126,6 @@ class Agent:
         new_coordinates = []
 
         for idx, val in enumerate(coordinates):
-
             coordinate = int((val + 1) / float_world_size * array.world.shape[idx])
 
             # ensure coordinate is within bounds
