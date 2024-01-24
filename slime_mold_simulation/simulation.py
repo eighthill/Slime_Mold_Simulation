@@ -1,7 +1,6 @@
 import math
 from random import randint
 import numpy as np
-import random
 
 
 class PheromoneArray:
@@ -63,7 +62,7 @@ class Agent:
             [agent["int_x_pos"], agent["int_y_pos"]] = self.mapping_float_to_int(next_position[0], array)
 
             # this is the direction the agent is looking at after the move
-            agent["movement_angle"] = next_position[1] + randint(-5,5)
+            agent["movement_angle"] = next_position[1] + randint(-5, 5)
 
     # this method compares all possible next positions for an agent to find the best option
     def get_best_move(self, array, agent):
@@ -93,10 +92,9 @@ class Agent:
         angles = [-self.sensor_angle, 0, self.sensor_angle]
         for angle in angles:
             angle += agent["movement_angle"]
-            
+
             x_new = agent["float_x_pos"] + self.speed * self.radius * math.cos(angle)
             y_new = agent["float_y_pos"] + self.speed * self.radius * math.sin(angle)
-
 
             if x_new > 1 or x_new < -1 or y_new > 1 or y_new < -1:
                 # since agents can't leave the array, those lines calulate another angle and coordinates
