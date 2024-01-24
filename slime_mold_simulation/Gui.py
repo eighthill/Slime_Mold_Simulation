@@ -1,5 +1,6 @@
 from vispy import app, scene
-from simulation import PheromoneArray, Agent
+
+from simulation import Agent, PheromoneArray
 
 
 class SimulationGUI(app.Canvas):
