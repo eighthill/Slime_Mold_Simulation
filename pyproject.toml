@@ -33,7 +33,6 @@ version = "0.1.0"
 
 [project.optional-dependencies]
 dev = [
-    "black",
     "flake8",
     "isort",
     "pytest",
@@ -46,17 +45,9 @@ publishing = [
     "wheel",
 ]
 
-[tool.black]
-line-length = 120
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-)/
-'''
+
 
 [tool.isort]
-profile = "black"
 known_first_party = "slime_mold_simulation"
 src_paths = ["slime_mold_simulation", "tests"]
 line_length = "120"
