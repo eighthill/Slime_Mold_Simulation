@@ -7,7 +7,6 @@ class SimulationGUI(app.Canvas):
     def __init__(self):
         """
         Initialize the Simulation GUI.
-
         This class sets up the canvas, a timer for periodic updates,
         initializes the PheromoneArray, Agent instances, and creates
         a visual representation of the pheromone array using Vispy.
@@ -30,7 +29,6 @@ class SimulationGUI(app.Canvas):
     def on_draw(self, event):
         """
         Event handler for drawing on the canvas.
-
         Updates the visual representation of the pheromone array.
         """
 
@@ -40,7 +38,6 @@ class SimulationGUI(app.Canvas):
     def on_timer(self, event):
         """
         Event handler for the timer.
-
         Updates the pheromone array and agent movements periodically.
         """
 
