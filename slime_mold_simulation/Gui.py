@@ -9,8 +9,8 @@ class SimulationGUI(app.Canvas):
         Initialize the Simulation GUI.
 
 
-        
-        
+
+
         This class sets up the canvas, a timer for periodic updates,
         initializes the PheromoneArray, Agent instances, and creates
         a visual representation of the pheromone array using Vispy.
