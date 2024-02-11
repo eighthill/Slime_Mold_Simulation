@@ -43,7 +43,6 @@ class Agent:
                 "float_x_pos": float_x_pos,
                 "float_y_pos": float_y_pos,
                 "movement_angle": movement_angle,
-                "speed": speed,  # Neues Attribut für die Geschwindigkeit
             }
 
             self.Agents_list.append(agent_dict)
