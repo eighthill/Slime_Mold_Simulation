@@ -1,8 +1,9 @@
-from vispy import app, scene
-from simulation import Agent, PheromoneArray
 import numpy as np
+from vispy import app, scene
 from vispy.color import Color
 from vispy.scene import visuals
+
+from simulation import Agent, PheromoneArray
 
 
 class SimulationGUI(app.Canvas):
@@ -36,7 +37,7 @@ class SimulationGUI(app.Canvas):
 
     def update_points(self, points):
         """
-        Update the positions of yellow points.
+        Update the positions of agents.
         """
         # Convert points to numpy array
         points_array = np.array(points, dtype=np.float32)
@@ -52,19 +53,20 @@ class SimulationGUI(app.Canvas):
         """
         Event handler for the timer.
 
-        Updates the positions of yellow points periodically.
+        Updates the positions of agents periodically.
         """
         # Update the pheromone array based on agent positions
         self.pheromone.update_pheromone(self.agents.Agents_list)
         # Update the agent movements
         self.agents.make_move(self.pheromone)
-        # Update the Vispy scene to reflect the changes
-        self.view.scene.update()
 
         # Example: Update points every timer event
         new_points = []
         for agent in self.agents.Agents_list:
             new_points.append((agent["float_x_pos"], agent["float_y_pos"]))
+
+        # Update the Vispy scene to reflect the changes
+        self.view.scene.update()
         self.update_points(new_points)
 
 
