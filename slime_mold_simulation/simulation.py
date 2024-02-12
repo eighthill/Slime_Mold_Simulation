@@ -4,7 +4,7 @@ import numpy as np
 
 
 class PheromoneArray:
-    def __init__(self, x_len=1900, y_len=1080, fading=0.2, pheromone_value=5):
+    def __init__(self, x_len=1000, y_len=1000, fading=0.2, pheromone_value=5):
         self.world = np.zeros((x_len, y_len), dtype=int)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -18,23 +18,22 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=1000, sensor_angle=0.33, radius=0.2, speed=0.02):
+    def __init__(self, array, num_agents=5000, sensor_angle=0.33, radius=0.2, speed=0.02, spawn_radius=100):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
         self.radius = radius
-        self.speed = speed  # Neuer Parameter für die Geschwindigkeit
-        self.Agents_list = []
-
-        # since the radius is now used as distance, maybe the variables name should be changed to distance
-        # if we still want the sensors to look within a given radius we should
-        self.radius = radius
+        self.speed = speed
         self.Agents_list = []
 
         for idx in range(num_agents):
-            int_x_pos = randint(0, array.world.shape[0] - 1)
-            int_y_pos = randint(0, array.world.shape[1] - 1)
+            # Calculate polar coordinates with random angle and fixed spawn radius
+            angle = math.radians(randint(0, 360))
+            r = spawn_radius
+            int_x_pos = int(array.world.shape[0] / 2 + r * math.cos(angle))
+            int_y_pos = int(array.world.shape[1] / 2 + r * math.sin(angle))
+
             float_x_pos, float_y_pos = self.mapping_int_to_float([int_x_pos, int_y_pos], array)
-            movement_angle = randint(0, 360)  # degree as float?
+            movement_angle = randint(0, 360)
 
             agent_dict = {
                 "int_x_pos": int_x_pos,
@@ -42,10 +41,11 @@ class Agent:
                 "float_x_pos": float_x_pos,
                 "float_y_pos": float_y_pos,
                 "movement_angle": movement_angle,
-                "speed": speed,  # Neues Attribut für die Geschwindigkeit
+                "speed": speed,
             }
 
             self.Agents_list.append(agent_dict)
+
 
     # this method updates the next move for each agent
     def make_move(self, array):
@@ -62,7 +62,7 @@ class Agent:
             [agent["int_x_pos"], agent["int_y_pos"]] = self.mapping_float_to_int(next_position[0], array)
 
             # this is the direction the agent is looking at after the move
-            agent["movement_angle"] = next_position[1]
+            agent["movement_angle"] = next_position[1] + randint(-10,10)
 
     # this method compares all possible next positions for an agent to find the best option
     def get_best_move(self, array, agent):

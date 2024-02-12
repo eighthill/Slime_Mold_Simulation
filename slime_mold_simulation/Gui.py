@@ -3,28 +3,34 @@ from simulation import PheromoneArray, Agent
 
 
 class SimulationGUI(app.Canvas):
-    def __init__(self):
+    def __init__(self, pheromone_array):
         """
         Initialize the Simulation GUI.
 
         This class sets up the canvas, a timer for periodic updates,
-        initializes the PheromoneArray, Agent instances, and creates
+        initiralizes the PheromoneAray, Agent instances, and creates
         a visual representation of the pheromone array using Vispy.
         """
         
         # Initialize the Vispy canvas
         app.Canvas.__init__(
-            self,
+            self, vsync=True,
         )
-        
+
         # Set up a timer for periodic updates
         self.timer = app.Timer(connect=self.on_timer, start=True)
+
         # Initialize the PheromoneArray and Agent instances
-        self.pheromone = PheromoneArray()
+        self.pheromone = pheromone_array
         self.agents = Agent(self.pheromone)
-        self.view = scene.SceneCanvas(keys="interactive", size=(1900, 1080), show=True)
+
+        # Adjust canvas size to accommodate the PheromoneArray
+        canvas_width, canvas_height = self.pheromone.world.shape[0], self.pheromone.world.shape[1]
+        self.view = scene.SceneCanvas(keys="interactive", size=(canvas_width, canvas_height), show=True)
+
         self.view.events.draw.connect(self.on_draw)
-         # Create an image visual representing the pheromone array
+
+        # Create an image visual representing the pheromone array
         self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
 
     def on_draw(self, event):
@@ -54,5 +60,6 @@ class SimulationGUI(app.Canvas):
 
 if __name__ == "__main__":
     # Main Program
-    gui = SimulationGUI()
+    pheromone_array = PheromoneArray()
+    gui = SimulationGUI(pheromone_array)
     app.run()
