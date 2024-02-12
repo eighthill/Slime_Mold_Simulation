@@ -90,7 +90,7 @@ class Agent:
         possible_moves = []
 
         # here we have 3 sensores, we could add a loop that creates a variable number of sensores
-        angles = [-self.sensor_angle, 0, self.sensor_angle]
+        angles = [-self.sensor_angle + randint(0, 1), 0, self.sensor_angle + randint(0, 1)]
         for angle in angles:
             angle += agent["movement_angle"]
 
