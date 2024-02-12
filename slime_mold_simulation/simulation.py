@@ -19,9 +19,7 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(
-        self, array, num_agents=10000, sensor_angle=0.33, radius=0.5, speed=0.02
-    ):
+    def __init__(self, array, num_agents=10000, sensor_angle=0.33, radius=0.5, speed=0.02):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
         self.radius = radius
@@ -36,9 +34,7 @@ class Agent:
         for idx in range(num_agents):
             int_x_pos = randint(0, array.world.shape[0] - 1)
             int_y_pos = randint(0, array.world.shape[1] - 1)
-            float_x_pos, float_y_pos = self.mapping_int_to_float(
-                [int_x_pos, int_y_pos], array
-            )
+            float_x_pos, float_y_pos = self.mapping_int_to_float([int_x_pos, int_y_pos], array)
             movement_angle = randint(0, 360)  # degree as float?
 
             agent_dict = {
@@ -64,9 +60,7 @@ class Agent:
             # here we have the indicies for the array for each agent,
             # maybe there is a way to not safe it because we actually have the information already within the float coordinates
             # and we can always calculate those to integers with the function mapping_float_to_int
-            [agent["int_x_pos"], agent["int_y_pos"]] = self.mapping_float_to_int(
-                next_position[0], array
-            )
+            [agent["int_x_pos"], agent["int_y_pos"]] = self.mapping_float_to_int(next_position[0], array)
 
             # this is the direction the agent is looking at after the move
             agent["movement_angle"] = next_position[1] + randint(-5, 5)
@@ -105,9 +99,7 @@ class Agent:
 
             if x_new > 1 or x_new < -1 or y_new > 1 or y_new < -1:
                 # since agents can't leave the array, those lines calulate another angle and coordinates
-                x_new, y_new, angle = self.reflect_at_boundary(
-                    x_new, y_new, agent["float_x_pos"], agent["float_y_pos"]
-                )
+                x_new, y_new, angle = self.reflect_at_boundary(x_new, y_new, agent["float_x_pos"], agent["float_y_pos"])
 
             # this list contains all possible next moves for one agent
             possible_moves.append([[x_new, y_new], angle])

@@ -25,9 +25,7 @@ class SimulationGUI(app.Canvas):
         self.view = scene.SceneCanvas(keys="interactive", size=(100, 100), show=True)
         self.view.events.draw.connect(self.on_draw)
         # Create an image visual representing the pheromone array
-        self.image = scene.visuals.Image(
-            self.pheromone.world, cmap="viridis", parent=self.view.scene
-        )
+        self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
 
     def on_draw(self, event):
         """
