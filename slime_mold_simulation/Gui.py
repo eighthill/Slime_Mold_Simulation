@@ -25,7 +25,7 @@ class SimulationGUI(app.Canvas):
         self.timer = app.Timer(connect=self.on_timer, start=True)
 
         # Create a black background
-        self.view = scene.SceneCanvas(keys="interactive", size=(100, 100), show=True)
+        self.view = scene.SceneCanvas(keys="interactive", size=(600, 600), show=True)
         self.view.bgcolor = Color("black")
 
         # Create yellow points visual
@@ -47,7 +47,7 @@ class SimulationGUI(app.Canvas):
             points_array = points_array.reshape(-1, 2)
 
         # Set data for points
-        self.points.set_data(pos=points_array, face_color="yellow", size=2)
+        self.points.set_data(pos=points_array, face_color="yellow", size=8)
 
     def on_timer(self, event):
         """

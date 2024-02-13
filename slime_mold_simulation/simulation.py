@@ -76,20 +76,23 @@ class Agent:
     # this method compares all possible next positions for an agent to find the best option
     def get_best_move(self, array, agent):
         possible_moves = self.get_next_moves(agent)
-        amount_of_pheromones_list = []
+        allowed_moves = []  # List to store moves with pheromone values below the maximum
 
-        # get the amount of pheromones for each possible move and add it to the list amount_of_pheromones_list
+        # Iterate over possible moves and calculate pheromone values
         for move in possible_moves:
-            int_coordinats = self.mapping_float_to_int(move[0], array)
-            value = array.world[int_coordinats[0], int_coordinats[1]]
-            amount_of_pheromones_list.append(value)
+            int_coordinates = self.mapping_float_to_int(move[0], array)
+            value = array.world[int_coordinates[0], int_coordinates[1]]
 
-        # find which of the possitions has the most pheremones
-        # here we could implement a method that makes sure that the agents change there way,
-        # if there amount of pheromones has crossed a given value
-        max_val = max(amount_of_pheromones_list)
-        max_idx = amount_of_pheromones_list.index(max_val)
-        next_position = possible_moves[max_idx]
+            # Check if pheromone value is below the maximum
+            if value <= self.max_pheromone_value:
+                allowed_moves.append((move, value))
+
+        # If no allowed moves found, return a random move
+        if not allowed_moves:
+            return possible_moves[randint(0, len(possible_moves) - 1)]
+
+        # Find the move with the maximum allowed pheromone value
+        next_position = max(allowed_moves, key=lambda x: x[1])[0]
 
         return next_position
 
