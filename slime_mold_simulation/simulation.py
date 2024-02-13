@@ -6,9 +6,15 @@ from scipy.ndimage import gaussian_filter
 #Simulationparameters
 WIDTH = 1000
 HEIGHT = 1000
-DECAY = 0.97
 PHEROMONE_VALUE = 10
+DECAY = 0.97
 DIFFUSION_COEFFICENT = 0.2
+
+#Agentparameters
+AGENT_NUMBER = 1000
+SENSOR_ANGLE = 0.33
+RADIUS = 0.5
+SPEED = 0.02
 
 class PheromoneArray:
     def __init__(self, x_len=WIDTH, y_len=HEIGHT, fading=DECAY, pheromone_value=PHEROMONE_VALUE, diffusion_coefficient=DIFFUSION_COEFFICENT):
@@ -31,7 +37,7 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=1000, sensor_angle=0.33, radius=0.5, speed=0.02):
+    def __init__(self, array, num_agents=AGENT_NUMBER, sensor_angle=SENSOR_ANGLE, radius=RADIUS, speed=SPEED):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
         self.radius = radius
