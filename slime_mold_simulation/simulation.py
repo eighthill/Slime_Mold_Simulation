@@ -13,7 +13,7 @@ class PheromoneArray:
         self.diffusion_coefficient = diffusion_coefficient
 
     def update_pheromone(self, Agents):
-        self.world = (self.world * self.fading).astype(int)
+        self.world = (self.world * self.fading).astype(float)
         for agent in Agents:
             x, y = agent["int_x_pos"], agent["int_y_pos"]
             self.world[x, y] = self.pheromone_value
