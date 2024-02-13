@@ -1,11 +1,10 @@
 import math
 from random import randint
-
 import numpy as np
 
 
 class PheromoneArray:
-    def __init__(self, x_len=1000, y_len=1000, fading=0.5, pheromone_value=50):
+    def __init__(self, x_len=1000, y_len=1000, fading=0.2, pheromone_value=5):
         self.world = np.zeros((x_len, y_len), dtype=int)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -19,23 +18,32 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=10000, sensor_angle=0.33, radius=0.5, speed=0.02):
+    def __init__(
+        self,
+        array,
+        num_agents=10000,
+        sensor_angle=0.33,
+        radius=0.2,
+        speed=0.3,
+        spawn_radius=100,
+        max_pheromone_value=10,
+    ):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
         self.radius = radius
-        self.speed = speed  # Neuer Parameter für die Geschwindigkeit
-        self.Agents_list = []
-
-        # since the radius is now used as distance, maybe the variables name should be changed to distance
-        # if we still want the sensors to look within a given radius we should
-        self.radius = radius
+        self.speed = speed
+        self.max_pheromone_value = max_pheromone_value  # New parameter
         self.Agents_list = []
 
         for idx in range(num_agents):
-            int_x_pos = randint(0, array.world.shape[0] - 1)
-            int_y_pos = randint(0, array.world.shape[1] - 1)
+            # Calculate polar coordinates with random angle and fixed spawn radius
+            angle = math.radians(randint(0, 360))
+            r = spawn_radius
+            int_x_pos = int(array.world.shape[0] / 2 + r * math.cos(angle))
+            int_y_pos = int(array.world.shape[1] / 2 + r * math.sin(angle))
+
             float_x_pos, float_y_pos = self.mapping_int_to_float([int_x_pos, int_y_pos], array)
-            movement_angle = randint(0, 360)  # degree as float?
+            movement_angle = randint(0, 360)
 
             agent_dict = {
                 "int_x_pos": int_x_pos,
@@ -43,7 +51,7 @@ class Agent:
                 "float_x_pos": float_x_pos,
                 "float_y_pos": float_y_pos,
                 "movement_angle": movement_angle,
-                "speed": speed,  # Neues Attribut für die Geschwindigkeit
+                "speed": speed,
             }
 
             self.Agents_list.append(agent_dict)
@@ -63,7 +71,7 @@ class Agent:
             [agent["int_x_pos"], agent["int_y_pos"]] = self.mapping_float_to_int(next_position[0], array)
 
             # this is the direction the agent is looking at after the move
-            agent["movement_angle"] = next_position[1] + randint(-5, 5)
+            agent["movement_angle"] = next_position[1] + randint(-10, 10)
 
     # this method compares all possible next positions for an agent to find the best option
     def get_best_move(self, array, agent):
@@ -93,7 +101,6 @@ class Agent:
         angles = [-self.sensor_angle, 0, self.sensor_angle]
         for angle in angles:
             angle += agent["movement_angle"]
-
             x_new = agent["float_x_pos"] + self.speed * self.radius * math.cos(angle)
             y_new = agent["float_y_pos"] + self.speed * self.radius * math.sin(angle)
 
@@ -105,22 +112,18 @@ class Agent:
             possible_moves.append([[x_new, y_new], angle])
         return possible_moves
 
-    # method to reflect the object from the edge of the square
+    # this method is from ChatGPT as a help for now, but it has to be adjusted later in another issue
     def reflect_at_boundary(self, x, y, x_pos, y_pos):
-        # check if absolute value is greater than 1
-        # if true, reflect point from subtracting *2 the result of a comparison (if statements)
-        if abs(x) > 1:
-            x = 2 * (x > 0) - x
-
-        if abs(y) > 1:
-            y = 2 * (y > 0) - y
-
-        dx = x - x_pos
-        dy = y - y_pos
-
-        # Calculate new angle
-        angle = math.atan2(dy, dx)
-
+        if x > 1:
+            x = 2 - x
+        elif x < -1:
+            x = -2 - x
+        if y > 1:
+            y = 2 - y
+        elif y < -1:
+            y = -2 - y
+        # calculating new angle
+        angle = math.atan2(y - y_pos, x - x_pos)
         return x, y, angle
 
     # this method needs a list with 2 float coordinates and calculates them to integer indicies for an given array
@@ -130,10 +133,7 @@ class Agent:
         new_coordinates = []
 
         for idx, val in enumerate(coordinates):
-            coordinate = int((val + 1) / float_world_size * array.world.shape[idx])
-
-            # ensure coordinate is within bounds
-            coordinate = max(0, min(array.world.shape[idx] - 1, coordinate))
+            coordinate = int(int((val + 1) / float_world_size * array.world.shape[idx])) - 1
             new_coordinates.append(coordinate)
         return new_coordinates
 
