@@ -4,9 +4,29 @@ from random import randint
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
+# Simulationparameters
+WIDTH = 1000
+HEIGHT = 1000
+PHEROMONE_VALUE = 10
+DECAY = 0.97
+DIFFUSION_COEFFICENT = 0.2
+
+# Agentparameters
+AGENT_NUMBER = 1000
+SENSOR_ANGLE = 0.33
+RADIUS = 0.5
+SPEED = 0.02
+
 
 class PheromoneArray:
-    def __init__(self, x_len=1000, y_len=1000, fading=1, pheromone_value=500, diffusion_coefficient=0.7):
+    def __init__(
+        self,
+        x_len=WIDTH,
+        y_len=HEIGHT,
+        fading=DECAY,
+        pheromone_value=PHEROMONE_VALUE,
+        diffusion_coefficient=DIFFUSION_COEFFICENT,
+    ):
         self.world = np.zeros((x_len, y_len), dtype=float)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -26,22 +46,28 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=1000, sensor_angle=0.33, radius=0.5, speed=0.02):
+    def __init__(self, array, num_agents=AGENT_NUMBER, sensor_angle=SENSOR_ANGLE, radius=RADIUS, speed=SPEED):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
         self.radius = radius
         self.speed = speed  # Neuer Parameter für die Geschwindigkeit
         self.Agents_list = []
 
-        for idx in range(num_agents):
-            int_x_pos = randint(0, array.world.shape[0] - 1)
-            int_y_pos = randint(0, array.world.shape[1] - 1)
-            float_x_pos, float_y_pos = self.mapping_int_to_float([int_x_pos, int_y_pos], array)
-            movement_angle = randint(0, 360)  # degree as float?
+        center_x = array.world.shape[0] // 2
+        center_y = array.world.shape[1] // 2
+        angles = np.random.random(num_agents) * 2 * math.pi
+        dst = np.random.random(num_agents) * radius
 
+        for angle, d in zip(angles, dst):
+            # Convert polar coordinates to Cartesian coordinates
+            x = center_x + int(d * array.world.shape[0] * np.cos(angle))
+            y = center_y + int(d * array.world.shape[1] * np.sin(angle))
+
+            float_x_pos, float_y_pos = self.mapping_int_to_float([x, y], array)
+            movement_angle = np.random.uniform(0, 360)
             agent_dict = {
-                "int_x_pos": int_x_pos,
-                "int_y_pos": int_y_pos,
+                "int_x_pos": x,
+                "int_y_pos": y,
                 "float_x_pos": float_x_pos,
                 "float_y_pos": float_y_pos,
                 "movement_angle": movement_angle,
@@ -94,7 +120,7 @@ class Agent:
         # here we have 3 sensores, we could add a loop that creates a variable number of sensores
         angles = [-self.sensor_angle + randint(0, 1), 0, self.sensor_angle + randint(0, 1)]
         for angle in angles:
-            angle += agent["movement_angle"]
+            angle = agent["movement_angle"]
 
             x_new = agent["float_x_pos"] + self.speed * self.radius * math.cos(angle)
             y_new = agent["float_y_pos"] + self.speed * self.radius * math.sin(angle)
