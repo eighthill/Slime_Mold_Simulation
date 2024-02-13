@@ -1,5 +1,6 @@
 import math
 from random import randint
+
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
