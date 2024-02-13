@@ -2,33 +2,34 @@ import math
 from random import randint
 
 import numpy as np
-
+from scipy.ndimage import gaussian_filter
 
 class PheromoneArray:
-    def __init__(self, x_len=1000, y_len=1000, fading=0.5, pheromone_value=50):
-        self.world = np.zeros((x_len, y_len), dtype=int)
+    def __init__(self, x_len=1000, y_len=1000, fading=1, pheromone_value=500, diffusion_coefficient=0.7):
+        self.world = np.zeros((x_len, y_len), dtype=float)
         self.fading = fading
         self.pheromone_value = pheromone_value
+        self.diffusion_coefficient = diffusion_coefficient
 
     def update_pheromone(self, Agents):
-        self.world = (self.world * self.fading).astype(int)
-        for agent in Agents:
-            x, y = agent["int_x_pos"], agent["int_y_pos"]
-            self.world[x, y] = self.pheromone_value
+            self.world = (self.world * self.fading).astype(int)
+            for agent in Agents:
+                x, y = agent["int_x_pos"], agent["int_y_pos"]
+                self.world[x, y] = self.pheromone_value
+
+            # Update pheromone concentration using Gaussian filter
+            dt = 10  # Time step
+            spread= np.sqrt(2 * self.diffusion_coefficient * dt)
+            self.world = gaussian_filter(self.world, sigma=spread)
 
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=10000, sensor_angle=0.33, radius=0.5, speed=0.02):
+    def __init__(self, array, num_agents=1000, sensor_angle=0.33, radius=0.5, speed=0.02):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
         self.radius = radius
         self.speed = speed  # Neuer Parameter für die Geschwindigkeit
-        self.Agents_list = []
-
-        # since the radius is now used as distance, maybe the variables name should be changed to distance
-        # if we still want the sensors to look within a given radius we should
-        self.radius = radius
         self.Agents_list = []
 
         for idx in range(num_agents):
