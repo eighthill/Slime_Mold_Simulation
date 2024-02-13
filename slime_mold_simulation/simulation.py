@@ -3,21 +3,29 @@ from random import randint
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-#Simulationparameters
+# Simulationparameters
 WIDTH = 1000
 HEIGHT = 1000
 PHEROMONE_VALUE = 10
 DECAY = 0.97
 DIFFUSION_COEFFICENT = 0.2
 
-#Agentparameters
+# Agentparameters
 AGENT_NUMBER = 1000
 SENSOR_ANGLE = 0.33
 RADIUS = 0.5
 SPEED = 0.02
 
+
 class PheromoneArray:
-    def __init__(self, x_len=WIDTH, y_len=HEIGHT, fading=DECAY, pheromone_value=PHEROMONE_VALUE, diffusion_coefficient=DIFFUSION_COEFFICENT):
+    def __init__(
+        self,
+        x_len=WIDTH,
+        y_len=HEIGHT,
+        fading=DECAY,
+        pheromone_value=PHEROMONE_VALUE,
+        diffusion_coefficient=DIFFUSION_COEFFICENT,
+    ):
         self.world = np.zeros((x_len, y_len), dtype=float)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -43,7 +51,6 @@ class Agent:
         self.radius = radius
         self.speed = speed  # Neuer Parameter für die Geschwindigkeit
         self.Agents_list = []
-
 
         center_x = array.world.shape[0] // 2
         center_y = array.world.shape[1] // 2
