@@ -1,6 +1,6 @@
-from vispy import visuals, app, scene
+from vispy import app, scene
 from simulation import Agent, PheromoneArray
-import numpy as np
+
 
 class SimulationGUI(app.Canvas):
     def __init__(self):
@@ -23,7 +23,7 @@ class SimulationGUI(app.Canvas):
         self.view = scene.SceneCanvas(keys="interactive", size=(1000, 1000), show=True)
         self.view.events.draw.connect(self.on_draw)
         # Create an image visual representing the pheromone array
-        self.image = scene.visuals.Image(self.pheromone.world,  cmap="viridis", parent=self.view.scene)
+        self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
         # Create a scatter plot visual for agents
         self.agents_scatter = scene.visuals.Markers()
         self.view.scene._add_child(self.agents_scatter)
@@ -38,8 +38,8 @@ class SimulationGUI(app.Canvas):
         self.image.set_data(self.pheromone.world)
 
         # Set the positions of agents in the scatter plot visual
-        #positions = np.array([[agent["float_x_pos"], agent["float_y_pos"]] for agent in self.agents.Agents_list])
-        #self.agents_scatter.set_data(positions, edge_color='blue', size=15)
+        # positions = np.array([[agent["float_x_pos"], agent["float_y_pos"]] for agent in self.agents.Agents_list])
+        # self.agents_scatter.set_data(positions, edge_color='blue', size=15)
 
     def on_timer(self, event):
         """
