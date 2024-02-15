@@ -13,10 +13,9 @@ view = canvas.central_widget.add_view()
 # Create a shader program for agents
 vertex_shader = """
 attribute vec2 position;
-uniform vec2 agent_positions[AGENT_NUMBER];
 void main()
 {
-    gl_Position = vec4(agent_positions[gl_InstanceID], 0.0, 1.0);
+    gl_Position = vec4(position, 0.0, 1.0);
 }
 """
 
@@ -32,12 +31,12 @@ program = gloo.Program(vertex_shader, fragment_shader)
 # Create agent instances
 agents = [Agent(x=np.random.uniform(0, 1000), y=np.random.uniform(0, 1000)) for _ in range(AGENT_NUMBER)]
 
-# Set agent positions as shader attribute
-agent_positions = np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32)
-program['agent_positions'] = agent_positions
+# Create agent visuals
+markers = scene.visuals.Markers(parent=view.scene, symbol='disc', size=10, face_color='red')
+markers.set_data(np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32))
 
-#Set camera view
-view.camera = 'panzoom'
+# Set camera view
+#view.camera = 'panzoom'
 
 # Timer callback to update agent positions and redraw
 def update_timer(ev):
@@ -45,9 +44,15 @@ def update_timer(ev):
         agent.move()
 
     agent_positions = np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32)
-    program['agent_positions'] = agent_positions
-    markers = scene.visuals.Markers(parent=view.scene, symbol='disc', size=1, face_color='red')
     markers.set_data(agent_positions)
+
+    # Clear the canvas before redrawing
+    canvas.clear()
+
+    # Draw the agent visuals
+    markers.draw()
+
+    # Swap the buffer (show the rendered image)
     canvas.update()
 
 # Create a timer to update positions
