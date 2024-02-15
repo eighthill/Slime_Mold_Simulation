@@ -1,62 +1,58 @@
-from vispy import app, scene
-
 from simulation import Agent, PheromoneArray
 
+import numpy as np
+from vispy import app, gloo, scene
+from simulation import Agent, PheromoneArray, AGENT_NUMBER, WIDTH, HEIGHT
 
-class SimulationGUI(app.Canvas):
-    def __init__(self):
-        """
-        Initialize the Simulation GUI.
-        This class sets up the canvas, a timer for periodic updates,
-        initializes the PheromoneArray, Agent instances, and creates
-        a visual representation of the pheromone array using Vispy.
-        """
-        # Initialize the Vispy canvas
-        app.Canvas.__init__(
-            self,
-        )
+# Create a canvas
+canvas = scene.SceneCanvas(keys='interactive', size=(WIDTH, HEIGHT), show=True)
 
-        # Set up a timer for periodic updates
-        self.timer = app.Timer(connect=self.on_timer, start=True)
-        # Initialize the PheromoneArray and Agent instances
-        self.pheromone = PheromoneArray()
-        self.agents = Agent(self.pheromone)
-        self.view = scene.SceneCanvas(keys="interactive", size=(1000, 1000), show=True)
-        self.view.events.draw.connect(self.on_draw)
-        # Create an image visual representing the pheromone array
-        self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
-        # Create a scatter plot visual for agents
-        self.agents_scatter = scene.visuals.Markers()
-        self.view.scene._add_child(self.agents_scatter)
+# Create a view
+view = canvas.central_widget.add_view()
 
-    def on_draw(self, event):
-        """
-        Event handler for drawing on the canvas.
-        Updates the visual representation of the pheromone array and agents.
-        """
+# Create a shader program for agents
+vertex_shader = """
+attribute vec2 position;
+uniform vec2 agent_positions[AGENT_NUMBER];
+void main()
+{
+    gl_Position = vec4(agent_positions[gl_InstanceID], 0.0, 1.0);
+}
+"""
 
-        # Set the data of the image visual to the current pheromone array
-        self.image.set_data(self.pheromone.world)
+fragment_shader = """
+void main()
+{
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+"""
 
-        # Set the positions of agents in the scatter plot visual
-        # positions = np.array([[agent["float_x_pos"], agent["float_y_pos"]] for agent in self.agents.Agents_list])
-        # self.agents_scatter.set_data(positions, edge_color='blue', size=15)
+program = gloo.Program(vertex_shader, fragment_shader)
 
-    def on_timer(self, event):
-        """
-        Event handler for the timer.
-        Updates the pheromone array and agent movements periodically.
-        """
+# Create agent instances
+agents = [Agent(x=np.random.uniform(0, 1000), y=np.random.uniform(0, 1000)) for _ in range(AGENT_NUMBER)]
 
-        # Update the pheromone array based on agent positions
-        self.pheromone.update_pheromone(self.agents.Agents_list)
-        # Update the agent movements
-        self.agents.make_move(self.pheromone)
-        # Trigger a redraw of the scene
-        self.view.scene.update()
+# Set agent positions as shader attribute
+agent_positions = np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32)
+program['agent_positions'] = agent_positions
 
+#Set camera view
+view.camera = 'panzoom'
 
-if __name__ == "__main__":
-    # Main Program
-    gui = SimulationGUI()
+# Timer callback to update agent positions and redraw
+def update_timer(ev):
+    for agent in agents:
+        agent.move()
+
+    agent_positions = np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32)
+    program['agent_positions'] = agent_positions
+    markers = scene.visuals.Markers(parent=view.scene, symbol='disc', size=1, face_color='red')
+    markers.set_data(agent_positions)
+    canvas.update()
+
+# Create a timer to update positions
+timer = app.Timer('auto', connect=update_timer, start=True)
+
+# Run the application
+if __name__ == '__main__':
     app.run()
