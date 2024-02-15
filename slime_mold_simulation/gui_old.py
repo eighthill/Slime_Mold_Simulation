@@ -2,7 +2,7 @@ import numpy as np
 from vispy import app, scene, gloo
 from vispy.color import Color
 from simulation_old import Agent, PheromoneArray
-import moderngl
+#import moderngl
 
 class SlimeConfig:
     diffusion_speed = 10.0

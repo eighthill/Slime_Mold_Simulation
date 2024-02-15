@@ -8,6 +8,7 @@ from SlimeConfig import SlimeConfig
     
 
 # this method updates the next move for each agent
+@jit
 def make_move(self, array):
     for agent in self.Agents_list:
         # the variable next_position contains: [x_coordinate, y_coordinate], angle
@@ -25,6 +26,7 @@ def make_move(self, array):
         agent["movement_angle"] = next_position[1] + randint(-5, 5)
         # print(f"Updated Position - x: {agent['float_x_pos']}, y: {agent['float_y_pos']}")
 
+@jit
 def get_best_move(self, array, agent):
     possible_moves = self.get_next_moves(agent)
 
@@ -37,6 +39,7 @@ def get_best_move(self, array, agent):
 
     return next_position
 
+@jit
 def get_next_moves(self, agent):
     possible_moves = []
 
@@ -56,6 +59,7 @@ def get_next_moves(self, agent):
 
     return possible_moves
 
+@jit
 def reflect_at_boundary(self, x, y, x_pos, y_pos):
     # check if absolute value is greater than 1
     # if true, reflect point from subtracting *2 the result of a comparison (if statements)
@@ -73,6 +77,7 @@ def reflect_at_boundary(self, x, y, x_pos, y_pos):
 
     return x, y, angle
 
+@jit
 # this method needs a list with 2 float coordinates and calculates them to integer indices for a given array
 def mapping_float_to_int(self, coordinates, array):
     # 2 because of float has to be in [-1,1]
@@ -87,6 +92,7 @@ def mapping_float_to_int(self, coordinates, array):
         new_coordinates.append(coordinate)
     return new_coordinates
 
+@jit
 # this method needs a list with 2 integer indices for a given array and calculates them to float coordinates
 def mapping_int_to_float(self, coordinates, array):
     # 2 because of float has to be in [-1,1]

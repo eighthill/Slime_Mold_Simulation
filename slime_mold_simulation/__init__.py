@@ -1,5 +1,4 @@
 """Documentation about slime_mold_simulation"""
-
 import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())

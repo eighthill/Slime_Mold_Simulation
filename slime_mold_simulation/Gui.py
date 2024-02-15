@@ -19,13 +19,11 @@ class SimulationGUI(app.Canvas):
         self.view = scene.SceneCanvas(keys="interactive", size=(1000, 1000), show=True)
         self.view.events.draw.connect(self.on_draw)
         # Create an image visual representing the pheromone array
-        self.image = scene.visuals.Image(self.pheromone.world, cmap="inferno", parent=self.view.scene)
+        self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
         # Create a scatter plot visual for agents
          # Set the initial size as needed
         self.agents_scatter = scene.visuals.Markers()
         self.view.scene._add_child(self.agents_scatter)
-
-       
 
         # Initialize the slider logic
         self.slider_logic = SliderLogic(self)
@@ -129,10 +127,6 @@ class SimulationGUI(app.Canvas):
         self.agents_scatter.set_data(positions, edge_color='blue', size=15)
             
 
-        # Set the positions of agents in the scatter plot visual
-        # positions = np.array([[agent["float_x_pos"], agent["float_y_pos"]] for agent in self.agents.Agents_list])
-        # self.agents_scatter.set_data(positions, edge_color='blue', size=15)
-
     def on_timer(self, event):
         """
         Event handler for the timer.
@@ -161,6 +155,7 @@ class SimulationGUI(app.Canvas):
 if __name__ == "__main__":
     # Main Program
     gui = SimulationGUI()
+    
     # Start the PyQt5 application loop
     gui.qt_app.exec_()
     app.run()
