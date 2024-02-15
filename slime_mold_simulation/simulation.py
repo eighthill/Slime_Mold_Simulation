@@ -181,21 +181,12 @@ import math
 from random import randint
 import numpy as np
 from scipy.ndimage import gaussian_filter
+from Move import make_move, mapping_float_to_int, mapping_int_to_float, get_best_move, get_next_moves, reflect_at_boundary 
+from SlimeConfig import SlimeConfig
 
-
-class SlimeConfig:
-    num_agents=1000
-    fading=0.97
-    pheromone_value=10
-    diffusion_coefficient=0.2
-    sensor_angle=0.33
-    radius=0.5
-    move_speed=0.02
-    angles = np.random.random(num_agents) * 2 * math.pi
-    sensor_size = 3
     
 class PheromoneArray:
-    def __init__(self, x_len=1000, y_len=1000, fading=0.97, pheromone_value=0, diffusion_coefficient=0.2):
+    def __init__(self, x_len=1000, y_len=1000, fading=0.97, pheromone_value=10, diffusion_coefficient=0.2):
         self.world = np.zeros((x_len, y_len), dtype=float)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -215,7 +206,7 @@ class PheromoneArray:
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=1000, sensor_angle=0.33, size=0.02 , radius=0.5, speed=0.02):
+    def __init__(self, array, num_agents=1000, sensor_angle=0.33, size=15 , radius=0.4, speed=0.02):
         self.num_agents = num_agents
         self.sensor_angle = sensor_angle
         self.radius = radius
@@ -252,6 +243,7 @@ class Agent:
 
             self.Agents_list.append(agent_dict)
             
+<<<<<<< HEAD
             
     # this method updates the next move for each agent
     def make_move(self, array):
@@ -344,3 +336,11 @@ class Agent:
             new_coordinates.append(coordinate)
         return new_coordinates
 >>>>>>> b3387bdb388c298d0189c54489a1e568b4da1d1b
+=======
+Agent.make_move = make_move
+Agent.get_best_move = get_best_move
+Agent.get_next_moves = get_next_moves
+Agent.reflect_at_boundary = reflect_at_boundary
+Agent.mapping_float_to_int = mapping_float_to_int
+Agent.mapping_int_to_float = mapping_int_to_float
+>>>>>>> eea7e9d875adc880a537177db293347f16184629
