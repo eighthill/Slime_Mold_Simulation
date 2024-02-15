@@ -1,4 +1,4 @@
-from vispy import app, scene
+from vispy import app, scene, gloo
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QSlider, QVBoxLayout, QPushButton, QSpinBox
 from simulation import Agent, PheromoneArray, SlimeConfig
 import numpy as np
@@ -9,6 +9,8 @@ class SimulationGUI(app.Canvas):
         # Initialize the Vispy canvas
         app.Canvas.__init__(self)
 
+         # Initialize PyQt5 application
+        self.qt_app = QApplication([])
         # Set up a timer for periodic updates
         self.timer = app.Timer(connect=self.on_timer, start=True)
         # Initialize the PheromoneArray and Agent instances
@@ -17,13 +19,13 @@ class SimulationGUI(app.Canvas):
         self.view = scene.SceneCanvas(keys="interactive", size=(1000, 1000), show=True)
         self.view.events.draw.connect(self.on_draw)
         # Create an image visual representing the pheromone array
-        self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
+        self.image = scene.visuals.Image(self.pheromone.world, cmap="inferno", parent=self.view.scene)
         # Create a scatter plot visual for agents
+         # Set the initial size as needed
         self.agents_scatter = scene.visuals.Markers()
         self.view.scene._add_child(self.agents_scatter)
 
-        # Initialize PyQt5 application
-        self.qt_app = QApplication([])
+       
 
         # Initialize the slider logic
         self.slider_logic = SliderLogic(self)
@@ -32,12 +34,43 @@ class SimulationGUI(app.Canvas):
         self.slider_logic.slider_widget.show()
         
         # Connect the resize event to the on_resize method
+        
+         # Vertex and fragment shaders
+        # Vertex shader
+        vertex_shader = """
+        #version 120
+        attribute vec2 a_position;
+        varying vec4 v_color;
+
+        uniform vec4 u_color;  // Declare u_color as a uniform variable
+
+        void main() {
+            gl_Position = vec4(a_position, 0.0, 1.0);
+            v_color = u_color;  // Pass the uniform value to the varying variable
+        }
+        """
+
+        # Fragment shader
+        fragment_shader = """
+        #version 120
+        varying vec4 v_color;  // Declare v_color as a varying variable
+
+        void main() {
+            gl_FragColor = v_color;
+        }
+        """
+        self.program = gloo.Program(vert=vertex_shader, frag=fragment_shader)
      #   self.view.events.resize.connect(self.on_resize)
 
     def update_agent_size(self):
         size = self.slider_logic.agent_size_slider.value()
-        self.agents_scatter.set_data(size=size)
 
+        # Update the size of the scatter plot markers (agents)
+        self.agents_scatter.set_data()
+
+        # Trigger a redraw of the scene
+        self.view.scene.update()
+        
         # Update the label
         self.slider_logic.agent_size_slider.value_label.setText(str(size))
 
@@ -88,9 +121,13 @@ class SimulationGUI(app.Canvas):
         Event handler for drawing on the canvas.
         Updates the visual representation of the pheromone array and agents.
         """
-
+        
         # Set the data of the image visual to the current pheromone array
-        self.image.set_data(self.pheromone.world)
+        self.image.set_data(self.pheromone.world)  
+        
+        positions = np.array([[agent["float_x_pos"], agent["float_y_pos"]] for agent in self.agents.Agents_list])
+        self.agents_scatter.set_data(positions, edge_color='blue', size=15)
+            
 
     def on_timer(self, event):
         """
