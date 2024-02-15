@@ -47,7 +47,7 @@ def update_timer(ev):
     markers.set_data(agent_positions)
 
     # Clear the canvas before redrawing
-    canvas.clear()
+    canvas.render()
 
     # Draw the agent visuals
     markers.draw()

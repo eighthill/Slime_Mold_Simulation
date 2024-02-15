@@ -12,7 +12,7 @@ DECAY = 0.97
 DIFFUSION_COEFFICENT = 0.2
 
 # Agentparameters
-AGENT_NUMBER = 10000
+AGENT_NUMBER = 100
 SENSOR_ANGLE = 0.33
 RADIUS = 0.5
 SPEED = 2
@@ -70,13 +70,37 @@ class Agent:
                 # Adjust heading towards the sensor
                 self.heading += angle_difference * self.rotation_speed
 
+
     def move(self):
         # Update agent's position based on heading and speed
         self.speed = SPEED
-        self.x += self.speed * np.cos(self.heading)
-        self.y += self.speed * np.sin(self.heading)
+        new_x = self.x + self.speed * np.cos(self.heading)
+        new_y = self.y + self.speed * np.sin(self.heading)
 
-        # Ensure the agent stays within the simulation bounds (adjust as needed)
+        # Check if the agent is about to hit a corner
+        corner_threshold = 1.5  # Adjust based on your simulation
+        if (new_x < corner_threshold and new_y < corner_threshold) or \
+           (new_x < corner_threshold and new_y >= HEIGHT - corner_threshold) or \
+           (new_x >= WIDTH - corner_threshold and new_y < corner_threshold) or \
+           (new_x >= WIDTH - corner_threshold and new_y >= HEIGHT - corner_threshold):
+            # Bounce in a random direction
+            self.heading = np.random.uniform(0, 2 * math.pi)
+        else:
+            # Bounce off the borders with an angle of reflection
+            if new_x < 0 or new_x >= WIDTH:
+                self.heading = math.pi - self.heading  # Reflect horizontally
+                if abs(self.heading) < 0.01:
+                    self.heading += math.pi  # Ensure a minimum change in heading
+            if new_y < 0 or new_y >= HEIGHT:
+                self.heading = -self.heading  # Reflect vertically
+                if abs(self.heading) < 0.01:
+                    self.heading += math.pi  # Ensure a minimum change in heading
+
+        # Update agent's position after bouncing
+        self.x = new_x
+        self.y = new_y
+
+        # Ensure the agent stays within the simulation bounds
         self.x = max(0, min(self.x, WIDTH - 1))
         self.y = max(0, min(self.y, HEIGHT - 1))
 
