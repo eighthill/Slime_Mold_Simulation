@@ -1,5 +1,6 @@
 import math
 from random import randint
+from numba import jit
 
 import numpy as np
 from scipy.ndimage import gaussian_filter
@@ -8,16 +9,16 @@ from scipy.ndimage import gaussian_filter
 # Simulationparameters
 WIDTH = 1000
 HEIGHT = 1000
-DECAY = 0.97
-DIFFUSION_COEFFICENT = 0.2
+DECAY = 0.95
+DIFFUSION_COEFFICENT = 0.5
 
 # Agentparameters
 AGENT_NUMBER = 100
 SENSOR_ANGLE = 0.33
-RADIUS = 0.5
 SPEED = 2
-THRESHOLD = 0.5  # Adjust based on your simulation
-ROTATION_SPEED = 0.01
+THRESHOLD = 0.1  # Adjust based on your simulation
+ROTATION_SPEED = 1
+SENSOR_DISTANCE = 10 #this is the radius
 
 class PheromoneArray:
     def __init__(self, width=WIDTH, height=HEIGHT,):
@@ -26,17 +27,16 @@ class PheromoneArray:
         self.p_array = np.zeros((WIDTH, HEIGHT))
 
     def diffuse(self, diffuse=DIFFUSION_COEFFICENT):
-        # Implement pheromone diffusion logic
-        pass
+        # Apply Gaussian filter for diffusion
+        self.p_array = gaussian_filter(self.p_array, sigma=DIFFUSION_COEFFICENT)
 
     def decay(self, decay=DECAY):
-        # Implement pheromone decay logic
-        pass
+        self.p_array = self.p_array * decay
 
     def get_pheromone_value_at(self, x, y):
-        # Ensure x and y are within the bounds of the pheromone array
-        x = np.clip(int(round(x)), 0, self.width - 1)
-        y = np.clip(int(round(y)), 0, self.height - 1)
+        # Clip x and y to ensure they are within the bounds of the pheromone array
+        x = np.clip(np.round(x).astype(int), 0, self.width - 1)
+        y = np.clip(np.round(y).astype(int), 0, self.height - 1)
 
         return self.p_array[y, x]  # Access the pheromone value at the specified position
 
@@ -46,29 +46,38 @@ class Agent:
         self.x = x
         self.y = y
         self.heading = np.random.uniform(0, 2 * math.pi)  # Initial heading is straight
-        self.sensors = np.zeros((3, 2))  # 3 sensors with x, y coordinates
-        self.sensor_distance = 10  # Distance from agent to sensor
+        self.sensor_distance = SENSOR_DISTANCE  # Distance from agent to sensor
         self.threshold = THRESHOLD
         self.rotation_speed = ROTATION_SPEED
 
-    def calculate_sensor_directions(self):
-        angles = np.linspace(-SENSOR_ANGLE / 2, SENSOR_ANGLE / 2, 3)
-        for i in range(3):
-            self.sensors[i] = [self.x + self.sensor_distance * np.cos(self.heading + angles[i]),
-                               self.y + self.sensor_distance * np.sin(self.heading + angles[i])]
-            
+        # Define sensor positions directly in the constructor
+        self.main_sensor = [self.x + self.sensor_distance * np.cos(self.heading),
+                            self.y + self.sensor_distance *
+                              np.sin(self.heading)]
+
+        # Calculate positions of the other two sensors
+        angle_offset = SENSOR_ANGLE / 2
+        self.sensor1 = [self.x + self.sensor_distance * np.cos(self.heading + angle_offset),
+                        self.y + self.sensor_distance * np.sin(self.heading + angle_offset)]
+
+        self.sensor2 = [self.x + self.sensor_distance * np.cos(self.heading - angle_offset),
+                        self.y + self.sensor_distance * np.sin(self.heading - angle_offset)]
+
     def rotate_towards_sensor(self, pheromone_array):
-        for i in range(3):
-            sensor_x, sensor_y = self.sensors[i]
-            sensor_value = pheromone_array.get_pheromone_value_at(sensor_x, sensor_y)
+        # Combine sensor positions into a numpy array
+        sensors = np.array([self.main_sensor, self.sensor1, self.sensor2])
 
-            # You may need to adjust the threshold based on your simulation
-            if sensor_value > self.threshold:
-                angle_to_sensor = np.arctan2(sensor_y - self.y, sensor_x - self.x)
-                angle_difference = angle_to_sensor - self.heading
+        sensor_values = pheromone_array.get_pheromone_value_at(sensors[:, 0], sensors[:, 1])
 
-                # Adjust heading towards the sensor
-                self.heading += angle_difference * self.rotation_speed
+        # Find indices where sensor values exceed the threshold
+        active_sensors = sensor_values > self.threshold
+
+        # Calculate angles to sensors with matrix operations
+        angles_to_sensors = np.arctan2(sensors[active_sensors, 1] - self.y,
+                                       sensors[active_sensors, 0] - self.x)
+
+        # Adjust heading towards the sensors with matrix operations
+        self.heading += np.sum(angles_to_sensors) * self.rotation_speed
 
 
     def move(self):
@@ -101,13 +110,13 @@ class Agent:
         self.y = new_y
 
         # Ensure the agent stays within the simulation bounds
-        self.x = max(0, min(self.x, WIDTH - 1))
-        self.y = max(0, min(self.y, HEIGHT - 1))
+        self.x = max(1, min(self.x, WIDTH - 1))
+        self.y = max(1, min(self.y, HEIGHT - 1))
 
-    def deposit_pheromones(self, pheromone_array):
-            # Round the agent's coordinates to integers
-            deposit_x = int(round(self.x))
-            deposit_y = int(round(self.y))
+    def deposit_pheromone(self, pheromone_array):
+        # Round coordinates to the nearest integers and clip to array bounds
+        x_idx = np.clip(int(round(self.x)), 0, pheromone_array.width - 1)
+        y_idx = np.clip(int(round(self.y)), 0, pheromone_array.height - 1)
 
-            # Deposit pheromones at the agent's position
-            pheromone_array.p_array[deposit_y, deposit_x] += 1
+        # Deposit pheromone at the rounded position
+        pheromone_array.p_array[y_idx, x_idx] += 1
