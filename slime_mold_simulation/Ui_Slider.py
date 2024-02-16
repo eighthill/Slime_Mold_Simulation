@@ -5,7 +5,7 @@ class SliderLogic:
         self.gui = gui_instance
 
         # Create sliders for agent-related parameters
-        self.agent_size_slider, self.agent_size_widget = self.create_slider(5, 30, 15, self.gui.update_agent_size, "Agent Size")
+      #  self.agent_size_slider, self.agent_size_widget = self.create_slider(5, 30, 15, self.gui.update_agent_size, "Agent Size")
         self.agent_speed_slider, self.agent_speed_widget = self.create_slider(1, 10, 1, self.gui.update_agent_speed, "Agent Speed")
         self.agent_count_spinbox = self.create_spinbox(1, 5000, self.gui.update_agent_count)
 
@@ -57,8 +57,8 @@ class SliderLogic:
     def create_slider_widget(self):
         widget = QWidget()
         layout = QVBoxLayout(widget)
-        layout.addWidget(QLabel("Agent Size"))
-        layout.addWidget(self.agent_size_slider)
+       # layout.addWidget(QLabel("Agent Size"))
+        #layout.addWidget(self.agent_size_slider)
         layout.addWidget(QLabel("Agent Speed"))
         layout.addWidget(self.agent_speed_slider)
         layout.addWidget(QLabel("Agent Count"))

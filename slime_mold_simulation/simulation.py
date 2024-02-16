@@ -2,12 +2,12 @@ import math
 from random import randint
 import numpy as np
 from scipy.ndimage import gaussian_filter
-from Move import make_move, mapping_float_to_int, mapping_int_to_float, get_best_move, get_next_moves, reflect_at_boundary 
+from Move import sense, sense_and_move, mapping_float_to_int, mapping_int_to_float, reflect_at_boundary 
 from SlimeConfig import SlimeConfig
 
     
 class PheromoneArray:
-    def __init__(self, x_len=1000, y_len=1000, fading=0.97, pheromone_value=10, diffusion_coefficient=0.2):
+    def __init__(self, x_len=1100, y_len=1100, fading=0.97, pheromone_value=2, diffusion_coefficient=0.1):
         self.world = np.zeros((x_len, y_len), dtype=float)
         self.fading = fading
         self.pheromone_value = pheromone_value
@@ -16,57 +16,60 @@ class PheromoneArray:
     def update_pheromone(self, Agents):
         self.world = (self.world * self.fading).astype(float)
         for agent in Agents:
-            x, y = agent["int_x_pos"], agent["int_y_pos"]
+            x, y = int(agent.x), int(agent.y)
             self.world[x, y] = self.pheromone_value
 
         # Update pheromone concentration using Gaussian filter
-        dt = 10  # Time step
+        dt = 0.0166  # Time step
         spread = np.sqrt(2 * self.diffusion_coefficient * dt)
         self.world = gaussian_filter(self.world, sigma=spread)
 
+    def update_pheromone_at_position(self, x, y):
+        # Assuming x and y are integers, if not, they should be converted before calling this method.
+        # Add the pheromone value at the current position.
+        self.world[x, y] += self.pheromone_value
+        
 
 # the agent class creates a list with one dictionary for each agent
 class Agent:
-    def __init__(self, array, num_agents=1000, sensor_angle=0.33, size=15 , radius=0.4, speed=0.02):
-        self.num_agents = num_agents
-        self.sensor_angle = sensor_angle
-        self.radius = radius
-        self.speed = speed
-        self.Agents_list = []
+    def __init__(self, x, y, movement_angle, sensor_distances=10.0, sensor_angles= 0.33, move_speed= 10.0, turn_speed = 10.0, random_move= 5):
+        self.x = x
+        self.y = y
+        self.movement_angle = movement_angle
+        self.sensor_distances = sensor_distances
+        self.sensor_angles = sensor_angles
+        self.move_speed = move_speed
+        self.turn_speed = turn_speed
+        self.random_move = random_move
+        # Optionally, set the sense and sense_and_move methods as attributes if needed
         
+    def update(self, pheromone_array):
+        # Use the sense_and_move method to update the agent's position and orientation
+        self.sense_and_move(pheromone_array.world, self.sensor_distances, self.sensor_angles, self.move_speed, self.turn_speed, self.x, self.y, self.movement_angle, pheromone_array)
         
+        # Deposit a pheromone at the new position.
+        pheromone_array.update_pheromone_at_position(int(self.x), int(self.y))
+        
+    @staticmethod
+    def initialize_agents(center_x, center_y, num_agents, radius, move_speed, world_x, world_y):
+        angles = np.random.uniform(0, 2 * np.pi, num_agents)
+        distances = np.sqrt(np.random.uniform(0, radius**2, num_agents))
+        x_positions = center_x + (distances * np.cos(angles))
+        y_positions = center_y + (distances * np.sin(angles))
+        movement_angles = np.random.uniform(0, 2 * np.pi, num_agents)
 
-        center_x = array.world.shape[0] // 2
-        center_y = array.world.shape[1] // 2
-        angles = np.random.random(num_agents) * 2 * math.pi
-        dst = np.random.random(num_agents) * radius
+        agents = [{
+            "x": np.clip(x, 0, world_x - 1),
+            "y": np.clip(y, 0, world_y - 1),
+            "movement_angle": angle,
+            "move_speed": move_speed,
+        } for x, y, angle in zip(x_positions, y_positions, movement_angles)]
 
-        for angle, d in zip(angles, dst):
-            # Convert polar coordinates to Cartesian coordinates
-            x = center_x + int(d * array.world.shape[0] * np.cos(angle))
-            y = center_y + int(d * array.world.shape[1] * np.sin(angle))
+        return agents
+                
+Agent.sense_and_move = sense_and_move
+Agent.sense = sense
 
-            # Ensure the initial position is within the canvas bounds
-            x = max(0, min(x, array.world.shape[0] - 1))
-            y = max(0, min(y, array.world.shape[1] - 1))
-            #print(f"Initial Position - x: {x}, y: {y}")
-            float_x_pos, float_y_pos = self.mapping_int_to_float([x, y], array)
-            movement_angle = np.random.uniform(0, 2 * np.pi)
-
-            agent_dict = {
-                "int_x_pos": x,
-                "int_y_pos": y,
-                "float_x_pos": float_x_pos,
-                "float_y_pos": float_y_pos,
-                "movement_angle": movement_angle,
-                "speed": speed,
-            }
-
-            self.Agents_list.append(agent_dict)
-            
-Agent.make_move = make_move
-Agent.get_best_move = get_best_move
-Agent.get_next_moves = get_next_moves
 Agent.reflect_at_boundary = reflect_at_boundary
 Agent.mapping_float_to_int = mapping_float_to_int
 Agent.mapping_int_to_float = mapping_int_to_float

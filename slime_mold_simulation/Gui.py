@@ -1,158 +1,56 @@
 from vispy import app, scene, gloo
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QSlider, QVBoxLayout, QPushButton, QSpinBox
-from simulation import Agent, PheromoneArray, SlimeConfig
+from simulation import Agent, PheromoneArray
 import numpy as np
-from Ui_Slider import SliderLogic
+from SlimeConfig import SlimeConfig
+from Move import  sense, sense_and_move, mapping_float_to_int, mapping_int_to_float, reflect_at_boundary 
+import random
 
 class SimulationGUI(app.Canvas):
     def __init__(self):
-        # Initialize the Vispy canvas
         app.Canvas.__init__(self)
-
-         # Initialize PyQt5 application
         self.qt_app = QApplication([])
-        # Set up a timer for periodic updates
         self.timer = app.Timer(connect=self.on_timer, start=True)
-        # Initialize the PheromoneArray and Agent instances
         self.pheromone = PheromoneArray()
-        self.agents = Agent(self.pheromone)
-        self.view = scene.SceneCanvas(keys="interactive", size=(1000, 1000), show=True)
+        self.view = scene.SceneCanvas(keys="interactive", size=(1100, 1100), show=True)
+        center_x = self.view.size[0] // 2
+        center_y = self.view.size[1] // 2
         self.view.events.draw.connect(self.on_draw)
-        # Create an image visual representing the pheromone array
         self.image = scene.visuals.Image(self.pheromone.world, cmap="inferno", parent=self.view.scene)
-        # Create a scatter plot visual for agents
-         # Set the initial size as needed
         self.agents_scatter = scene.visuals.Markers()
         self.view.scene._add_child(self.agents_scatter)
-
-       
-
-        # Initialize the slider logic
-        self.slider_logic = SliderLogic(self)
-
-        # Show the slider widget
-        self.slider_logic.slider_widget.show()
+        # Initialize agents using the static method from the Agent class
+        world_x, world_y = self.pheromone.world.shape
+        self.canvas_width, self.canvas_height = self.view.size
+        self.agents_data = [Agent(**agent_params, random_move=random.choice([True, False])) for agent_params in Agent.initialize_agents(
+            center_x=center_x, 
+            center_y=center_y, 
+            num_agents=10,  # Adjust as needed
+            radius=250,  # Adjust as needed
+            move_speed=SlimeConfig.move_speed,
+            world_x=world_x,
+            world_y=world_y,            
+        )]
         
-        # Connect the resize event to the on_resize method
-        
-         # Vertex and fragment shaders
-        # Vertex shader
-        vertex_shader = """
-        #version 120
-        attribute vec2 a_position;
-        varying vec4 v_color;
-
-        uniform vec4 u_color;  // Declare u_color as a uniform variable
-
-        void main() {
-            gl_Position = vec4(a_position, 0.0, 1.0);
-            v_color = u_color;  // Pass the uniform value to the varying variable
-        }
-        """
-
-        # Fragment shader
-        fragment_shader = """
-        #version 120
-        varying vec4 v_color;  // Declare v_color as a varying variable
-
-        void main() {
-            gl_FragColor = v_color;
-        }
-        """
-        self.program = gloo.Program(vert=vertex_shader, frag=fragment_shader)
-     #   self.view.events.resize.connect(self.on_resize)
-
-    def update_agent_size(self):
-        size = self.slider_logic.agent_size_slider.value()
-
-        # Update the size of the scatter plot markers (agents)
-        self.agents_scatter.set_data()
-
-        # Trigger a redraw of the scene
-        self.view.scene.update()
-        
-        # Update the label
-        self.slider_logic.agent_size_slider.value_label.setText(str(size))
-
-    def update_agent_speed(self):
-        slider_value = self.slider_logic.agent_speed_slider.value() / 10
-        min_speed = 0.01
-        max_speed = 0.1
-        speed = slider_value * (max_speed - min_speed)
-        self.agents.speed = speed
-
-        # Update the label
-        #self.slider_logic.agent_speed_slider.value_label.setText(f"{speed:.2f}")
-
-    def update_agent_count(self):
-        agent_count = self.slider_logic.agent_count_spinbox.value()
-        self.agents = Agent(self.pheromone, num_agents=agent_count)
-
-        # Update the label
-        #self.slider_logic.agent_count_spinbox.value_label.setText(str(agent_count))
-
-    def update_fading(self):
-        slider_value = self.slider_logic.fading_slider.value() / 100
-        SlimeConfig.fading = slider_value
-
-        # Update the label
-        #self.slider_logic.fading_slider.value_label.setText(f"{slider_value:.2f}")
-
-    def update_diffusion_coefficient(self):
-        slider_value = self.slider_logic.diffusion_coefficient_slider.value() / 100
-        SlimeConfig.diffusion_coefficient = slider_value
-
-        # Update the label
-        #self.slider_logic.diffusion_coefficient_slider.value_label.setText(f"{slider_value:.2f}")
-
-    def update_pheromone_value(self):
-        slider_value = self.slider_logic.pheromone_value_slider.value() / 100
-        SlimeConfig.pheromone_value = slider_value
-
-        # Update the label
-        #self.slider_logic.pheromone_value_slider.value_label.setText(f"{slider_value:.2f}")
-        
-    def restart_simulation(self):
-        self.pheromone = PheromoneArray()
-        self.agents = Agent(self.pheromone)
-
     def on_draw(self, event):
-        """
-        Event handler for drawing on the canvas.
-        Updates the visual representation of the pheromone array and agents.
-        """
         
-        # Set the data of the image visual to the current pheromone array
-        self.image.set_data(self.pheromone.world)  
-        
-        positions = np.array([[agent["float_x_pos"], agent["float_y_pos"]] for agent in self.agents.Agents_list])
-        self.agents_scatter.set_data(positions, edge_color='blue', size=15)
-            
+        #self.agents_scatter.set_data(pos=positions, size=15)
+        self.image.set_data(self.pheromone.world)
+        positions = np.array([[agent.x, agent.y] for agent in self.agents_data])
 
     def on_timer(self, event):
-        """
-        Event handler for the timer.
-        Updates the pheromone array and agent movements periodically.
-        """
-
-        # Update the pheromone array based on agent positions
-        self.pheromone.update_pheromone(self.agents.Agents_list)
-        # Update the agent movements
-        self.agents.make_move(self.pheromone)
-        # Trigger a redraw of the scene
-        self.view.scene.update()
+        self.pheromone.update_pheromone(self.agents_data)
         
-   # def on_resize(self, event):
-    #    """
-     #   Event handler for resizing the window.
-      #  Update the size of the Vispy SceneCanvas and the PheromoneArray.
-       # """
-        #new_size = event.size[0], event.size[1]
-        #self.view.size = new_size
-        #self.image.set_data(self.pheromone.world)
+        for agent in self.agents_data:
+            # Pass the canvas width and height to the sense_and_move function
+            agent.sense_and_move(self.pheromone.world, SlimeConfig.sensor_distances, SlimeConfig.sensor_angles,
+                                 SlimeConfig.move_speed, SlimeConfig.turn_speed,
+                                 self.canvas_width, self.canvas_height)
+        
+       # [agent.sense_and_move(self.pheromone.world, SlimeConfig.sensor_distances, SlimeConfig.sensor_angles, SlimeConfig.move_speed, SlimeConfig.turn_speed) for agent in self.agents_data]
+            
+        self.view.update()
 
-        # Update the size of the PheromoneArray
-        #self.pheromone = PheromoneArray(x_len=new_size[0], y_len=new_size[1])
 
 if __name__ == "__main__":
     # Main Program

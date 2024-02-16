@@ -6,72 +6,69 @@ from numba import jit
 from SlimeConfig import SlimeConfig
 
     
+def sense_and_move(self, pheromone, sensor_distances, sensor_angles, move_speed, turn_speed, canvas_width, canvas_height):
+    # Calculate sensor readings for forward, left, and right directions
+    #print(f"Initial values - x: {self.x}, y: {self.y}, angle: {self.movement_angle}")
+    weightForward = self.sense(pheromone, sensor_distances[0], 0)  # Assuming forward distance is the first in the list
+    weightLeft = self.sense(pheromone, sensor_distances[0], np.radians(-33))
+    weightRight = self.sense(pheromone, sensor_distances[0], np.radians(33))
+    #print(f"Weights - Forward: {weightForward}, Left: {weightLeft}, Right: {weightRight}")
 
-# this method updates the next move for each agent
-def make_move(self, array):
-    for agent in self.Agents_list:
-        # the variable next_position contains: [x_coordinate, y_coordinate], angle
-        next_position = self.get_best_move(array, agent)
+    # Calculate randomSteerStrength
+    random_seed = ((self.x + self.y) * 0.0166 + self.movement_angle) * (2**32-1)
+    #print(f"Random seed: {random_seed}")
 
-        # Update the pheromone concentration at the agent's current position
-        x, y = self.mapping_float_to_int([agent["float_x_pos"], agent["float_y_pos"]], array)
-        array.world[x, y] += SlimeConfig.pheromone_value
+   # np.random.seed(int(random_seed * 1000))
+    randomSteerStrength = np.random.rand()
 
-        # Move the agent to the next position
-        agent["float_x_pos"], agent["float_y_pos"] = next_position[0]
-        agent["int_x_pos"], agent["int_y_pos"] = self.mapping_float_to_int(next_position[0], array)
+    # Adjust angle based on weights and random steer strength
+    if weightForward < weightLeft and weightForward < weightRight:
+        self.movement_angle += (randomSteerStrength - 0.5) * 2 * turn_speed * 0.0166
+    elif weightRight > weightLeft:
+        self.movement_angle -= randomSteerStrength * turn_speed * 0.0166
+    elif weightLeft > weightRight:
+        self.movement_angle += randomSteerStrength * turn_speed * 0.0166
 
-        # Update the direction the agent is looking at after the move
-        agent["movement_angle"] = next_position[1] + randint(-5, 5)
-        # print(f"Updated Position - x: {agent['float_x_pos']}, y: {agent['float_y_pos']}")
+    #print(f"Updated values - x: {self.x}, y: {self.y}, angle: {self.movement_angle}")
 
-def get_best_move(self, array, agent):
-    possible_moves = self.get_next_moves(agent)
+    
+    # Update position based on movement_angle
+    self.x += np.cos(self.movement_angle) * move_speed
+    self.y += np.sin(self.movement_angle) * move_speed
+    # Deposit pheromone at the new position
+    pheromone_array.update_pheromone_at_position(int(self.x), int(self.y))
+    self.reflect_at_boundary( canvas_width, canvas_height)
+    # Ensure x and y are within canvas bounds
+    self.x = np.clip(self.x + np.cos(self.movement_angle) * move_speed, 0, canvas_width - 1)
+    self.y = np.clip(self.y + np.sin(self.movement_angle) * move_speed, 0, canvas_height - 1)
+    
+    #print(f"Final position - x: {self.x}, y: {self.y}")
 
-    # Get the pheromone values for each possible move
-    pheromone_values = [array.world[tuple(self.mapping_float_to_int(move[0], array))] for move in possible_moves]
+def sense(self, pheromone, distance, angle):
+    # Convert polar to cartesian
+    dx = distance * np.cos(self.movement_angle + angle)
+    dy = distance * np.sin(self.movement_angle + angle)
+    sensed_x = int(self.x + dx)
+    sensed_y = int(self.y + dy)
+    # Ensure sensed coordinates are within bounds
+    sensed_x = np.clip(sensed_x, 0, pheromone.shape[1] - 1)
+    sensed_y = np.clip(sensed_y, 0, pheromone.shape[0] - 1)
+    return pheromone[sensed_y, sensed_x]
 
-    # Find the move with the maximum pheromone concentration
-    max_idx = np.argmax(pheromone_values)
-    next_position = possible_moves[max_idx]
+def reflect_at_boundary(agent, width, height):
+    # Reflect off vertical boundaries (left/right edges)
+    if agent.x <= 0 or agent.x >= width:
+        agent.movement_angle = np.pi - agent.movement_angle
 
-    return next_position
+    # Reflect off horizontal boundaries (top/bottom edges)
+    if agent.y <= 0 or agent.y >= height:
+        agent.movement_angle = -agent.movement_angle
 
-def get_next_moves(self, agent):
-    possible_moves = []
-
-    # Iterate over sensor angles
-    for sensor_angle in [-self.sensor_angle, 0, self.sensor_angle]:
-        angle = agent["movement_angle"] + sensor_angle
-
-        x_new = agent["float_x_pos"] + self.speed * self.radius * math.cos(angle)
-        y_new = agent["float_y_pos"] + self.speed * self.radius * math.sin(angle)
-
-        # Reflect at the boundary if the new position is outside the array
-        if not (0 <= x_new <= 1 and 0 <= y_new <= 1):
-            x_new, y_new, _ = self.reflect_at_boundary(x_new, y_new, agent["float_x_pos"], agent["float_y_pos"])
-
-        # Append the move to the list of possible moves
-        possible_moves.append([[x_new, y_new], angle])
-
-    return possible_moves
-
-def reflect_at_boundary(self, x, y, x_pos, y_pos):
-    # check if absolute value is greater than 1
-    # if true, reflect point from subtracting *2 the result of a comparison (if statements)
-    if abs(x) > 1:
-        x = 2 * (x > 0) - x
-
-    if abs(y) > 1:
-        y = 2 * (y > 0) - y
-
-    dx = x - x_pos
-    dy = y - y_pos
-
-    # Calculate new angle
-    angle = math.atan2(dy, dx)
-
-    return x, y, angle
+    # Normalize the angle to ensure it's between 0 and 2*np.pi
+    agent.movement_angle = agent.movement_angle % (2 * np.pi)
+    
+    # Update the agent's position based on the new angle, if necessary
+    # This part may require adjustment based on how you apply movement based on the angle
 
 # this method needs a list with 2 float coordinates and calculates them to integer indices for a given array
 def mapping_float_to_int(self, coordinates, array):
