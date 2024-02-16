@@ -52,16 +52,15 @@ class Agent:
 
         # Define sensor positions directly in the constructor
         self.main_sensor = [self.x + self.sensor_distance * np.cos(self.heading),
-                            self.y + self.sensor_distance *
-                              np.sin(self.heading)]
+                            self.y + self.sensor_distance * np.sin(self.heading)]
 
         # Calculate positions of the other two sensors
-        angle_offset = SENSOR_ANGLE / 2
-        self.sensor1 = [self.x + self.sensor_distance * np.cos(self.heading + angle_offset),
-                        self.y + self.sensor_distance * np.sin(self.heading + angle_offset)]
 
-        self.sensor2 = [self.x + self.sensor_distance * np.cos(self.heading - angle_offset),
-                        self.y + self.sensor_distance * np.sin(self.heading - angle_offset)]
+        self.sensor1 = [self.x + self.sensor_distance * np.cos(self.heading + SENSOR_ANGLE),
+                        self.y + self.sensor_distance * np.sin(self.heading + SENSOR_ANGLE)]
+
+        self.sensor2 = [self.x + self.sensor_distance * np.cos(self.heading - SENSOR_ANGLE),
+                        self.y + self.sensor_distance * np.sin(self.heading - SENSOR_ANGLE)]
 
     def rotate_towards_sensor(self, pheromone_array):
         # Combine sensor positions into a numpy array
