@@ -117,7 +117,7 @@ class Agent:
             "y": np.clip(y, 0, world_y - 1),
             "movement_angle": angle,
             "move_speed": move_speed,
-            pheromone_array: pheromone_array_instance
+            pheromone_array: pheromone_array
         } for x, y, angle in zip(x_positions, y_positions, movement_angles)]
         return agents
                 
