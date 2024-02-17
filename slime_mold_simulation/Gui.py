@@ -8,7 +8,7 @@ from simulation import Agent, PheromoneArray, AGENT_NUMBER, WIDTH, HEIGHT
 parray = PheromoneArray()
 
 # Create a canvas
-canvas = scene.SceneCanvas(keys='interactive', size=(WIDTH, HEIGHT), show=True)
+canvas = scene.SceneCanvas(keys="interactive", size=(WIDTH, HEIGHT), show=True)
 
 # Create a view
 view = canvas.central_widget.add_view()
@@ -32,22 +32,24 @@ void main()
 program = gloo.Program(vertex_shader, fragment_shader)
 
 # Create agent instances
-agents = [Agent(x=np.random.uniform(300, 600), y=np.random.uniform(300, 600)) for _ in range(AGENT_NUMBER)]
+agents = Agent.agents(AGENT_NUMBER, WIDTH, HEIGHT)
+# [Agent(x=np.random.uniform(300, 600), y=np.random.uniform(300, 600)) for _ in range(AGENT_NUMBER)]
 
 # Create agent visuals
-markers = scene.visuals.Markers(parent=view.scene, symbol='disc', size=0.1, face_color='red')
+markers = scene.visuals.Markers(parent=view.scene, symbol="disc", size=0.1, face_color="red")
 markers.set_data(np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32))
 
 # Set camera view
-#view.camera = 'panzoom'
+# view.camera = 'panzoom'
+
 
 # Timer callback to update agent positions and redraw
 def update_timer(ev):
     for agent in agents:
         agent.rotate_towards_sensor(parray)
         agent.move()
-        #agent.deposit_pheromone(parray)
-        
+        # agent.deposit_pheromone(parray)
+
     parray.diffuse()
     parray.decay()
 
@@ -63,9 +65,10 @@ def update_timer(ev):
     # Swap the buffer (show the rendered image)
     canvas.update()
 
+
 # Create a timer to update positions
-timer = app.Timer('auto', connect=update_timer, start=True)
+timer = app.Timer("auto", connect=update_timer, start=True)
 
 # Run the application
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
