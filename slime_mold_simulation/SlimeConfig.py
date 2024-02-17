@@ -11,5 +11,5 @@ class SlimeConfig:
     radius=0.5
     move_speed = 5.0
     turn_speed = 5.0
-    sensor_size = 20
+    sensor_size = 4
     sensor_distances = [10.0]

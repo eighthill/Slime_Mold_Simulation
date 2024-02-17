@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QSlider, QVBoxLayout,
 from simulation import Agent, PheromoneArray
 import numpy as np
 from SlimeConfig import SlimeConfig
-from Move import  sense, sense_and_move, mapping_float_to_int, mapping_int_to_float, reflect_at_boundary 
+#from Move import  sense, sense_and_move, mapping_float_to_int, mapping_int_to_float, reflect_at_boundary 
 import random
 
 class SimulationGUI(app.Canvas):
