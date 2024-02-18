@@ -27,16 +27,17 @@ class PheromoneArray:
         self.world[x, y] += self.pheromone_value
 
 class Agent:
-    def __init__(self, x, y, movement_angle, sensor_distances=10.0, sensor_angles=0.33, move_speed=10.0, turn_speed=10.0, random_move=5, pheromone_array=None):
+    def __init__(self, x, y, movement_angle, sensor_distances=10.0, sensor_size =2 , sensor_angles=0.33, move_speed=10.0, turn_speed=10.0, random_move=5, pheromone_array=None):
         self.x = x
         self.y = y
         self.movement_angle = movement_angle
         self.sensor_distances = sensor_distances
         self.sensor_angles = sensor_angles
+        self.sensor_size = sensor_size
         self.move_speed = move_speed
         self.turn_speed = turn_speed
         self.random_move = random_move
-        self.pheromone_array = pheromone_array.world
+        self.pheromone_array = pheromone_array
 
     def update(self):
         self.sense_and_move()
@@ -68,20 +69,29 @@ class Agent:
         self.x = np.clip(self.x, 0, self.pheromone_array.world.shape[1] - 1)
         self.y = np.clip(self.y, 0, self.pheromone_array.world.shape[0] - 1)
         
-    def sense(self, distance, angle, size):
-        max_concentration = 0
-        # Iterate over a range to simulate the sensor's coverage area
-        for offset in np.linspace(-size / 2, size / 2, num=int(size)):
-            dx = (distance * np.cos(self.movement_angle + angle)) + (offset * np.sin(self.movement_angle + angle))
-            dy = (distance * np.sin(self.movement_angle + angle)) + (offset * np.cos(self.movement_angle + angle))
-            sensed_x = int(self.x + dx)
-            sensed_y = int(self.y + dy)
-            sensed_x = np.clip(sensed_x, 0, self.pheromone_array.world.shape[1] - 1)
-            sensed_y = np.clip(sensed_y, 0, self.pheromone_array.world.shape[0] - 1)
-            concentration = self.pheromone_array.world[sensed_y, sensed_x]
-            if concentration > max_concentration:
-                max_concentration = concentration
-        return max_concentration
+    def sense(agent_position, movement_angle, sensor_distances, sensor_angles, sensor_size, pheromone_array):
+        angles = np.array([movement_angle + angle_offset for angle_offset in (-sensor_angles, 0, sensor_angles)])
+        offsets = np.linspace(-sensor_size / 2, sensor_size / 2, num=int(sensor_size))
+        
+        # Calculate dx and dy for each angle and offset
+        dx = sensor_distances * np.cos(angles[:, None]) + offsets * np.sin(angles[:, None])
+        dy = sensor_distances * np.sin(angles[:, None]) + offsets * np.cos(angles[:, None])
+        
+        # Calculate sensed positions
+        sensed_positions_x = (agent_position[0] + dx).astype(int)
+        sensed_positions_y = (agent_position[1] + dy).astype(int)
+        
+        # Clip to ensure within bounds
+        sensed_positions_x = np.clip(sensed_positions_x, 0, pheromone_array.shape[1] - 1)
+        sensed_positions_y = np.clip(sensed_positions_y, 0, pheromone_array.shape[0] - 1)
+        
+        # Query pheromone concentrations in bulk
+        concentrations = pheromone_array[sensed_positions_y, sensed_positions_x]
+        
+        # Find max concentration for each direction
+        max_concentrations = concentrations.max(axis=1)
+        
+        return max_concentrations
 
     def reflect_at_boundary(self):
         if self.x <= 0 or self.x >= self.pheromone_array.world.shape[1]:
@@ -117,7 +127,7 @@ class Agent:
             "y": np.clip(y, 0, world_y - 1),
             "movement_angle": angle,
             "move_speed": move_speed,
-            pheromone_array: pheromone_array
+            "pheromone_array": pheromone_array
         } for x, y, angle in zip(x_positions, y_positions, movement_angles)]
         return agents
                 
