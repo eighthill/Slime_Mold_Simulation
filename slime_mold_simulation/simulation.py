@@ -67,15 +67,35 @@ def get_pheromone_value_at(p_array, sensors):
         sensor_values[:, idx] = p_array[y, x]
     return sensor_values
 
+def reflect_boundary(agents):
+    mask_top = agents[:, 0] < 0
+    mask_bottom = agents[:, 0] > HEIGHT - 1
+    mask_left = agents[:, 1] < 0
+    mask_right = agents[:, 1] > WIDTH - 1
 
+    agents[mask_top, 0] = -agents[mask_top, 0] + 1 + 2 * np.random.rand(np.sum(mask_top))
+    agents[mask_bottom, 0] = 2 * HEIGHT - agents[mask_bottom, 0] - 1 - 2 * np.random.rand(np.sum(mask_bottom))
+    agents[mask_left, 1] = -agents[mask_left, 1] + 1 + 2 * np.random.rand(np.sum(mask_left))
+    agents[mask_right, 1] = 2 * WIDTH - agents[mask_right, 1] - 1 - 2 * np.random.rand(np.sum(mask_right))
+
+    # Reflect the heading if the agent hits a boundary
+    agents[mask_top, 2] = np.pi - agents[mask_top, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_top))
+    agents[mask_bottom, 2] = np.pi - agents[mask_bottom, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_bottom))
+    agents[mask_left, 2] = np.pi - agents[mask_left, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_left))
+    agents[mask_right, 2] = np.pi - agents[mask_right, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_right))
+
+    return agents
 
 
 
 
 def move(agents):
     # Update agent's position based on heading=agents[:, 2] and speed
+    agents = reflect_boundary(agents)
     agents[:, 0] = agents[:, 0] + SPEED * np.sin(agents[:, 2])
     agents[:, 1] = agents[:, 1] + SPEED * np.cos(agents[:, 2])
+    
+
     return agents
 
 
