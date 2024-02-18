@@ -104,8 +104,8 @@ def rotate_towards_sensor(p_array, agents, SENSOR_DISTANCE, rotation_speed=ROTAT
 # @jit
 def move(agents, width=WIDTH, height=HEIGHT, speed=SPEED):
     # Update agent's position based on heading and speed
-    new_x = agents[:, 0] + speed * np.cos(agents[:, 2])
-    new_y = agents[:, 1] + speed * np.sin(agents[:, 2])
+    agents[:, 0] = agents[:, 0] + speed * np.cos(agents[:, 2])
+    agents[:, 1] = agents[:, 1] + speed * np.sin(agents[:, 2])
 
 
 # @jit
