@@ -1,24 +1,11 @@
+from config import *
+
 import math
 from random import randint
-from numba import jit
-
+import numba
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-#Put the global parameters in a seperate file for visualization?
-# Simulationparameters
-WIDTH = 1000
-HEIGHT = 1000
-DECAY = 0.95
-DIFFUSION_COEFFICENT = 0.5
-
-# Agentparameters
-AGENT_NUMBER = 100
-SENSOR_ANGLE = 0.33
-SPEED = 2
-THRESHOLD = 0.1  # Adjust based on your simulation
-ROTATION_SPEED = 1
-SENSOR_DISTANCE = 10 #this is the radius
 
 class PheromoneArray:
     def __init__(self, width=WIDTH, height=HEIGHT,):
@@ -28,10 +15,11 @@ class PheromoneArray:
 
     def diffuse(self, diffuse=DIFFUSION_COEFFICENT):
         # Apply Gaussian filter for diffusion
-        self.p_array = gaussian_filter(self.p_array, sigma=DIFFUSION_COEFFICENT)
+        #self.p_array = gaussian_filter(self.p_array, sigma=DIFFUSION_COEFFICENT)
+        pass
 
-    def decay(self, decay=DECAY):
-        self.p_array = self.p_array * decay
+    def decay(self):
+        self.p_array = self.p_array * DECAY
 
     def get_pheromone_value_at(self, x, y):
         # Clip x and y to ensure they are within the bounds of the pheromone array
@@ -47,7 +35,6 @@ class Agent:
         self.y = y
         self.heading = np.random.uniform(0, 2 * math.pi)  # Initial heading is straight
         self.sensor_distance = SENSOR_DISTANCE  # Distance from agent to sensor
-        self.threshold = THRESHOLD
         self.rotation_speed = ROTATION_SPEED
 
         # Define sensor positions directly in the constructor
@@ -55,7 +42,6 @@ class Agent:
                             self.y + self.sensor_distance * np.sin(self.heading)]
 
         # Calculate positions of the other two sensors
-
         self.sensor1 = [self.x + self.sensor_distance * np.cos(self.heading + SENSOR_ANGLE),
                         self.y + self.sensor_distance * np.sin(self.heading + SENSOR_ANGLE)]
 
@@ -63,21 +49,7 @@ class Agent:
                         self.y + self.sensor_distance * np.sin(self.heading - SENSOR_ANGLE)]
 
     def rotate_towards_sensor(self, pheromone_array):
-        # Combine sensor positions into a numpy array
-        sensors = np.array([self.main_sensor, self.sensor1, self.sensor2])
-
-        sensor_values = pheromone_array.get_pheromone_value_at(sensors[:, 0], sensors[:, 1])
-
-        # Find indices where sensor values exceed the threshold
-        active_sensors = sensor_values > self.threshold
-
-        # Calculate angles to sensors with matrix operations
-        angles_to_sensors = np.arctan2(sensors[active_sensors, 1] - self.y,
-                                       sensors[active_sensors, 0] - self.x)
-
-        # Adjust heading towards the sensors with matrix operations
-        self.heading += np.sum(angles_to_sensors) * self.rotation_speed
-
+        pass
 
     def move(self):
         # Update agent's position based on heading and speed
@@ -85,37 +57,18 @@ class Agent:
         new_x = self.x + self.speed * np.cos(self.heading)
         new_y = self.y + self.speed * np.sin(self.heading)
 
-        # Check if the agent is about to hit a corner
-        corner_threshold = 1.5  # Adjust based on your simulation
-        if (new_x < corner_threshold and new_y < corner_threshold) or \
-           (new_x < corner_threshold and new_y >= HEIGHT - corner_threshold) or \
-           (new_x >= WIDTH - corner_threshold and new_y < corner_threshold) or \
-           (new_x >= WIDTH - corner_threshold and new_y >= HEIGHT - corner_threshold):
-            # Bounce in a random direction
-            self.heading = np.random.uniform(0, 2 * math.pi)
-        else:
-            # Bounce off the borders with an angle of reflection
-            if new_x < 0 or new_x >= WIDTH:
-                self.heading = math.pi - self.heading  # Reflect horizontally
-                if abs(self.heading) < 0.01:
-                    self.heading += math.pi  # Ensure a minimum change in heading
-            if new_y < 0 or new_y >= HEIGHT:
-                self.heading = -self.heading  # Reflect vertically
-                if abs(self.heading) < 0.01:
-                    self.heading += math.pi  # Ensure a minimum change in heading
+        # Bounce off the borders with an angle of reflection
+        if new_x < 0 or new_x > WIDTH:
+            self.heading = np.pi - self.heading  # Reflect across the y-axis
+            new_x = np.clip(new_x, 0, WIDTH)
+        if new_y < 0 or new_y > HEIGHT:
+            self.heading = -self.heading  # Reflect across the x-axis
+            new_y = np.clip(new_y, 0, HEIGHT)
 
-        # Update agent's position after bouncing
+        # Update the agent's position
         self.x = new_x
         self.y = new_y
 
-        # Ensure the agent stays within the simulation bounds
-        self.x = max(1, min(self.x, WIDTH - 1))
-        self.y = max(1, min(self.y, HEIGHT - 1))
-
     def deposit_pheromone(self, pheromone_array):
-        # Round coordinates to the nearest integers and clip to array bounds
-        x_idx = np.clip(int(round(self.x)), 0, pheromone_array.width - 1)
-        y_idx = np.clip(int(round(self.y)), 0, pheromone_array.height - 1)
+        pass
 
-        # Deposit pheromone at the rounded position
-        pheromone_array.p_array[y_idx, x_idx] += 1
