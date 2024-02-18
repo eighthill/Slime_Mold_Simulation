@@ -36,7 +36,7 @@ class Agent:
         self.move_speed = move_speed
         self.turn_speed = turn_speed
         self.random_move = random_move
-        self.pheromone_array = pheromone_array
+        self.pheromone_array = pheromone_array.world
 
     def update(self):
         self.sense_and_move()
