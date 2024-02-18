@@ -1,74 +1,53 @@
-from simulation import Agent, PheromoneArray
+from vispy import app, scene
 
-import numpy as np
-from vispy import app, gloo, scene
-from simulation import Agent, PheromoneArray, AGENT_NUMBER, WIDTH, HEIGHT
+from simulation import Agent, PheromoneArray, main_easy
 
 
-parray = PheromoneArray()
+class SimulationGUI(app.Canvas):
+    def __init__(self):
+        """
+        Initialize the Simulation GUI.
+        This class sets up the canvas, a timer for periodic updates,
+        initializes the PheromoneArray, Agent instances, and creates
+        a visual representation of the pheromone array using Vispy.
+        """
+        # Initialize the Vispy canvas
+        app.Canvas.__init__(
+            self,
+        )
 
-# Create a canvas
-canvas = scene.SceneCanvas(keys="interactive", size=(WIDTH, HEIGHT), show=True)
+        # Set up a timer for periodic updates
+        self.timer = app.Timer(connect=self.on_timer, start=True)
+        # Initialize the PheromoneArray and Agent instances
+        p_array = PheromoneArray()
+        agneten = Agent()
+        self.parray = p_array.p_array
+        self.agnet = agneten.agenten
+        self.view = scene.SceneCanvas(keys="interactive", size=(100, 100), show=True)
+        self.view.events.draw.connect(self.on_draw)
+        # Create an image visual representing the pheromone array
+        self.image = scene.visuals.Image(self.parray, cmap="viridis", parent=self.view.scene)
 
-# Create a view
-view = canvas.central_widget.add_view()
+    def on_draw(self, event):
+        """
+        Event handler for drawing on the canvas.
+        Updates the visual representation of the pheromone array.
+        """
 
-# Create a shader program for agents
-vertex_shader = """
-attribute vec2 position;
-void main()
-{
-    gl_Position = vec4(position, 0.0, 1.0);
-}
-"""
+        # Set the data of the image visual to the current pheromone array
+        self.image.set_data(self.parray)
 
-fragment_shader = """
-void main()
-{
-    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-}
-"""
-
-program = gloo.Program(vertex_shader, fragment_shader)
-
-# Create agent instances
-agents = Agent.agents(AGENT_NUMBER, WIDTH, HEIGHT)
-# [Agent(x=np.random.uniform(300, 600), y=np.random.uniform(300, 600)) for _ in range(AGENT_NUMBER)]
-
-# Create agent visuals
-markers = scene.visuals.Markers(parent=view.scene, symbol="disc", size=0.1, face_color="red")
-markers.set_data(np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32))
-
-# Set camera view
-# view.camera = 'panzoom'
-
-
-# Timer callback to update agent positions and redraw
-def update_timer(ev):
-    for agent in agents:
-        agent.rotate_towards_sensor(parray)
-        agent.move()
-        # agent.deposit_pheromone(parray)
-
-    parray.diffuse()
-    parray.decay()
-
-    agent_positions = np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32)
-    markers.set_data(agent_positions)
-
-    # Clear the canvas before redrawing
-    canvas.render()
-
-    # Draw all marker visuals
-    markers.draw()
-
-    # Swap the buffer (show the rendered image)
-    canvas.update()
+    def on_timer(self, event):
+        """
+        Event handler for the timer.
+        Updates the pheromone array and agent movements periodically.
+        """
+        self.parray,self.agnet=main_easy(self.parray,self.agnet)
+        # Update the Vispy scene to reflect the changes
+        self.view.scene.update()
 
 
-# Create a timer to update positions
-timer = app.Timer("auto", connect=update_timer, start=True)
-
-# Run the application
 if __name__ == "__main__":
+    # Main Program
+    gui = SimulationGUI()
     app.run()
