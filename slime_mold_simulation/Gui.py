@@ -1,11 +1,14 @@
 from simulation import Agent, PheromoneArray
+from config import *
 
 import numpy as np
 from vispy import app, gloo, scene
-from simulation import Agent, PheromoneArray, AGENT_NUMBER, WIDTH, HEIGHT
 
 
+#Create Pheromone array and agents
 parray = PheromoneArray()
+agents = [Agent(x=np.random.uniform(300, 600), y=np.random.uniform(300, 600)) for _ in range(AGENT_NUMBER)]
+
 
 # Create a canvas
 canvas = scene.SceneCanvas(keys='interactive', size=(WIDTH, HEIGHT), show=True)
@@ -31,11 +34,9 @@ void main()
 
 program = gloo.Program(vertex_shader, fragment_shader)
 
-# Create agent instances
-agents = [Agent(x=np.random.uniform(300, 600), y=np.random.uniform(300, 600)) for _ in range(AGENT_NUMBER)]
 
 # Create agent visuals
-markers = scene.visuals.Markers(parent=view.scene, symbol='disc', size=0.1, face_color='red')
+markers = scene.visuals.Markers(parent=view.scene, symbol='disc', size=0.001, face_color='red')
 markers.set_data(np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32))
 
 # Set camera view
@@ -44,12 +45,10 @@ markers.set_data(np.array([[agent.x, agent.y] for agent in agents], dtype=np.flo
 # Timer callback to update agent positions and redraw
 def update_timer(ev):
     for agent in agents:
-        agent.rotate_towards_sensor(parray)
         agent.move()
-        #agent.deposit_pheromone(parray)
         
-    parray.diffuse()
-    parray.decay()
+    #parray.diffuse()
+    #parray.decay()
 
     agent_positions = np.array([[agent.x, agent.y] for agent in agents], dtype=np.float32)
     markers.set_data(agent_positions)
