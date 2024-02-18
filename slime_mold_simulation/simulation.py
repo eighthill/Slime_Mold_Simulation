@@ -1,24 +1,9 @@
+from config import *
 import math
 import numpy as np
 from random import choice, randint
 from scipy.stats import rankdata
 from scipy.ndimage import gaussian_filter
-
-
-# Put the global parameters in a seperate file for visualization?
-# Simulationparameters
-WIDTH = 1000
-HEIGHT = 1000
-DECAY = 0.95
-DIFFUSION_COEFFICENT = 0.5
-
-# Agentparameters
-AGENT_NUMBER = 2000
-SENSOR_ANGLE = 0.7
-SPEED = 5
-THRESHOLD = 0.1  # Adjust based on your simulation
-ROTATION_SPEED = 1
-SENSOR_DISTANCE = 10 
 
 
 class PheromoneArray:
@@ -134,7 +119,7 @@ def rotate_towards_sensor_upgrade(agents,sensor_ranking,sensors_angles):
 
 
 
-def main_easy(parray,agnet):
+def main_simple(parray,agnet):
     parray = diffuse(parray)
     parray = decay(parray)
     sensors,sensors_angles = get_sensors(agnet)
@@ -146,7 +131,7 @@ def main_easy(parray,agnet):
 
 
 
-def main_better(parray,agnet):
+def main_upgrade(parray,agnet):
     parray = diffuse(parray)
     parray = decay(parray)
     sensors,sensors_angles = get_sensors(agnet)
@@ -156,16 +141,3 @@ def main_better(parray,agnet):
     agnet = move(agnet)
     parray= deposit_pheromone(parray, agnet)
 
-
-
-"""
-p_array = PheromoneArray()
-agneten = Agent()
-parray = p_array.p_array
-agnet = agneten.agenten
-print(agnet)
-
-
-for _ in range(5):
-    main_easy(parray,agnet,_)
-    main_better(parray,agnet,_)"""
