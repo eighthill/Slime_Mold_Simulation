@@ -6,11 +6,12 @@ from scipy.stats import rankdata
 from scipy.ndimage import gaussian_filter
 
 
+
 class PheromoneArray:
     def __init__(self):
         self.width = WIDTH
         self.height = HEIGHT
-        self.p_array = np.zeros((WIDTH, HEIGHT))
+        self.p_array = np.zeros((HEIGHT,WIDTH))
 
 class Agent:
     def __init__(self):
@@ -61,8 +62,8 @@ def get_pheromone_value_at(p_array, sensors):
     sensor_values = np.zeros((AGENT_NUMBER, len(sensors)))
     for idx, sensor in enumerate(sensors):
         # Clip x and y to ensure they are within the bounds of the pheromone array
-        y = np.clip(np.round(sensor[0]).astype(int), 0, WIDTH - 1)
-        x = np.clip(np.round(sensor[1]).astype(int), 0, HEIGHT - 1)
+        y = np.clip(np.round(sensor[0]).astype(int), 0, HEIGHT - 1)
+        x = np.clip(np.round(sensor[1]).astype(int), 0, WIDTH  - 1)
         sensor_values[:, idx] = p_array[y, x]
     return sensor_values
 
@@ -80,8 +81,8 @@ def move(agents):
 
 def deposit_pheromone(p_array, agents):
     # Round coordinates to the nearest integers and clip to array bounds
-    x_idx = np.clip(np.round(agents[:, 0]).astype(int), 0, HEIGHT  - 1)
-    y_idx = np.clip(np.round(agents[:, 1]).astype(int), 0, WIDTH - 1)
+    y_idx = np.clip(np.round(agents[:, 0]).astype(int), 0, HEIGHT - 1)
+    x_idx = np.clip(np.round(agents[:, 1]).astype(int), 0, WIDTH - 1)
     # Deposit pheromone at the rounded position
     p_array[y_idx, x_idx] = p_array[y_idx, x_idx] + 1
     return p_array
@@ -94,7 +95,7 @@ def rotate_towards_sensor_simple(agents, sensor_values, sensors_angles):
     for idx in range(AGENT_NUMBER):
         selected_angle = np.argmax(sensor_values[idx])
         agents[idx,2] =  sensors_angles[idx][selected_angle] #* ROTATION_SPEED agents[idx,2] + 
-        print(type(agents))
+        
     return agents
 
 def rank_pheromone_values(sensor_values):
@@ -144,5 +145,7 @@ def main_upgrade(parray,agnet):
     agnet = rotate_towards_sensor_upgrade(agnet,sensor_ranking,sensors_angles)
     agnet = move(agnet)
     parray= deposit_pheromone(parray, agnet)
+    #agentenarray = np.zeros((HEIGHT, WIDTH))
+    #agentenarray = deposit_pheromone(agentenarray, agnet)
     return parray,agnet
 
