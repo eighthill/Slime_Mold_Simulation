@@ -94,6 +94,7 @@ def rotate_towards_sensor_simple(agents, sensor_values, sensors_angles):
     for idx in range(AGENT_NUMBER):
         selected_angle = np.argmax(sensor_values[idx])
         agents[idx,2] =  sensors_angles[idx][selected_angle] #* ROTATION_SPEED agents[idx,2] + 
+        print(type(agents))
     return agents
 
 def rank_pheromone_values(sensor_values):
@@ -104,17 +105,20 @@ def rank_pheromone_values(sensor_values):
     
 def rotate_towards_sensor_upgrade(agents,sensor_ranking,sensors_angles):
     selected_angles = []
-    for row in sensor_ranking:
+    for idx,row in enumerate(sensor_ranking):
         if np.count_nonzero(row == 1) == 1:
-            idx = np.where(row == 1)[0][0]
+            idx_angle = np.where(row == 1)[0][0]
         else:
             # if we want the Agents to choose a point between two sensores that both have the highest value of pheromones
             # then we have to change code here so that not indecies are stored but the new angle is calculated here already
             indices_of_ones = np.where(row == 1)[0]
-            idx = choice(indices_of_ones)
-        selected_angles.append(sensors_angles[idx])
+            idx_angle = choice(indices_of_ones)
+        selected_angles.append(sensors_angles[idx][idx_angle])
+    #selected_angles = np.array(selected_angles)
     # Adjust heading towards the sensors with matrix operations
-    return agents[:, 2] + selected_angles * ROTATION_SPEED
+    agents[:, 2]= selected_angles# * ROTATION_SPEEDagents[:, 2] + 
+    #print(type(agents))
+    return agents
 
 
 
@@ -140,4 +144,5 @@ def main_upgrade(parray,agnet):
     agnet = rotate_towards_sensor_upgrade(agnet,sensor_ranking,sensors_angles)
     agnet = move(agnet)
     parray= deposit_pheromone(parray, agnet)
+    return parray,agnet
 
