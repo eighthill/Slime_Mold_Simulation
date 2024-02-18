@@ -13,9 +13,9 @@ DECAY = 0.95
 DIFFUSION_COEFFICENT = 0.5
 
 # Agentparameters
-AGENT_NUMBER = 20000
-SENSOR_ANGLE = 0.2
-SPEED = 10
+AGENT_NUMBER = 2000
+SENSOR_ANGLE = 0.7
+SPEED = 5
 THRESHOLD = 0.1  # Adjust based on your simulation
 ROTATION_SPEED = 1
 SENSOR_DISTANCE = 10 
@@ -43,9 +43,9 @@ def decay(p_array):
 
 def get_sensors(agents):
     # Define sensor positions directly in the constructor
-    angle_left = -agents[:,2]-SENSOR_ANGLE-np.random.uniform(0, 0.1* math.pi, AGENT_NUMBER)
+    angle_left = -agents[:,2] - SENSOR_ANGLE-np.random.uniform(0, 0.1* math.pi, AGENT_NUMBER)
     angle_main = agents[:,2]
-    angle_right= agents[:,2]-SENSOR_ANGLE-np.random.uniform(0,  0.1*math.pi, AGENT_NUMBER)
+    angle_right= agents[:,2] + SENSOR_ANGLE+np.random.uniform(0,  0.1*math.pi, AGENT_NUMBER)
 
     sensor_left = [agents[:,0] + SENSOR_DISTANCE * np.sin(angle_left),
                    agents[:,1] + SENSOR_DISTANCE * np.cos(angle_left)]
@@ -59,19 +59,17 @@ def get_sensors(agents):
 
     """
     # Überprüfen und abprallen
-    for sensor in (sensor_left, sensor_main, sensor_right):
-        for idx,senor in enumerate(sensors):
-            mask_top = senor[0] < 0
-            mask_bottom = senor[0] > HEIGHT 
-            mask_left = senor[1] < 0
-            mask_right = senor[1] > WIDTH
-
-
-            sensors_angles[idx] = np.where(mask_left, -sensors_angles[idx], sensors_angles[idx])
-            sensors_angles[idx] = np.where(mask_right, 2 * math.pi - sensors_angles[idx], sensors_angles[idx])
-            sensors_angles[idx] = np.where(mask_top, -sensors_angles[idx], sensors_angles[idx])
-            sensors_angles[idx] = np.where(mask_bottom, 2 * math.pi - sensors_angles[idx], sensors_angles[idx])
-            """
+    for idx,senor in enumerate(sensors):
+        mask_top = senor[0] < 0
+        mask_bottom = senor[0] > HEIGHT 
+        mask_left = senor[1] < 0
+        mask_right = senor[1] > WIDTH
+        
+        sensors_angles[idx] = np.where(mask_left, -sensors_angles[idx], sensors_angles[idx])
+        sensors_angles[idx] = np.where(mask_right, 2 * math.pi - sensors_angles[idx], sensors_angles[idx])
+        sensors_angles[idx] = np.where(mask_top, -sensors_angles[idx], sensors_angles[idx])
+        sensors_angles[idx] = np.where(mask_bottom, 2 * math.pi - sensors_angles[idx], sensors_angles[idx])
+        """
     return sensors,sensors_angles
 
 def get_pheromone_value_at(p_array, sensors):
@@ -110,7 +108,7 @@ def deposit_pheromone(p_array, agents):
 def rotate_towards_sensor_simple(agents, sensor_values, sensors_angles):
     for idx in range(AGENT_NUMBER):
         selected_angle = np.argmax(sensor_values[idx])
-        agents[idx,2] =  sensors_angles[idx][selected_angle]* ROTATION_SPEED #agents[idx,2] +
+        agents[idx,2] =  sensors_angles[idx][selected_angle] #* ROTATION_SPEED agents[idx,2] + 
     return agents
 
 def rank_pheromone_values(sensor_values):
