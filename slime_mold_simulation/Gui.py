@@ -1,7 +1,7 @@
 from vispy import app, scene
 from config import *
 from simulation import Agent, PheromoneArray, main_upgrade,main_simple
-
+import numba, numba.experimental
 
 class SimulationGUI(app.Canvas):
     def __init__(self):
@@ -30,7 +30,7 @@ class SimulationGUI(app.Canvas):
         self.view.events.draw.connect(self.on_draw)
         # Create an image visual representing the pheromone array
         self.image = scene.visuals.Image(self.parray, cmap="viridis", parent=self.view.scene)
-
+    
     def on_draw(self, event):
         """
         Event handler for drawing on the canvas.

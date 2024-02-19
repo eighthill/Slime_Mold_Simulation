@@ -4,14 +4,15 @@ import numpy as np
 from random import choice, randint
 from scipy.stats import rankdata
 from scipy.ndimage import gaussian_filter
-
+from numba import jit
 
 
 class PheromoneArray:
     def __init__(self):
         self.width = WIDTH
         self.height = HEIGHT
-        self.p_array = np.zeros((HEIGHT,WIDTH))
+        self.p_array = np.zeros((HEIGHT, WIDTH))
+
 
 class Agent:
     def __init__(self):
@@ -24,24 +25,32 @@ def diffuse(p_array):
     # Apply Gaussian filter for diffusion
     return gaussian_filter(p_array, sigma=DIFFUSION_COEFFICENT)
 
+@jit
 def decay(p_array):
     return p_array * DECAY
 
+@jit
 def get_sensors(agents):
     # Define sensor positions directly in the constructor
-    angle_left = -agents[:,2] - SENSOR_ANGLE-np.random.uniform(0, 0.1* math.pi, AGENT_NUMBER)
-    angle_main = agents[:,2]
-    angle_right= agents[:,2] + SENSOR_ANGLE+np.random.uniform(0,  0.1*math.pi, AGENT_NUMBER)
+    angle_left = -agents[:, 2] - SENSOR_ANGLE - np.random.uniform(0, 0.1 * math.pi, AGENT_NUMBER)
+    angle_main = agents[:, 2]
+    angle_right = agents[:, 2] + SENSOR_ANGLE + np.random.uniform(0, 0.1 * math.pi, AGENT_NUMBER)
 
-    sensor_left = [agents[:,0] + SENSOR_DISTANCE * np.sin(angle_left),
-                   agents[:,1] + SENSOR_DISTANCE * np.cos(angle_left)]
-    sensor_main = [agents[:,0] + SENSOR_DISTANCE * np.sin(angle_main),
-                   agents[:,1] + SENSOR_DISTANCE * np.cos(angle_main)]
-    sensor_right = [agents[:,0] + SENSOR_DISTANCE * np.sin(angle_right),
-                    agents[:,1] + SENSOR_DISTANCE * np.cos(angle_right)]
-    
+    sensor_left = [
+        agents[:, 0] + SENSOR_DISTANCE * np.sin(angle_left),
+        agents[:, 1] + SENSOR_DISTANCE * np.cos(angle_left),
+    ]
+    sensor_main = [
+        agents[:, 0] + SENSOR_DISTANCE * np.sin(angle_main),
+        agents[:, 1] + SENSOR_DISTANCE * np.cos(angle_main),
+    ]
+    sensor_right = [
+        agents[:, 0] + SENSOR_DISTANCE * np.sin(angle_right),
+        agents[:, 1] + SENSOR_DISTANCE * np.cos(angle_right),
+    ]
+
     sensors = [sensor_left, sensor_main, sensor_right]
-    sensors_angles = np.column_stack((angle_left,angle_main,angle_right))
+    sensors_angles = np.column_stack((angle_left, angle_main, angle_right))
 
     """
     # Überprüfen und abprallen
@@ -56,17 +65,18 @@ def get_sensors(agents):
         sensors_angles[idx] = np.where(mask_top, -sensors_angles[idx], sensors_angles[idx])
         sensors_angles[idx] = np.where(mask_bottom, 2 * math.pi - sensors_angles[idx], sensors_angles[idx])
         """
-    return sensors,sensors_angles
+    return sensors, sensors_angles
 
 def get_pheromone_value_at(p_array, sensors):
     sensor_values = np.zeros((AGENT_NUMBER, len(sensors)))
     for idx, sensor in enumerate(sensors):
         # Clip x and y to ensure they are within the bounds of the pheromone array
         y = np.clip(np.round(sensor[0]).astype(int), 0, HEIGHT - 1)
-        x = np.clip(np.round(sensor[1]).astype(int), 0, WIDTH  - 1)
+        x = np.clip(np.round(sensor[1]).astype(int), 0, WIDTH - 1)
         sensor_values[:, idx] = p_array[y, x]
     return sensor_values
 
+@jit
 def reflect_boundary(agents):
     mask_top = agents[:, 0] < 0
     mask_bottom = agents[:, 0] > HEIGHT - 1
@@ -80,24 +90,26 @@ def reflect_boundary(agents):
 
     # Reflect the heading if the agent hits a boundary
     agents[mask_top, 2] = np.pi - agents[mask_top, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_top))
-    agents[mask_bottom, 2] = np.pi - agents[mask_bottom, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_bottom))
-    agents[mask_left, 2] = np.pi - agents[mask_left, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_left))
-    agents[mask_right, 2] = np.pi - agents[mask_right, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_right))
+    agents[mask_bottom, 2] = (
+        np.pi - agents[mask_bottom, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_bottom))
+    )
+    agents[mask_left, 2] = (
+        np.pi - agents[mask_left, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_left))
+    )
+    agents[mask_right, 2] = (
+        np.pi - agents[mask_right, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_right))
+    )
 
     return agents
 
-
-
-
+@jit
 def move(agents):
     # Update agent's position based on heading=agents[:, 2] and speed
     agents = reflect_boundary(agents)
     agents[:, 0] = agents[:, 0] + SPEED * np.sin(agents[:, 2])
     agents[:, 1] = agents[:, 1] + SPEED * np.cos(agents[:, 2])
-    
 
     return agents
-
 
 def deposit_pheromone(p_array, agents):
     # Round coordinates to the nearest integers and clip to array bounds
@@ -107,26 +119,23 @@ def deposit_pheromone(p_array, agents):
     p_array[y_idx, x_idx] = p_array[y_idx, x_idx] + 1
     return p_array
 
-
-
-
-
+@jit
 def rotate_towards_sensor_simple(agents, sensor_values, sensors_angles):
     for idx in range(AGENT_NUMBER):
         selected_angle = np.argmax(sensor_values[idx])
-        agents[idx,2] =  sensors_angles[idx][selected_angle] #* ROTATION_SPEED agents[idx,2] + 
-        
+        agents[idx, 2] = sensors_angles[idx][selected_angle]  # * ROTATION_SPEED agents[idx,2] +
+
     return agents
 
 def rank_pheromone_values(sensor_values):
     sensor_ranking = []
     for row in sensor_values:
-        sensor_ranking.append(rankdata(row, method='min'))
+        sensor_ranking.append(rankdata(row, method="min"))
     return sensor_ranking
-    
-def rotate_towards_sensor_upgrade(agents,sensor_ranking,sensors_angles):
+
+def rotate_towards_sensor_upgrade(agents, sensor_ranking, sensors_angles):
     selected_angles = []
-    for idx,row in enumerate(sensor_ranking):
+    for idx, row in enumerate(sensor_ranking):
         if np.count_nonzero(row == 1) == 1:
             idx_angle = np.where(row == 1)[0][0]
         else:
@@ -135,37 +144,32 @@ def rotate_towards_sensor_upgrade(agents,sensor_ranking,sensors_angles):
             indices_of_ones = np.where(row == 1)[0]
             idx_angle = choice(indices_of_ones)
         selected_angles.append(sensors_angles[idx][idx_angle])
-    #selected_angles = np.array(selected_angles)
+    # selected_angles = np.array(selected_angles)
     # Adjust heading towards the sensors with matrix operations
-    agents[:, 2]= selected_angles# * ROTATION_SPEEDagents[:, 2] + 
-    #print(type(agents))
+    agents[:, 2] = selected_angles  # * ROTATION_SPEEDagents[:, 2] +
+    # print(type(agents))
     return agents
 
-
-
-
-def main_simple(parray,agnet):
+def main_simple(parray, agnet):
     parray = diffuse(parray)
     parray = decay(parray)
-    sensors,sensors_angles = get_sensors(agnet)
+    sensors, sensors_angles = get_sensors(agnet)
     sensor_values = get_pheromone_value_at(parray, sensors)
     agnet = rotate_towards_sensor_simple(agnet, sensor_values, sensors_angles)
     agnet = move(agnet)
-    parray= deposit_pheromone(parray, agnet)
-    return parray,agnet
+    parray = deposit_pheromone(parray, agnet)
+    return parray, agnet
 
 
-
-def main_upgrade(parray,agnet):
+def main_upgrade(parray, agnet):
     parray = diffuse(parray)
     parray = decay(parray)
-    sensors,sensors_angles = get_sensors(agnet)
+    sensors, sensors_angles = get_sensors(agnet)
     sensor_values = get_pheromone_value_at(parray, sensors)
     sensor_ranking = rank_pheromone_values(sensor_values)
-    agnet = rotate_towards_sensor_upgrade(agnet,sensor_ranking,sensors_angles)
+    agnet = rotate_towards_sensor_upgrade(agnet, sensor_ranking, sensors_angles)
     agnet = move(agnet)
-    parray= deposit_pheromone(parray, agnet)
-    #agentenarray = np.zeros((HEIGHT, WIDTH))
-    #agentenarray = deposit_pheromone(agentenarray, agnet)
-    return parray,agnet
-
+    parray = deposit_pheromone(parray, agnet)
+    # agentenarray = np.zeros((HEIGHT, WIDTH))
+    # agentenarray = deposit_pheromone(agentenarray, agnet)
+    return parray, agnet
