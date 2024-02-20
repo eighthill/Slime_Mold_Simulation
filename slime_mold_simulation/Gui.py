@@ -52,7 +52,7 @@ class SimulationGUI(app.Canvas):
         # Set the data of the image visual to the current pheromone array
         self.image.set_data(self.parray)
         self.agent[:, [0, 1]] = self.agent[:, [1, 0]]
-        self.agent_markers.set_data(pos=self.agent[:, :2], size=3, face_color=(1, 0, 0, 1))
+        self.agent_markers.set_data(pos=self.agent[:, :2], size=3, face_color=(1, 1, 1, 1)) #weiß(1, 1, 1, 1), grün(0, 0, 1, 1), blau(0, 1, 0, 1), rot(1, 0, 0, 1)
         self.agent[:, [1, 0]] = self.agent[:, [0, 1]]
         
         # Set the position of the agent visual to the current position of the agents

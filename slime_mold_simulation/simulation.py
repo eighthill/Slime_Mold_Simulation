@@ -199,7 +199,7 @@ def rotate_towards_sensor_simple(
     selected_angles = sensors_angles[np.arange(len(idx_angles)), idx_angles[:, 0]]
 
     # Applying ROTATION_SPEED
-    agents[:, 2] = selected_angles * ROTATION_SPEED
+    agents[:, 2] = selected_angles
     return agents
 
 
