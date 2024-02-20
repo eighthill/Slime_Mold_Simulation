@@ -1,6 +1,6 @@
 from vispy import app, scene
 from config import *
-from simulation import Agent, PheromoneArray, main_upgrade,main_simple
+from simulation import Agent, PheromoneArray, main
 
 
 class SimulationGUI(app.Canvas):
@@ -42,7 +42,7 @@ class SimulationGUI(app.Canvas):
         Event handler for the timer.
         Updates the pheromone array and agent movements periodically.
         """
-        self.parray,self.agnet=main_upgrade(self.parray,self.agnet)
+        self.parray, self.agnet = main(self.parray, self.agnet)
         # Update the Vispy scene to reflect the changes
         self.view.scene.update()
 
