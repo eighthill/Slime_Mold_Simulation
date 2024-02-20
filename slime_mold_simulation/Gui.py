@@ -1,7 +1,16 @@
+import config
 from vispy import app, scene
-
-from config import *
 from simulation import Agent, PheromoneArray, main
+
+WIDTH = config.WIDTH
+HEIGHT = config.HEIGHT
+DECAY = config.DECAY
+DIFFUSION_COEFFICENT = config.DIFFUSION_COEFFICENT
+AGENT_NUMBER = config.AGENT_NUMBER
+SPEED = config.SPEED
+SENSOR_DISTANCE = config.SENSOR_DISTANCE
+ROTATION_SPEED = config.ROTATION_SPEED
+SENSOR_ANGLE = config.SENSOR_ANGLE
 
 
 class SimulationGUI(app.Canvas):
