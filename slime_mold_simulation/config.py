@@ -8,7 +8,7 @@ DECAY = 0.95
 DIFFUSION_COEFFICENT = 0.5
 
 # Agentparameters
-AGENT_NUMBER = 1
+AGENT_NUMBER = 10000
 SPEED = 1
 SENSOR_DISTANCE = 3
 ROTATION_SPEED = 1  # max. 1 otherwise error!

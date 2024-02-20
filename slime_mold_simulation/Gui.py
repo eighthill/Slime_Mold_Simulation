@@ -38,10 +38,10 @@ class SimulationGUI(app.Canvas):
         self.view = scene.SceneCanvas(keys="interactive", size=(HEIGHT, WIDTH), show=True)
         self.view.events.draw.connect(self.on_draw)
         # Create a visual representing the agents
-        self.agents = scene.visuals.Markers(pos=self.agnet[:, :2], face_color='white', symbol='o', size=100, parent=self.view.scene)
+        self.agents = scene.visuals.Markers(pos=self.agnet[:, :2], face_color='white', symbol='o', size=1, parent=self.view.scene)
 
         # Create an image visual representing the pheromone array
-        self.image = scene.visuals.Image(self.parray, cmap="viridis", parent=self.view.scene)
+        self.image = scene.visuals.Image(self.parray, cmap="inferno", parent=self.view.scene)
         
     def on_draw(self, event):
         """
