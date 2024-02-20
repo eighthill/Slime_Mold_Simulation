@@ -1,5 +1,6 @@
-import config
 from vispy import app, scene
+
+import config
 from simulation import Agent, PheromoneArray, main
 
 WIDTH = config.WIDTH
