@@ -1,7 +1,9 @@
-from config import *
 import math
+
 import numpy as np
 from scipy.ndimage import gaussian_filter
+
+from config import *
 
 
 # Class creates an array "p_array" where the pheromones of the agents can be placed.

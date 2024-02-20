@@ -1,4 +1,5 @@
 from vispy import app, scene
+
 from config import *
 from simulation import Agent, PheromoneArray, main
 
