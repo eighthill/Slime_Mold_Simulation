@@ -1,6 +1,17 @@
 from vispy import app, scene
 
-from simulation import Agent, PheromoneArray
+import config
+from simulation import Agent, PheromoneArray, main
+
+WIDTH = config.WIDTH
+HEIGHT = config.HEIGHT
+DECAY = config.DECAY
+DIFFUSION_COEFFICENT = config.DIFFUSION_COEFFICENT
+AGENT_NUMBER = config.AGENT_NUMBER
+SPEED = config.SPEED
+SENSOR_DISTANCE = config.SENSOR_DISTANCE
+ROTATION_SPEED = config.ROTATION_SPEED
+SENSOR_ANGLE = config.SENSOR_ANGLE
 
 
 class SimulationGUI(app.Canvas):
@@ -19,40 +30,31 @@ class SimulationGUI(app.Canvas):
         # Set up a timer for periodic updates
         self.timer = app.Timer(connect=self.on_timer, start=True)
         # Initialize the PheromoneArray and Agent instances
-        self.pheromone = PheromoneArray()
-        self.agents = Agent(self.pheromone)
-        self.view = scene.SceneCanvas(keys="interactive", size=(1000, 1000), show=True)
+        p_array = PheromoneArray()
+        agneten = Agent()
+        self.parray = p_array.p_array
+        self.agnet = agneten.agenten
+        self.view = scene.SceneCanvas(keys="interactive", size=(HEIGHT, WIDTH), show=True)
         self.view.events.draw.connect(self.on_draw)
         # Create an image visual representing the pheromone array
-        self.image = scene.visuals.Image(self.pheromone.world, cmap="viridis", parent=self.view.scene)
-        # Create a scatter plot visual for agents
-        self.agents_scatter = scene.visuals.Markers()
-        self.view.scene._add_child(self.agents_scatter)
+        self.image = scene.visuals.Image(self.parray, cmap="viridis", parent=self.view.scene)
 
     def on_draw(self, event):
         """
         Event handler for drawing on the canvas.
-        Updates the visual representation of the pheromone array and agents.
+        Updates the visual representation of the pheromone array.
         """
 
         # Set the data of the image visual to the current pheromone array
-        self.image.set_data(self.pheromone.world)
-
-        # Set the positions of agents in the scatter plot visual
-        # positions = np.array([[agent["float_x_pos"], agent["float_y_pos"]] for agent in self.agents.Agents_list])
-        # self.agents_scatter.set_data(positions, edge_color='blue', size=15)
+        self.image.set_data(self.parray)
 
     def on_timer(self, event):
         """
         Event handler for the timer.
         Updates the pheromone array and agent movements periodically.
         """
-
-        # Update the pheromone array based on agent positions
-        self.pheromone.update_pheromone(self.agents.Agents_list)
-        # Update the agent movements
-        self.agents.make_move(self.pheromone)
-        # Trigger a redraw of the scene
+        self.parray, self.agnet = main(self.parray, self.agnet)
+        # Update the Vispy scene to reflect the changes
         self.view.scene.update()
 
 

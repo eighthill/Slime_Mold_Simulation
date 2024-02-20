@@ -1,177 +1,214 @@
 import math
-from random import randint
 
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-# Simulationparameters
-WIDTH = 1000
-HEIGHT = 1000
-PHEROMONE_VALUE = 10
-DECAY = 0.97
-DIFFUSION_COEFFICENT = 0.2
+import config
 
-# Agentparameters
-AGENT_NUMBER = 1000
-SENSOR_ANGLE = 0.33
-RADIUS = 0.5
-SPEED = 0.02
+WIDTH = config.WIDTH
+HEIGHT = config.HEIGHT
+DECAY = config.DECAY
+DIFFUSION_COEFFICENT = config.DIFFUSION_COEFFICENT
+AGENT_NUMBER = config.AGENT_NUMBER
+SPEED = config.SPEED
+SENSOR_DISTANCE = config.SENSOR_DISTANCE
+ROTATION_SPEED = config.ROTATION_SPEED
+SENSOR_ANGLE = config.SENSOR_ANGLE
 
 
+# Class creates an array "p_array" where the pheromones of the agents can be placed.
+# It is the world in witch the agents are getting informations from to decide where to go.
 class PheromoneArray:
-    def __init__(
-        self,
-        x_len=WIDTH,
-        y_len=HEIGHT,
-        fading=DECAY,
-        pheromone_value=PHEROMONE_VALUE,
-        diffusion_coefficient=DIFFUSION_COEFFICENT,
-    ):
-        self.world = np.zeros((x_len, y_len), dtype=float)
-        self.fading = fading
-        self.pheromone_value = pheromone_value
-        self.diffusion_coefficient = diffusion_coefficient
-
-    def update_pheromone(self, Agents):
-        self.world = (self.world * self.fading).astype(float)
-        for agent in Agents:
-            x, y = agent["int_x_pos"], agent["int_y_pos"]
-            self.world[x, y] = self.pheromone_value
-
-        # Update pheromone concentration using Gaussian filter
-        dt = 10  # Time step
-        spread = np.sqrt(2 * self.diffusion_coefficient * dt)
-        self.world = gaussian_filter(self.world, sigma=spread)
+    def __init__(self):
+        self.width = WIDTH
+        self.height = HEIGHT
+        self.p_array = np.zeros((HEIGHT, WIDTH))
 
 
-# the agent class creates a list with one dictionary for each agent
+# Class creates an array "agenten" with informations about the agents. where each row represents an agent.
+# colum 0 = y coordinate, colum 1 = x coordinate and colum 2 = the angle in which the agents is heading to.
 class Agent:
-    def __init__(self, array, num_agents=AGENT_NUMBER, sensor_angle=SENSOR_ANGLE, radius=RADIUS, speed=SPEED):
-        self.num_agents = num_agents
-        self.sensor_angle = sensor_angle
-        self.radius = radius
-        self.speed = speed  # Neuer Parameter für die Geschwindigkeit
-        self.Agents_list = []
+    def __init__(self):
+        y = np.random.uniform(0, HEIGHT, AGENT_NUMBER)
+        x = np.random.uniform(0, WIDTH, AGENT_NUMBER)
+        heading = np.random.uniform(0, 2 * np.pi, AGENT_NUMBER)
+        self.agenten = np.column_stack((y, x, heading))
 
-        center_x = array.world.shape[0] // 2
-        center_y = array.world.shape[1] // 2
-        angles = np.random.random(num_agents) * 2 * math.pi
-        dst = np.random.random(num_agents) * radius
 
-        for angle, d in zip(angles, dst):
-            # Convert polar coordinates to Cartesian coordinates
-            x = center_x + int(d * array.world.shape[0] * np.cos(angle))
-            y = center_y + int(d * array.world.shape[1] * np.sin(angle))
+# Applying a gaussian filter to the array, so that the pheromones within the array diffuse
+def diffuse(p_array):
+    return gaussian_filter(p_array, sigma=DIFFUSION_COEFFICENT)
 
-            float_x_pos, float_y_pos = self.mapping_int_to_float([x, y], array)
-            movement_angle = np.random.uniform(0, 360)
-            agent_dict = {
-                "int_x_pos": x,
-                "int_y_pos": y,
-                "float_x_pos": float_x_pos,
-                "float_y_pos": float_y_pos,
-                "movement_angle": movement_angle,
-                "speed": speed,  # Neues Attribut für die Geschwindigkeit
-            }
 
-            self.Agents_list.append(agent_dict)
+# @jit
+# Applying a fading to the array, so that the pheromones within the array decay
+def decay(p_array):
+    return p_array * DECAY
 
-    # this method updates the next move for each agent
-    def make_move(self, array):
-        for agent in self.Agents_list:
-            # the variable next_position contains: [x_coordinate,y_coordinate], angle
-            next_position = self.get_best_move(array, agent)
 
-            # the coordinates are given as float
-            agent["float_x_pos"], agent["float_y_pos"] = next_position[0]
+# @jit
+# Update possible angles
+def get_sensors(agents, SENSOR_ANGLE=SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER):
+    # Prepare anlges for each of agents sensores, with a little randomness to create more natural behavior
+    angle_left = agents[:, 2] - SENSOR_ANGLE + np.random.uniform(-0.3 * np.pi, 0.3 * np.pi, AGENT_NUMBER)
+    angle_main = agents[:, 2]
+    angle_right = agents[:, 2] + SENSOR_ANGLE + np.random.uniform(-0.3 * np.pi, 0.3 * np.pi, AGENT_NUMBER)
 
-            # here we have the indicies for the array for each agent,
-            # maybe there is a way to not safe it because we actually have the information already within the float coordinates
-            # and we can always calculate those to integers with the function mapping_float_to_int
-            [agent["int_x_pos"], agent["int_y_pos"]] = self.mapping_float_to_int(next_position[0], array)
+    # Prepare y and x coordinates for the position of each sensor for each agent
+    sensor_left = [
+        agents[:, 0] + SENSOR_DISTANCE * np.sin(angle_left),
+        agents[:, 1] + SENSOR_DISTANCE * np.cos(angle_left),
+    ]
+    sensor_main = [
+        agents[:, 0] + SENSOR_DISTANCE * np.sin(angle_main),
+        agents[:, 1] + SENSOR_DISTANCE * np.cos(angle_main),
+    ]
+    sensor_right = [
+        agents[:, 0] + SENSOR_DISTANCE * np.sin(angle_right),
+        agents[:, 1] + SENSOR_DISTANCE * np.cos(angle_right),
+    ]
 
-            # this is the direction the agent is looking at after the move
-            agent["movement_angle"] = next_position[1] + randint(-5, 5)
+    # create a list with all sensor coordinates and an array with all possible angles for agents
+    sensors = [sensor_left, sensor_main, sensor_right]
+    sensors_angles = np.column_stack((angle_left, angle_main, angle_right))
+    return sensors, sensors_angles
 
-    # this method compares all possible next positions for an agent to find the best option
-    def get_best_move(self, array, agent):
-        possible_moves = self.get_next_moves(agent)
-        amount_of_pheromones_list = []
 
-        # get the amount of pheromones for each possible move and add it to the list amount_of_pheromones_list
-        for move in possible_moves:
-            int_coordinats = self.mapping_float_to_int(move[0], array)
-            value = array.world[int_coordinats[0], int_coordinats[1]]
-            amount_of_pheromones_list.append(value)
+"""
+def get_pheromone_value_at(p_array, sensors,AGENT_NUMBER=AGENT_NUMBER):
+    sensor_values = np.zeros((AGENT_NUMBER, len(sensors)))
+    for idx, sensor in enumerate(sensors):
+        try:
+            # Clip x and y to ensure they are within the bounds of the pheromone array
+            y = np.round(sensor[0]).astype(int), 0, HEIGHT - 1
+            x = np.round(sensor[1]).astype(int), 0, WIDTH - 1
+            sensor_values[:, idx] = p_array[y, x]
+        except:
+            sensor_values[:, idx] = 0
+    return sensor_values
+"""
 
-        # find which of the possitions has the most pheremones
-        # here we could implement a method that makes sure that the agents change there way,
-        # if there amount of pheromones has crossed a given value
-        max_val = max(amount_of_pheromones_list)
-        max_idx = amount_of_pheromones_list.index(max_val)
-        next_position = possible_moves[max_idx]
 
-        return next_position
+def get_pheromone_value_at(p_array, sensors, AGENT_NUMBER=AGENT_NUMBER):
+    sensor_values = np.zeros((AGENT_NUMBER, len(sensors)))
+    for idx, sensor in enumerate(sensors):
+        # Clip x and y to ensure they are within the bounds of the pheromone array
+        y = np.round(sensor[0]).astype(int)
+        x = np.round(sensor[1]).astype(int)
+        mask_HEIGHT = np.logical_and(y >= 0, y <= HEIGHT - 1)
+        mask_WIDTH = np.logical_and(x >= 0, x <= WIDTH - 1)
+        mask_combined = np.logical_and(mask_HEIGHT, mask_WIDTH)
+        y = y[mask_combined]
+        x = x[mask_combined]
+        sensor_values[:, idx][mask_combined] = p_array[y, x]
+    return sensor_values
 
-    # calculate new x and y coordinate by given startposition, angle and distance
-    def get_next_moves(self, agent):
-        possible_moves = []
 
-        # here we have 3 sensores, we could add a loop that creates a variable number of sensores
-        angles = [-self.sensor_angle + randint(0, 1), 0, self.sensor_angle + randint(0, 1)]
-        for angle in angles:
-            angle = agent["movement_angle"]
+def angle_adjustment(agents):
+    mask_to_low = agents[:, 2] < 0
+    mask_to_big = agents[:, 2] > 2 * np.pi
+    agents[mask_to_low, 2] = agents[mask_to_low, 2] + 2 * np.pi
+    agents[mask_to_big, 2] = agents[mask_to_big, 2] - 2 * np.pi
+    return agents
 
-            x_new = agent["float_x_pos"] + self.speed * self.radius * math.cos(angle)
-            y_new = agent["float_y_pos"] + self.speed * self.radius * math.sin(angle)
 
-            if x_new > 1 or x_new < -1 or y_new > 1 or y_new < -1:
-                # since agents can't leave the array, those lines calulate another angle and coordinates
-                x_new, y_new, angle = self.reflect_at_boundary(x_new, y_new, agent["float_x_pos"], agent["float_y_pos"])
+# @jit
 
-            # this list contains all possible next moves for one agent
-            possible_moves.append([[x_new, y_new], angle])
-        return possible_moves
 
-    # method to reflect the object from the edge of the square
-    def reflect_at_boundary(self, x, y, x_pos, y_pos):
-        # check if absolute value is greater than 1
-        # if true, reflect point from subtracting *2 the result of a comparison (if statements)
-        if abs(x) > 1:
-            x = 2 * (x > 0) - x
+def reflect_boundary(agents):
+    mask_top = agents[:, 0] < 0
+    mask_bottom = agents[:, 0] > HEIGHT - 1
+    mask_left = agents[:, 1] < 0
+    mask_right = agents[:, 1] > WIDTH - 1
 
-        if abs(y) > 1:
-            y = 2 * (y > 0) - y
+    agents[mask_top, 0] = -agents[mask_top, 0] + 1 + 2 * np.random.rand(np.sum(mask_top))
+    agents[mask_bottom, 0] = 2 * HEIGHT - agents[mask_bottom, 0] - 1 - 2 * np.random.rand(np.sum(mask_bottom))
+    agents[mask_left, 1] = -agents[mask_left, 1] + 1 + 2 * np.random.rand(np.sum(mask_left))
+    agents[mask_right, 1] = 2 * WIDTH - agents[mask_right, 1] - 1 - 2 * np.random.rand(np.sum(mask_right))
 
-        dx = x - x_pos
-        dy = y - y_pos
+    # Reflect the heading if the agent hits a boundary
+    agents[mask_top, 2] = np.pi - agents[mask_top, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_top))
+    agents[mask_bottom, 2] = (
+        np.pi - agents[mask_bottom, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_bottom))
+    )
+    agents[mask_left, 2] = (
+        np.pi - agents[mask_left, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_left))
+    )
+    agents[mask_right, 2] = (
+        np.pi - agents[mask_right, 2] + np.random.uniform(-math.pi / 4, math.pi / 4, np.sum(mask_right))
+    )
+    return agents
 
-        # Calculate new angle
-        angle = math.atan2(dy, dx)
 
-        return x, y, angle
+# @jit
+def move(agents, SPEED=SPEED):
+    # agents = angle_adjustment(agents)
+    # Update agent's position based on heading=agents[:, 2] and
+    agents[:, 0] = agents[:, 0] + SPEED * np.sin(agents[:, 2])
+    agents[:, 1] = agents[:, 1] + SPEED * np.cos(agents[:, 2])
+    agents = reflect_boundary(agents)
+    agents = angle_adjustment(agents)
+    return agents
 
-    # this method needs a list with 2 float coordinates and calculates them to integer indicies for an given array
-    def mapping_float_to_int(self, coordinates, array):
-        # 2 because of float has to be in [-1,1]
-        float_world_size = 2
-        new_coordinates = []
 
-        for idx, val in enumerate(coordinates):
-            coordinate = int((val + 1) / float_world_size * array.world.shape[idx])
+def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
+    # Round coordinates to the nearest integers and clip to array bounds
+    y_idx = np.clip(np.round(agents[:, 0]).astype(int), 0, HEIGHT - 1)
+    x_idx = np.clip(np.round(agents[:, 1]).astype(int), 0, WIDTH - 1)
+    # Deposit pheromone at the rounded position
+    p_array[y_idx, x_idx] = p_array[y_idx, x_idx] + 1
+    return p_array
 
-            # ensure coordinate is within bounds
-            coordinate = max(0, min(array.world.shape[idx] - 1, coordinate))
-            new_coordinates.append(coordinate)
-        return new_coordinates
 
-    # this method needs a list with 2 integer indicies for an given array and calculates them to float coordinates
-    def mapping_int_to_float(self, coordinates, array):
-        # 2 because of float has to be in [-1,1]
-        float_world_size = 2
-        new_coordinates = []
+# @jit#@jit
+def rotate_towards_sensor_simple(
+    agents, sensor_values, sensors_angles, AGENT_NUMBER=AGENT_NUMBER, ROTATION_SPEED=ROTATION_SPEED
+):
+    if ROTATION_SPEED > 1 or ROTATION_SPEED < 1:
+        np.clip(ROTATION_SPEED, 0, 1)
+    highest_pheromons = np.argmax(sensor_values, axis=1)
 
-        for idx, val in enumerate(coordinates):
-            coordinate = -1 + (float_world_size * val / array.world.shape[idx])
-            new_coordinates.append(coordinate)
-        return new_coordinates
+    highest_value_left = sensor_values[:, 0] == highest_pheromons
+    highest_value_mid = sensor_values[:, 1] == highest_pheromons
+    highest_value_right = sensor_values[:, 2] == highest_pheromons
+
+    # Create a combined condition
+    combined_all = np.logical_and(highest_value_left, highest_value_mid, highest_value_right)
+    combined_left_mid = np.logical_and(highest_value_left, highest_value_mid)
+    combined_left_right = np.logical_and(highest_value_left, highest_value_right)
+    combined_mid_right = np.logical_and(highest_value_mid, highest_value_right)
+
+    idx_angles = np.zeros((AGENT_NUMBER, 1))
+    numbers = [0, 2]
+    random_l_r = np.random.choice(numbers, (idx_angles[combined_left_right].shape[0], 1))
+    random_all = np.random.randint(0, 3, (idx_angles[combined_all].shape[0], 1))
+    random_l_m = np.random.randint(0, 2, (idx_angles[combined_left_mid].shape[0], 1))
+    random_m_r = np.random.randint(1, 3, (idx_angles[combined_mid_right].shape[0], 1))
+
+    # masked_left = sensor_values[highest_value_left]
+    idx_angles[highest_value_mid] = 1
+    idx_angles[highest_value_right] = 2
+    idx_angles[combined_left_mid] = random_l_m
+    idx_angles[combined_mid_right] = random_m_r
+    idx_angles[combined_left_right] = random_l_r
+    idx_angles[combined_all] = random_all
+    idx_angles = idx_angles.astype(int)
+    # agents[:, 2] = sensors_angles[idx_angles] * ROTATION_SPEED
+
+    # Accessing elements from sensors_angles using idx_angles
+    selected_angles = sensors_angles[np.arange(len(idx_angles)), idx_angles[:, 0]]
+
+    # Applying ROTATION_SPEED
+    agents[:, 2] = selected_angles * ROTATION_SPEED
+    return agents
+
+
+def main(parray, agnet):
+    parray = diffuse(parray)
+    parray = decay(parray)
+    sensors, sensors_angles = get_sensors(agnet)
+    sensor_values = get_pheromone_value_at(parray, sensors)
+    agnet = rotate_towards_sensor_simple(agnet, sensor_values, sensors_angles)
+    agnet = move(agnet)
+    parray = deposit_pheromone(parray, agnet)
+    return parray, agnet
