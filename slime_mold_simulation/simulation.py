@@ -73,29 +73,13 @@ def get_sensors(agents, SENSOR_ANGLE=SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER):
     sensors_angles = np.column_stack((angle_left, angle_main, angle_right))
     return sensors, sensors_angles
 
-
-"""
-def get_pheromone_value_at(p_array, sensors,AGENT_NUMBER=AGENT_NUMBER):
+def get_pheromone_value_at(p_array, sensors, AGENT_NUMBER=AGENT_NUMBER):
     sensor_values = np.zeros((AGENT_NUMBER, len(sensors)))
     for idx, sensor in enumerate(sensors):
         try:
-            # Clip x and y to ensure they are within the bounds of the pheromone array
-            y = np.round(sensor[0]).astype(int), 0, HEIGHT - 1
-            x = np.round(sensor[1]).astype(int), 0, WIDTH - 1
-            sensor_values[:, idx] = p_array[y, x]
-        except:
-            sensor_values[:, idx] = 0
-    return sensor_values
-"""
-
-
-def get_pheromone_value_at(p_array, sensors,AGENT_NUMBER=AGENT_NUMBER):
-    sensor_values = np.zeros((AGENT_NUMBER, len(sensors)))
-    for idx, sensor in enumerate(sensors):
-        try:
-            # Clip x and y to ensure they are within the bounds of the pheromone array
-            y = np.round(sensor[0]).astype(int), 0, HEIGHT - 1
-            x = np.round(sensor[1]).astype(int), 0, WIDTH - 1
+            # Round x and y coordinates to the nearest integers and clip them to array bounds
+            y = np.clip(np.round(sensor[0]).astype(int), 0, HEIGHT - 1)
+            x = np.clip(np.round(sensor[1]).astype(int), 0, WIDTH - 1)
             sensor_values[:, idx] = p_array[y, x]
         except:
             sensor_values[:, idx] = 0
@@ -118,6 +102,7 @@ def reflect_boundary(agents):
     agents[mask_left | mask_right, 2] = np.pi - agents[mask_left | mask_right, 2]
     return agents
 
+
 # @jit
 def move(agents, parray, SPEED=SPEED):
     # agents = angle_adjustment(agents)
@@ -126,7 +111,6 @@ def move(agents, parray, SPEED=SPEED):
     agents[:, 1] = agents[:, 1] + SPEED * np.cos(agents[:, 2])
     agents = reflect_boundary(agents)
     return agents
-
 
 def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
     # Round coordinates to the nearest integers and clip to array bounds
@@ -138,27 +122,26 @@ def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
 
 
 # @jit#@jit
-def rotate_towards_sensor_simple(agents, sensor_values, sensors_angles, SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER, ROTATION_SPEED=ROTATION_SPEED):
-    highest_pheromons = np.argmax(sensor_values, axis=1)
-
-    highest_value_left = sensor_values[:, 0] == highest_pheromons
-    highest_value_mid = sensor_values[:, 1] == highest_pheromons
-    highest_value_right = sensor_values[:, 2] == highest_pheromons
-    """
+def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER, ROTATION_SPEED=ROTATION_SPEED):
     for i in range(AGENT_NUMBER):
-        if highest_value_left[i] >= highest_value_mid[i] > highest_value_right[i]:
-            agents[i:, 3] = sensors_angles[i:, 1] - ROTATION_SPEED * SENSOR_ANGLE
-        if highest_value_right[i] >= highest_value_mid[i] > highest_value_right[i]:
-            agents[i:, 3] = sensors_angles[i:, 1] + ROTATION_SPEED * SENSOR_ANGLE
-            print(agents[i:, 3])
-    """
-    for i in range(AGENT_NUMBER):
-        if highest_value_left[i] and not highest_value_mid[i] and not highest_value_right[i]:
-            agents[i, 2] = sensors_angles[i, 1] - ROTATION_SPEED * SENSOR_ANGLE
-            print(agents[i:, 3])
+        pheromone_left = sensor_values[i, 0]
+        pheromone_main = sensor_values[i, 1]
+        pheromone_right = sensor_values[i, 2]
 
-        elif highest_value_right[i] and not highest_value_mid[i] and not highest_value_left[i]:
-            agents[i, 2] = sensors_angles[i, 1] + ROTATION_SPEED * SENSOR_ANGLE
+        if pheromone_left >= pheromone_main > pheromone_right:
+            # Calculate the target angle between angle_left and angle_main
+            target_angle = sensors_angles[i, 0]
+        elif pheromone_right >= pheromone_main > pheromone_left:
+            # Calculate the target angle between angle_right and angle_main
+            target_angle = sensors_angles[i, 2] 
+        else:
+            # If the pheromone values at sensor_right and sensor_left are the same, no heading change
+            target_angle = agents[i, 2]
+
+        # Smoothly adjust the agent's angle towards the target angle
+        angle_difference = target_angle - agents[i, 2]
+        agents[i, 2] += ROTATION_SPEED * angle_difference
+
     return agents
 
 
@@ -166,8 +149,7 @@ def main(parray, agnet):
 
     sensors, sensors_angles = get_sensors(agnet)
     sensor_values = get_pheromone_value_at(parray, sensors)
-    agnet = rotate_towards_sensor_simple(agnet, sensor_values, sensors_angles, SENSOR_ANGLE)
-
+    agnet = rotate_towards_sensor(agnet, sensor_values, sensors_angles, SENSOR_ANGLE)
     agnet = move(agnet, parray)
     parray = deposit_pheromone(parray, agnet)
     

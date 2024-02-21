@@ -42,7 +42,7 @@ class SimulationGUI(app.Canvas):
 
         # Create an image visual representing the pheromone array
         self.image = scene.visuals.Image(self.parray, cmap="inferno", parent=self.view.scene)
-        
+
     def on_draw(self, event):
         """
         Event handler for drawing on the canvas.
