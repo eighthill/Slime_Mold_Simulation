@@ -147,9 +147,9 @@ def rotate_towards_sensor_simple(agents, sensor_values, sensors_angles, SENSOR_A
 
     for i in range(AGENT_NUMBER):
         if highest_value_left[i] >= highest_value_mid[i] > highest_value_right[i]:
-            agents[i:, 3] = sensors_angles[i:, 1] - SENSOR_ANGLE 
+            agents[i:, 3] = sensors_angles[i:, 1] - ROTATION_SPEED * SENSOR_ANGLE
         if highest_value_right[i] >= highest_value_mid[i] > highest_value_right[i]:
-            agents[i:, 3] = sensors_angles[i:, 1] + SENSOR_ANGLE 
+            agents[i:, 3] = sensors_angles[i:, 1] + ROTATION_SPEED * SENSOR_ANGLE
             
     return agents
 

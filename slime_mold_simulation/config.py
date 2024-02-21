@@ -4,11 +4,11 @@ import numpy as np
 # Simulationparameters
 WIDTH = 1000
 HEIGHT = 1000
-DECAY = 0.95
+DECAY = 0.97
 DIFFUSION_COEFFICENT = 0.5
 
 # Agentparameters
-AGENT_NUMBER = 100
+AGENT_NUMBER = 1000
 SPEED = 1
 SENSOR_DISTANCE = 3
 ROTATION_SPEED = 10
