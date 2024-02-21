@@ -30,13 +30,13 @@ class Agent:
     def __init__(self):
         current_agent_number = SlimeConfig.AGENT_NUMBER
         heading = np.random.uniform(0, 2 * np.pi, current_agent_number)
+        center_y, center_x = SlimeConfig.HEIGHT / 2, SlimeConfig.WIDTH / 2
 
-        y = (SlimeConfig.HEIGHT / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.sin(
-            heading
-        )
-        x = (SlimeConfig.WIDTH / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.cos(
-            heading
-        )
+        y = center_y + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.sin(np.random.uniform(0, 2 * np.pi, current_agent_number))
+        x = center_x + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.cos(np.random.uniform(0, 2 * np.pi, current_agent_number))
+
+        # Calculate heading towards the center with noise
+        heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(-3, 3, current_agent_number)
 
         self.agenten = np.column_stack((y, x, heading))
 
@@ -45,7 +45,7 @@ class Agent:
 def diffuse(p_array):
     current_diff = SlimeConfig.DIFFUSION_COEFFICENT
     
-    print(current_diff)
+   # print(current_diff)
     return gaussian_filter(p_array, sigma=current_diff)
 
 
@@ -53,7 +53,7 @@ def diffuse(p_array):
 # Applying a fading to the array, so that the pheromones within the array decay
 def decay(p_array):
     current_decay = SlimeConfig.DECAY
-    print(current_decay)
+   # print(current_decay)
     return p_array * current_decay
 
 
