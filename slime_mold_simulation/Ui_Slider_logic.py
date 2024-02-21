@@ -10,9 +10,9 @@ class SliderLogic:
         # Create sliders for agent-related parameters
         # self.agent_size_slider, self.agent_size_widget = self.create_slider(5, 30, 15, self.gui.update_agent_size, "Agent Size")
         self.agent_speed_slider, self.agent_speed_widget = self.create_slider(
-            SlimeConfig.SPEED, 5, SlimeConfig.SPEED, self.gui.update_agent_speed, "Agent Speed"
+            SlimeConfig.SPEED, 7, SlimeConfig.SPEED, self.gui.update_agent_speed, "Agent Speed"
         )
-        self.agent_count_spinbox = self.create_spinbox(1, 10000, SlimeConfig.AGENT_NUMBER, self.gui.update_agent_count)
+        self.agent_count_spinbox = self.create_spinbox(1, 100000, SlimeConfig.AGENT_NUMBER, self.gui.update_agent_count)
 
         # Create sliders for simulation parameters
         # self.fading_slider, self.fading_widget = self.create_slider(1, 100, 1, self.gui.update_fading, "Fading")
