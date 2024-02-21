@@ -128,10 +128,10 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE, A
         pheromone_main = sensor_values[i, 1]
         pheromone_right = sensor_values[i, 2]
 
-        if pheromone_left >= pheromone_main > pheromone_right:
+        if pheromone_left  >= pheromone_main > pheromone_right:
             # Calculate the target angle between angle_left and angle_main
-            target_angle = sensors_angles[i, 0]
-        elif pheromone_right >= pheromone_main > pheromone_left:
+            target_angle = sensors_angles[i, 0] 
+        elif pheromone_right  >= pheromone_main > pheromone_left:
             # Calculate the target angle between angle_right and angle_main
             target_angle = sensors_angles[i, 2] 
         else:
@@ -140,7 +140,9 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE, A
 
         # Smoothly adjust the agent's angle towards the target angle
         angle_difference = target_angle - agents[i, 2]
-        agents[i, 2] += ROTATION_SPEED * angle_difference
+
+        agents[i, 2] += (ROTATION_SPEED * angle_difference) * SPEED
+        #print(agents[i, 2])
 
     return agents
 
