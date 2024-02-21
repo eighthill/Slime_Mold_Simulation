@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.ndimage import gaussian_filter
-
+from numba import jit
 from config import SlimeConfig
 
 WIDTH = SlimeConfig.WIDTH
@@ -12,6 +12,7 @@ SPEED = SlimeConfig.SPEED
 SENSOR_DISTANCE = SlimeConfig.SENSOR_DISTANCE
 ROTATION_SPEED = SlimeConfig.ROTATION_SPEED
 SENSOR_ANGLE = SlimeConfig.SENSOR_ANGLE
+SPAWN_RADIUS = SlimeConfig.SPAWN_RADIUS
 
 
 # Class creates an array "p_array" where the pheromones of the agents can be placed.
@@ -28,28 +29,38 @@ class PheromoneArray:
 class Agent:
     def __init__(self):
         current_agent_number = SlimeConfig.AGENT_NUMBER
-        y = np.random.uniform(500, 600, current_agent_number)
-        x = np.random.uniform(500, 600, current_agent_number)
         heading = np.random.uniform(0, 2 * np.pi, current_agent_number)
+
+        y = (SlimeConfig.HEIGHT / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.sin(
+            heading
+        )
+        x = (SlimeConfig.WIDTH / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.cos(
+            heading
+        )
+
         self.agenten = np.column_stack((y, x, heading))
 
 
 # Applying a gaussian filter to the array, so that the pheromones within the array diffuse
 def diffuse(p_array):
-    return gaussian_filter(p_array, sigma=DIFFUSION_COEFFICENT)
+    current_diff = SlimeConfig.DIFFUSION_COEFFICENT
+    
+    print(current_diff)
+    return gaussian_filter(p_array, sigma=current_diff)
 
 
-# @jit
+@jit
 # Applying a fading to the array, so that the pheromones within the array decay
 def decay(p_array):
-    return p_array * DECAY
+    current_decay = SlimeConfig.DECAY
+    print(current_decay)
+    return p_array * current_decay
 
 
-# @jit
+@jit
 # Update possible angles
 def get_sensors(agents, SENSOR_ANGLE=SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER):
     # Prepare anlges for each of agents sensores / no randomenes on angles wtf
-    current_agent_number = SlimeConfig.AGENT_NUMBER
     angle_left = agents[:, 2] - SENSOR_ANGLE
     angle_main = agents[:, 2]
     angle_right = agents[:, 2] + SENSOR_ANGLE
@@ -88,7 +99,7 @@ def get_pheromone_value_at(p_array, sensors, AGENT_NUMBER=AGENT_NUMBER):
     return sensor_values
 
 
-# @jit
+#@jit
 def reflect_boundary(agents):
     mask_top = agents[:, 0] < 0
     mask_bottom = agents[:, 0] > HEIGHT - 1
@@ -104,8 +115,7 @@ def reflect_boundary(agents):
     agents[mask_left | mask_right, 2] = np.pi - agents[mask_left | mask_right, 2]
     return agents
 
-
-# @jit
+@jit
 def move(agents, parray, SPEED=SPEED):
     current_speed = SlimeConfig.SPEED
     agents[:, 0] = agents[:, 0] + current_speed * np.sin(agents[:, 2])
@@ -123,7 +133,7 @@ def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
     return p_array
 
 
-# @jit#@jit
+@jit
 def rotate_towards_sensor(
     agents, sensor_values, sensors_angles, SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER, ROTATION_SPEED=ROTATION_SPEED
 ):
@@ -146,8 +156,13 @@ def rotate_towards_sensor(
 
         # Smoothly adjust the agent's angle towards the target angle
         angle_difference = target_angle - agents[i, 2]
-
-        agents[i, 2] += (ROTATION_SPEED * angle_difference) * current_speed
+        
+        random_seed = ((agents[i, 0] + agents[i, 1]) * 0.0166 + agents[i, 2]) * (2**16-1)
+        np.random.seed(int(random_seed * 75))
+        randomSteerStrength = np.random.rand()
+        agents[i, 2] += (ROTATION_SPEED * randomSteerStrength - 0.5) * 0.0166 * angle_difference
+        
+        #agents[i, 2] += (ROTATION_SPEED * angle_difference) * current_speed
         # print(agents[i, 2])
 
     return agents
