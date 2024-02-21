@@ -34,6 +34,10 @@ The documentation is especially for developers who are interested in getting a b
 
 First of all, we decided to structure everything as well as possible. This means that the simulation was not written in one file, but the logic of the simulation is in one file (simulation.py), the Gui (Gui.py), Config (config.py) and the sliders (Ui_Slider_logic.py) are each in separate files so that they can be better separated.
 
+### Code structure as a diagram
+![Picture of Code Structure](https://cdn.discordapp.com/attachments/1179079479230992425/1209953090120323102/image.png?ex=65e8cba0&is=65d656a0&hm=3acc8596537df45ce254a2d39ce9f6d1e8a483d1644d9f55a7083c556e95e730&)
+
+
 ### Simulation
 So let's look specifically at our logic, that's the heart of the program where everything is done. This is where the magic happens, where the agents find their way.This file is designed to simulate the complex, emergent behavior of slime molds using a combination of agent-based modeling and pheromone interaction mechanics.
 - **`PheromoneArray` Class:**  Manages the simulation's environment, specifically the pheromone levels across the grid.
