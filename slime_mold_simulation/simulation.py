@@ -2,7 +2,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter
 
 import slime_mold_simulation.config as config
-#from numba import jit
+from numba import jit
 
 WIDTH = config.WIDTH
 HEIGHT = config.HEIGHT
@@ -39,13 +39,13 @@ def diffuse(p_array):
     return gaussian_filter(p_array, sigma=DIFFUSION_COEFFICENT)
 
 
-#@jit
+@jit
 # Applying a fading to the array, so that the pheromones within the array decay
 def decay(p_array):
     return p_array * DECAY
 
 
-#@jit
+@jit
 # Update possible angles
 def get_sensors(agents, SENSOR_ANGLE=SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER):
     # Prepare anlges for each of agents sensores / no randomenes on angles wtf
@@ -86,7 +86,7 @@ def get_pheromone_value_at(p_array, sensors, AGENT_NUMBER=AGENT_NUMBER):
     return sensor_values
 
 
-#@jit
+@jit
 def reflect_boundary(agents):
     mask_top = agents[:, 0] < 0
     mask_bottom = agents[:, 0] > HEIGHT - 1
@@ -103,7 +103,7 @@ def reflect_boundary(agents):
     return agents
 
 
-#@jit
+@jit
 def move(agents, parray, SPEED=SPEED):
     # agents = angle_adjustment(agents)
     # Update agent's position based on heading=agents[:, 2] and
@@ -122,7 +122,7 @@ def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
     return p_array
 
 
-#@jit
+@jit
 def rotate_towards_sensor(
     agents, sensor_values, sensors_angles, SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER, ROTATION_SPEED=ROTATION_SPEED
 ):

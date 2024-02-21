@@ -1,6 +1,6 @@
 from vispy import app, scene
 
-import slime_mold_simulation.config as config
+import config as config
 from simulation import Agent, PheromoneArray, main
 
 WIDTH = config.WIDTH
