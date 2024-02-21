@@ -144,6 +144,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE, A
         agents[i, 2] += (ROTATION_SPEED * angle_difference) * SPEED
         #print(agents[i, 2])
 
+
     return agents
 
 

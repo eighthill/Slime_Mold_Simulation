@@ -1,4 +1,5 @@
 from vispy import app, scene
+import numpy as np
 
 import config
 from simulation import Agent, PheromoneArray, main
@@ -27,19 +28,18 @@ class SimulationGUI(app.Canvas):
             self,
         )
         # Set up a timer for periodic updates
-
         self.timer = app.Timer(connect=self.on_timer, start=True)
         # Initialize the PheromoneArray and Agent instances
         p_array = PheromoneArray()
-        agneten = Agent()
+        agent = Agent()
         self.parray = p_array.p_array
-        self.agnet = agneten.agenten
+        self.agent = agent.agenten
 
         self.view = scene.SceneCanvas(keys="interactive", size=(HEIGHT, WIDTH), show=True)
         self.view.events.draw.connect(self.on_draw)
-        # Create a visual representing the agents
-        self.agents = scene.visuals.Markers(pos=self.agnet[:, :2], face_color='white', symbol='o', size=1, parent=self.view.scene)
-
+        
+        # Create a markers visual to represent agents as pixels
+        self.agent_markers = scene.visuals.Markers(parent=self.view.scene)
         # Create an image visual representing the pheromone array
         self.image = scene.visuals.Image(self.parray, cmap="inferno", parent=self.view.scene)
 
@@ -50,19 +50,21 @@ class SimulationGUI(app.Canvas):
         """
         # Set the data of the image visual to the current pheromone array
         self.image.set_data(self.parray)
+        self.agent[:, [0, 1]] = self.agent[:, [1, 0]]
+        self.agent_markers.set_data(pos=self.agent[:, :2], size=3, face_color=(1, 1, 1, 1)) #weiß(1, 1, 1, 1), grün(0, 0, 1, 1), blau(0, 1, 0, 1), rot(1, 0, 0, 1)
+        self.agent[:, [1, 0]] = self.agent[:, [0, 1]]
+        
         # Set the position of the agent visual to the current position of the agents
-        self.agnet[:, [0, 1]] = self.agnet[:, [1, 0]]
-        self.agents.set_data(pos=self.agnet[:, :2])
-        self.agnet[:, [1, 0]] = self.agnet[:, [0, 1]]
-
+        
     def on_timer(self, event):
         """
         Event handler for the timer.
         Updates the pheromone array and agent movements periodically.
         """
-        self.parray, self.agnet = main(self.parray, self.agnet)
-        self.agents.set_data(pos=self.agnet[:, :2])
+        self.parray, self.agent = main(self.parray, self.agent)
+        self.image.set_data(self.parray)
         self.view.scene.update()
+
 
 if __name__ == "__main__":
     # Main Program
