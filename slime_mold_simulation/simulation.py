@@ -27,9 +27,12 @@ class PheromoneArray:
 # colum 0 = y coordinate, colum 1 = x coordinate and colum 2 = the angle in which the agents is heading to.
 class Agent:
     def __init__(self):
-        y = np.random.uniform(400, 600, AGENT_NUMBER)
-        x = np.random.uniform(400, 600, AGENT_NUMBER)
-        heading = np.random.uniform(0, 2 * np.pi, AGENT_NUMBER)
+        radius = min(WIDTH, HEIGHT) // 4  # Adjust the radius of the circle
+        angles = np.linspace(0, 2 * np.pi, AGENT_NUMBER, endpoint=False)
+        random_angles = np.random.uniform(0, 2 * np.pi, AGENT_NUMBER)
+        y = HEIGHT // 2 + radius * np.sin(angles)
+        x = WIDTH // 2 + radius * np.cos(angles)
+        heading = random_angles
         self.agenten = np.column_stack((y, x, heading))
 
 
