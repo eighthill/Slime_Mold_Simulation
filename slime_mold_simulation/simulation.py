@@ -31,8 +31,12 @@ class Agent:
         current_agent_number = SlimeConfig.AGENT_NUMBER
         heading = np.random.uniform(0, 2 * np.pi, current_agent_number)
 
-        y = (SlimeConfig.HEIGHT / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) *  SPAWN_RADIUS  * np.sin(heading)
-        x = (SlimeConfig.WIDTH / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) *  SPAWN_RADIUS * np.cos(heading)
+        y = (SlimeConfig.HEIGHT / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.sin(
+            heading
+        )
+        x = (SlimeConfig.WIDTH / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.cos(
+            heading
+        )
 
         self.agenten = np.column_stack((y, x, heading))
 
@@ -52,7 +56,6 @@ def decay(p_array):
 # Update possible angles
 def get_sensors(agents, SENSOR_ANGLE=SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER):
     # Prepare anlges for each of agents sensores / no randomenes on angles wtf
-    current_agent_number = SlimeConfig.AGENT_NUMBER
     angle_left = agents[:, 2] - SENSOR_ANGLE
     angle_main = agents[:, 2]
     angle_right = agents[:, 2] + SENSOR_ANGLE
