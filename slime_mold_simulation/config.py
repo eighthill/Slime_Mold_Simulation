@@ -1,5 +1,4 @@
 # This is the Configutaion file with all global parameters
-import numpy as np
 
 # Simulationparameters
 WIDTH = 1000
