@@ -1,8 +1,8 @@
 import numpy as np
+from numba import jit
 from scipy.ndimage import gaussian_filter
 
 from config import SlimeConfig
-from numba import jit
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
@@ -115,7 +115,7 @@ def reflect_boundary(agents):
 @jit
 def move(agents, parray, SPEED=SPEED):
     current_speed = SlimeConfig.SPEED
-    agents[:, 0] = agents[:, 0] + current_speed  * np.sin(agents[:, 2])
+    agents[:, 0] = agents[:, 0] + current_speed * np.sin(agents[:, 2])
     agents[:, 1] = agents[:, 1] + current_speed * np.cos(agents[:, 2])
     agents = reflect_boundary(agents)
     return agents
@@ -154,7 +154,7 @@ def rotate_towards_sensor(
         # Smoothly adjust the agent's angle towards the target angle
         angle_difference = target_angle - agents[i, 2]
 
-        agents[i, 2] += ((ROTATION_SPEED * angle_difference) * current_speed ) + np.random.randint(0,1)
+        agents[i, 2] += ((ROTATION_SPEED * angle_difference) * current_speed) + np.random.randint(0, 1)
         # print(agents[i, 2])
 
     return agents

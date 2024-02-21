@@ -8,7 +8,6 @@ class SlimeConfig:
     DECAY = 0.9
     DIFFUSION_COEFFICENT = 0.85
 
-
     # Agentparameters
     AGENT_NUMBER = 10000
     SPEED = 1
