@@ -12,6 +12,7 @@ SPEED = SlimeConfig.SPEED
 SENSOR_DISTANCE = SlimeConfig.SENSOR_DISTANCE
 ROTATION_SPEED = SlimeConfig.ROTATION_SPEED
 SENSOR_ANGLE = SlimeConfig.SENSOR_ANGLE
+SPAWN_RADIUS = SlimeConfig.SPAWN_RADIUS
 
 
 # Class creates an array "p_array" where the pheromones of the agents can be placed.
@@ -28,9 +29,11 @@ class PheromoneArray:
 class Agent:
     def __init__(self):
         current_agent_number = SlimeConfig.AGENT_NUMBER
-        y = np.random.uniform(500, 600, current_agent_number)
-        x = np.random.uniform(500, 600, current_agent_number)
         heading = np.random.uniform(0, 2 * np.pi, current_agent_number)
+
+        y = (SlimeConfig.HEIGHT / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) *  SPAWN_RADIUS  * np.sin(heading)
+        x = (SlimeConfig.WIDTH / 2) + np.sqrt(np.random.uniform(0, 1, current_agent_number)) *  SPAWN_RADIUS * np.cos(heading)
+
         self.agenten = np.column_stack((y, x, heading))
 
 
