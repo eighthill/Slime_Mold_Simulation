@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-import config
+import slime_mold_simulation.config as config
 
 WIDTH = config.WIDTH
 HEIGHT = config.HEIGHT
