@@ -144,13 +144,21 @@ def rotate_towards_sensor_simple(agents, sensor_values, sensors_angles, SENSOR_A
     highest_value_left = sensor_values[:, 0] == highest_pheromons
     highest_value_mid = sensor_values[:, 1] == highest_pheromons
     highest_value_right = sensor_values[:, 2] == highest_pheromons
-
+    """
     for i in range(AGENT_NUMBER):
         if highest_value_left[i] >= highest_value_mid[i] > highest_value_right[i]:
             agents[i:, 3] = sensors_angles[i:, 1] - ROTATION_SPEED * SENSOR_ANGLE
         if highest_value_right[i] >= highest_value_mid[i] > highest_value_right[i]:
             agents[i:, 3] = sensors_angles[i:, 1] + ROTATION_SPEED * SENSOR_ANGLE
-            
+            print(agents[i:, 3])
+    """
+    for i in range(AGENT_NUMBER):
+        if highest_value_left[i] and not highest_value_mid[i] and not highest_value_right[i]:
+            agents[i, 2] = sensors_angles[i, 1] - ROTATION_SPEED * SENSOR_ANGLE
+            print(agents[i:, 3])
+
+        elif highest_value_right[i] and not highest_value_mid[i] and not highest_value_left[i]:
+            agents[i, 2] = sensors_angles[i, 1] + ROTATION_SPEED * SENSOR_ANGLE
     return agents
 
 
