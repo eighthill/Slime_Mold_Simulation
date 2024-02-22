@@ -178,14 +178,14 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     return agents
 
 
-def main(parray, agnet):
+def main(parray, agent):
 
-    sensors, sensors_angles = get_sensors(agnet)
+    sensors, sensors_angles = get_sensors(agent)
     sensor_values = get_pheromone_value_at(parray, sensors)
-    agnet = rotate_towards_sensor(agnet, sensor_values, sensors_angles, SENSOR_ANGLE)
-    agnet = move(agnet, parray)
-    parray = deposit_pheromone(parray, agnet)
+    agent = rotate_towards_sensor(agent, sensor_values, sensors_angles, SENSOR_ANGLE)
+    agent = move(agent, parray)
+    parray = deposit_pheromone(parray, agent)
 
     parray = diffuse(parray)
     parray = decay(parray)
-    return parray, agnet
+    return parray, agent

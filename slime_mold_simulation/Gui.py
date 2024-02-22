@@ -24,10 +24,10 @@ class SimulationGUI(app.Canvas):
         self.timer = app.Timer(connect=self.on_timer, start=True)
         # Initialize the PheromoneArray and Agent instances
         p_array = simulation.PheromoneArray()
-        self.agneten = simulation.Agent()
+        self.agenten = simulation.Agent()
 
         self.parray = p_array.p_array
-        self.agent = self.agneten.agenten
+        self.agent = self.agenten.agenten
         # self.simulation = simulation.move(self.agent)
         # Move = move(agents)
         self.view = scene.SceneCanvas(
@@ -65,8 +65,8 @@ class SimulationGUI(app.Canvas):
         new_agent_count = self.slider_logic.agent_count_spinbox.value()
         SlimeConfig.set_agent_count(new_agent_count)
 
-        self.agneten = simulation.Agent()
-        self.agent = self.agneten.agenten
+        self.agenten = simulation.Agent()
+        self.agent = self.agenten.agenten
 
     def update_decay(self):
         new_decay = self.slider_logic.decay_spinbox.value()
@@ -97,8 +97,8 @@ class SimulationGUI(app.Canvas):
         self.parray = np.zeros_like(self.parray)  # Assuming a 2D array structure
 
         # Reinitialize the Agent instances
-        self.agneten = simulation.Agent()  # Recreate agent instances
-        self.agent = self.agneten.agenten  # Reset agent positions
+        self.agenten = simulation.Agent()  # Recreate agent instances
+        self.agent = self.agenten.agenten  # Reset agent positions
 
         # Reset the visuals
         self.image.set_data(self.parray)  # Reset the display image to the cleared pheromone array
@@ -117,9 +117,9 @@ class SimulationGUI(app.Canvas):
         self.agent_markers.set_data(pos=self.agent[:, :2], size=1)
         self.agent[:, [1, 0]] = self.agent[:, [0, 1]]
 
-    # positions = [(self.agnet[:, 1],self.agnet[:, 0]) for agenten in agenten]
+    # positions = [(self.agent[:, 1],self.agent[:, 0]) for agenten in agenten]
     # positions = np.array([[agent["float_x_pos"], agent["float_y_pos"]] for agent in self.agents.Agents_list])
-    # self.agneten_scatter.set_data(positions)
+    # self.agenten_scatter.set_data(positions)
 
     def on_timer(self, event):
         """
