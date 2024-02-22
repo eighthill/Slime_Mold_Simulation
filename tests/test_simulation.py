@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-import slime_mold_simulation.config as SlimeConfig
+from slime_mold_simulation.config import SlimeConfig
 from slime_mold_simulation import simulation
 # from slime_mold_simulation.simulation import WIDTH, HEIGHT, AGENT_NUMBER, SENSOR_ANGLE
 
@@ -52,7 +52,7 @@ def test_get_pheromone_value_at():
     p_array = np.zeros((HEIGHT, WIDTH))
     p_array[10, 10] = 1
     sensors = np.array([[10, 10], [0, 0], [15, 15], [100,100]])
-    sensor_values = simulation.get_pheromone_value_at(p_array, sensors, HEIGHT, WIDTH, AGENT_NUMBER)
+    sensor_values = simulation.get_pheromone_value_at(p_array, sensors)
     assert sensor_values.shape == (AGENT_NUMBER, len(sensors)), f"Expected shape ({AGENT_NUMBER}, {len(sensors)}), got {sensor_values.shape}"
     assert np.all(sensor_values[:, 0] == 1), "Sensor on pheromone should detect value 1 for all agents"
     assert np.all(sensor_values[:, 1] == 0), "Sensor not on pheromone should detect value 0 for all agents"

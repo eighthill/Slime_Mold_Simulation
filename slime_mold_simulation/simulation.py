@@ -1,8 +1,7 @@
 import numpy as np
 #from numba import jit
 from scipy.ndimage import gaussian_filter
-from config import SlimeConfig
-#from slime_mold_simulation.config import SlimeConfig as config
+from slime_mold_simulation.config import SlimeConfig
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
@@ -168,9 +167,14 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
 
     # Adjust agents' angles
     angle_difference = target_angle - agents[:, 2]
-    agents[:, 2] += (
+    adjusted_angle = agents[:, 2] + (
         (current_rotta_speed * randomSteerStrength - 0.5) * angle_difference * current_sen_angle * current_time_step
     )
+    
+    # Normalize angles to range [0, 2π]
+    normalized_angle = np.mod(adjusted_angle, 2 * np.pi)
+    agents[:, 2] = normalized_angle
+    
     return agents
 
 
