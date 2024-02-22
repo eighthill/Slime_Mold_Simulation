@@ -1,8 +1,9 @@
 import numpy as np
-from numba import jit
+
+# from numba import jit
 from scipy.ndimage import gaussian_filter
 
-from config import SlimeConfig
+from slime_mold_simulation.config import SlimeConfig
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
@@ -56,7 +57,7 @@ def diffuse(p_array):
     return gaussian_filter(p_array, sigma=current_diff)
 
 
-@jit
+# @jit
 # Applying a fading to the array, so that the pheromones within the array decay
 def decay(p_array):
     current_decay = SlimeConfig.DECAY
@@ -64,7 +65,7 @@ def decay(p_array):
     return p_array * current_decay
 
 
-@jit
+# @jit
 # Update possible angles
 def get_sensors(agents, SENSOR_ANGLE=SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER):
     # Prepare anlges for each of agents sensores / no randomenes on angles wtf
@@ -125,7 +126,7 @@ def reflect_boundary(agents):
     return agents
 
 
-@jit
+# @jit
 def move(agents, parray, SPEED=SPEED):
     current_speed = SlimeConfig.SPEED
     agents[:, 0] = agents[:, 0] + current_speed * np.sin(agents[:, 2])
@@ -143,14 +144,18 @@ def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
     return p_array
 
 
-@jit
+# @jit
 def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     # Assuming SENSOR_ANGLE, AGENT_NUMBER, ROTATION_SPEED are globally defined or passed as parameters
     current_agent_number = SlimeConfig.AGENT_NUMBER
     current_rotta_speed = SlimeConfig.ROTATION_SPEED
     current_sen_angle = SlimeConfig.SENSOR_ANGLE
     current_time_step = SlimeConfig.TIMESTEP
-    angle_left, angle_main, angle_right = sensors_angles.T  # Transpose for easy unpacking
+    (
+        angle_left,
+        angle_main,
+        angle_right,
+    ) = sensors_angles.T  # Transpose for easy unpacking
 
     # Calculate pheromone differences
     pheromone_diff_left = sensor_values[:, 0] >= sensor_values[:, 1]
@@ -168,20 +173,25 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
 
     # Adjust agents' angles
     angle_difference = target_angle - agents[:, 2]
-    agents[:, 2] += (
+    adjusted_angle = agents[:, 2] + (
         (current_rotta_speed * randomSteerStrength - 0.5) * angle_difference * current_sen_angle * current_time_step
     )
+
+    # Normalize angles to range [0, 2π]
+    normalized_angle = np.mod(adjusted_angle, 2 * np.pi)
+    agents[:, 2] = normalized_angle
+
     return agents
 
 
-def main(parray, agnet):
+def main(parray, agent):
 
-    sensors, sensors_angles = get_sensors(agnet)
+    sensors, sensors_angles = get_sensors(agent)
     sensor_values = get_pheromone_value_at(parray, sensors)
-    agnet = rotate_towards_sensor(agnet, sensor_values, sensors_angles, SENSOR_ANGLE)
-    agnet = move(agnet, parray)
-    parray = deposit_pheromone(parray, agnet)
+    agent = rotate_towards_sensor(agent, sensor_values, sensors_angles, SENSOR_ANGLE)
+    agent = move(agent, parray)
+    parray = deposit_pheromone(parray, agent)
 
     parray = diffuse(parray)
     parray = decay(parray)
-    return parray, agnet
+    return parray, agent
