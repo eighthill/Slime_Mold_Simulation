@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication
 from vispy import app, scene
 
 import simulation
-from config import SlimeConfig
+from cfg_sim.world_cfg import SlimeConfig
 from Ui_Slider_logic import SliderLogic
 
 

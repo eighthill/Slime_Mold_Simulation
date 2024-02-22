@@ -9,7 +9,7 @@ class SlimeConfig:
     DIFFUSION_COEFFICENT = 0.85
 
     # Agentparameters
-    AGENT_NUMBER = 10000
+    AGENT_NUMBER = 50000
     SPEED = 1
     SENSOR_DISTANCE = 8
     ROTATION_SPEED = 0.2  # max. 1 otherwise error!
