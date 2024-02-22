@@ -2,6 +2,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter
 from numba import jit
 from config import SlimeConfig
+import timeit
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
@@ -163,15 +164,17 @@ def rotate_towards_sensor(
         # Smoothly adjust the agent's angle towards the target angle
         angle_difference = target_angle - agents[i, 2]
         
-        random_seed = ((agents[i, 0] + agents[i, 1]) * 0.0166 + agents[i, 2]) * (2**16-1)
-        np.random.seed(int(random_seed * 75))
         randomSteerStrength = np.random.rand()
-        agents[i, 2] += (ROTATION_SPEED * randomSteerStrength - 0.5) * 0.0166 * angle_difference
+        agents[i, 2] += ((ROTATION_SPEED * randomSteerStrength - 0.5) * SlimeConfig.TIMESTEP) * angle_difference
         
         #agents[i, 2] += (ROTATION_SPEED * angle_difference) * current_speed
         # print(agents[i, 2])
+        # Measure the runtime using timeit
 
     return agents
+
+
+
 
 
 def main(parray, agnet):
@@ -184,4 +187,8 @@ def main(parray, agnet):
 
     parray = diffuse(parray)
     parray = decay(parray)
+    
+
     return parray, agnet
+
+

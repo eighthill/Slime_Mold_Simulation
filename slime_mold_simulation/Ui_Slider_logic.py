@@ -66,6 +66,7 @@ class SliderLogic:
         spinbox.setMinimum(min_value)
         spinbox.setMaximum(max_value)
         spinbox.setValue(default_value)
+        spinbox.setSingleStep(0.01)
         spinbox.valueChanged.connect(callback)
         return spinbox
 
@@ -86,4 +87,5 @@ class SliderLogic:
         # layout.addWidget(self.pheromone_value_slider)
         layout.addWidget(self.restart_button)
         widget.setLayout(layout)
+        widget.setMinimumSize(200,100)
         return widget
