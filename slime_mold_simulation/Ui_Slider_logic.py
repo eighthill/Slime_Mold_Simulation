@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QLabel, QPushButton, QSlider, QSpinBox, QVBoxLayout, QWidget, QDoubleSpinBox
+from PyQt5.QtWidgets import QDoubleSpinBox, QLabel, QPushButton, QSlider, QSpinBox, QVBoxLayout, QWidget
 
 from config import SlimeConfig
 
@@ -9,15 +9,19 @@ class SliderLogic:
 
         # Create sliders for agent-related parameters
         # self.agent_size_slider, self.agent_size_widget = self.create_slider(5, 30, 15, self.gui.update_agent_size, "Agent Size")
-        self.agent_count_spinbox = self.create_spinbox_int(1, 1000000, SlimeConfig.AGENT_NUMBER, self.gui.update_agent_count)
+        self.agent_count_spinbox = self.create_spinbox_int(
+            1, 1000000, SlimeConfig.AGENT_NUMBER, self.gui.update_agent_count
+        )
         self.agent_speed_spinbox = self.create_spinbox_int(1, 10, SlimeConfig.SPEED, self.gui.update_agent_speed)
         self.sen_dis_spinbox = self.create_spinbox_int(1, 50, SlimeConfig.SENSOR_DISTANCE, self.gui.update_sen_dis)
         self.sen_angle_spinbox = self.create_spinbox_int(1, 75, SlimeConfig.SENSOR_ANGLE, self.gui.update_sen_angle)
         self.time_step_spinbox = self.create_spinbox_float(0.01, 2, SlimeConfig.TIMESTEP, self.gui.update_time_step)
         self.decay_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DECAY, self.gui.update_decay)
         self.diff_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DIFFUSION_COEFFICENT, self.gui.update_diff)
-        self.rotta_speed_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.ROTATION_SPEED, self.gui.update_rotta_speed)
-        
+        self.rotta_speed_spinbox = self.create_spinbox_float(
+            0.1, 1.0, SlimeConfig.ROTATION_SPEED, self.gui.update_rotta_speed
+        )
+
         # Create sliders for simulation parameters
         # self.fading_slider, self.fading_widget = self.create_slider(1, 100, 1, self.gui.update_fading, "Fading")
         # self.diffusion_coefficient_slider, self.diffusion_coefficient_widget = self.create_slider(1, 100, 1, self.gui.update_diffusion_coefficient, "Diffusion Coefficient")
@@ -64,7 +68,7 @@ class SliderLogic:
         spinbox.setSingleStep(1)
         spinbox.valueChanged.connect(callback)
         return spinbox
-    
+
     def create_spinbox_float(self, min_value, max_value, default_value, callback):
         spinbox = QDoubleSpinBox()
         spinbox.setMinimum(min_value)
@@ -97,5 +101,5 @@ class SliderLogic:
         layout.addWidget(self.time_step_spinbox)
         layout.addWidget(self.restart_button)
         widget.setLayout(layout)
-        widget.setMinimumSize(200,100)
+        widget.setMinimumSize(200, 100)
         return widget
