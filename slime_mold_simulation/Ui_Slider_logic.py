@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDoubleSpinBox, QLabel, QPushButton, QSlider, QSpinBox, QVBoxLayout, QWidget
 
-from cfg_sim.world_cfg import SlimeConfig
+from world_cfg import *
 
 
 class SliderLogic:

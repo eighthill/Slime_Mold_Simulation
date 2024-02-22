@@ -3,7 +3,7 @@ import numpy as np
 # from numba import jit
 from scipy.ndimage import gaussian_filter
 
-from cfg_sim.world_cfg import *
+from world_cfg import *
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
