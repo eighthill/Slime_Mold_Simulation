@@ -5,8 +5,8 @@ class SlimeConfig:
     # Simulationparameters
     WIDTH = 1000
     HEIGHT = 1000
-    DECAY = 0.97
-    DIFFUSION_COEFFICENT = 0.5
+    DECAY = 0.9
+    DIFFUSION_COEFFICENT = 0.85
 
     # Agentparameters
     AGENT_NUMBER = 10000
@@ -15,6 +15,7 @@ class SlimeConfig:
     ROTATION_SPEED = 0.2  # max. 1 otherwise error!
     SPAWN_RADIUS = 350
     SENSOR_ANGLE = 30
+
     TIMESTEP = 0.0166
 
     @classmethod

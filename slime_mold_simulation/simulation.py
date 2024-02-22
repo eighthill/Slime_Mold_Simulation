@@ -171,6 +171,34 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     agents[:, 2] += (
         (current_rotta_speed * randomSteerStrength - 0.5) * angle_difference * current_sen_angle * current_time_step
     )
+#old rotate function
+"""
+def rotate_towards_sensor(
+    agents, sensor_values, sensors_angles, SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER, ROTATION_SPEED=ROTATION_SPEED
+):
+    current_agent_number = SlimeConfig.AGENT_NUMBER
+    current_speed = SlimeConfig.SPEED
+    for i in range(current_agent_number):
+        pheromone_left = sensor_values[i, 0]
+        pheromone_main = sensor_values[i, 1]
+        pheromone_right = sensor_values[i, 2]
+
+        if pheromone_left >= pheromone_main > pheromone_right:
+            # Calculate the target angle between angle_left and angle_main
+            target_angle = sensors_angles[i, 0]
+        elif pheromone_right >= pheromone_main > pheromone_left:
+            # Calculate the target angle between angle_right and angle_main
+            target_angle = sensors_angles[i, 2]
+        else:
+            # If the pheromone values at sensor_right and sensor_left are the same, no heading change
+            target_angle = agents[i, 2]
+
+        # Smoothly adjust the agent's angle towards the target angle
+        angle_difference = target_angle - agents[i, 2]
+
+        agents[i, 2] += ((ROTATION_SPEED * angle_difference) * current_speed) + np.random.randint(0, 1)
+        # print(agents[i, 2])
+"""
 
     return agents
 

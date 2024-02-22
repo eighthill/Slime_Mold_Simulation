@@ -22,6 +22,7 @@ class SliderLogic:
             0.1, 1.0, SlimeConfig.ROTATION_SPEED, self.gui.update_rotta_speed
         )
 
+
         # Create sliders for simulation parameters
         # self.fading_slider, self.fading_widget = self.create_slider(1, 100, 1, self.gui.update_fading, "Fading")
         # self.diffusion_coefficient_slider, self.diffusion_coefficient_widget = self.create_slider(1, 100, 1, self.gui.update_diffusion_coefficient, "Diffusion Coefficient")
