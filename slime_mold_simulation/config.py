@@ -3,8 +3,8 @@
 
 class SlimeConfig:
     # Simulationparameters
-    WIDTH = 1000
-    HEIGHT = 1000
+    WIDTH = 1600
+    HEIGHT = 900
     DECAY = 0.9
     DIFFUSION_COEFFICENT = 0.85
 
