@@ -30,7 +30,9 @@ class SimulationGUI(app.Canvas):
         self.agent = self.agneten.agenten
         # self.simulation = simulation.move(self.agent)
         # Move = move(agents)
-        self.view = scene.SceneCanvas(keys="interactive", size=(SlimeConfig.WIDTH, SlimeConfig.HEIGHT), show=True)
+        self.view = scene.SceneCanvas(
+            keys="interactive", size=(SlimeConfig.WIDTH, SlimeConfig.HEIGHT), show=True, vsync=True
+        )
         self.view.events.draw.connect(self.on_draw)
         # Create an image visual representing the pheromone array
         # Create a markers visual to represent agents as pixels
@@ -45,46 +47,62 @@ class SimulationGUI(app.Canvas):
         # Show the slider widget
         self.slider_logic.slider_widget.show()
 
-        self.slider_logic.agent_speed_slider.valueChanged.connect(self.update_agent_speed)
         self.slider_logic.agent_count_spinbox.valueChanged.connect(self.update_agent_count)
+        self.slider_logic.agent_speed_spinbox.valueChanged.connect(self.update_agent_speed)
+        self.slider_logic.decay_spinbox.valueChanged.connect(self.update_decay)
+        self.slider_logic.diff_spinbox.valueChanged.connect(self.update_diff)
+        self.slider_logic.sen_dis_spinbox.valueChanged.connect(self.update_sen_dis)
+        self.slider_logic.rotta_speed_spinbox.valueChanged.connect(self.update_rotta_speed)
+        self.slider_logic.sen_angle_spinbox.valueChanged.connect(self.update_sen_angle)
+        self.slider_logic.time_step_spinbox.valueChanged.connect(self.update_time_step)
 
     def update_agent_speed(self):
-        new_speed = self.slider_logic.agent_speed_slider.value()
+        new_speed = self.slider_logic.agent_speed_spinbox.value()
         SlimeConfig.set_speed(new_speed)
         # print(f"Speed updated to: {new_speed}")
 
     def update_agent_count(self):
         new_agent_count = self.slider_logic.agent_count_spinbox.value()
         SlimeConfig.set_agent_count(new_agent_count)
-        # print(new_agent_count)
 
         self.agneten = simulation.Agent()
         self.agent = self.agneten.agenten
-        # Optionally, update visuals or any other dependent components here
-        # self.restart_simulation()  # Restart simulation to apply the changes immediately
 
-        # Update the label
-        # self.slider_logic.agent_count_spinbox.value_label.setText(str(agent_count))
+    def update_decay(self):
+        new_decay = self.slider_logic.decay_spinbox.value()
+        SlimeConfig.set_decay(new_decay)
+
+    def update_diff(self):
+        new_diff = self.slider_logic.diff_spinbox.value()
+        SlimeConfig.set_diff(new_diff)
+
+    def update_sen_dis(self):
+        new_sen_dis = self.slider_logic.sen_dis_spinbox.value()
+        SlimeConfig.set_sen_dis(new_sen_dis)
+
+    def update_rotta_speed(self):
+        new_rotta_speed = self.slider_logic.rotta_speed_spinbox.value()
+        SlimeConfig.set_rotta_speed(new_rotta_speed)
+
+    def update_sen_angle(self):
+        new_sen_angle = self.slider_logic.sen_angle_spinbox.value()
+        SlimeConfig.set_sen_angle(new_sen_angle)
+
+    def update_time_step(self):
+        new_time_setp = self.slider_logic.time_step_spinbox.value()
+        SlimeConfig.set_time_step(new_time_setp)
 
     def restart_simulation(self):
         # Reset the Pheromone Array
         self.parray = np.zeros_like(self.parray)  # Assuming a 2D array structure
 
         # Reinitialize the Agent instances
-        # This step depends on how your agents are initially created. You might need to call the initial setup method.
         self.agneten = simulation.Agent()  # Recreate agent instances
         self.agent = self.agneten.agenten  # Reset agent positions
-
-        # Optionally, reset any other simulation states or configurations here
 
         # Reset the visuals
         self.image.set_data(self.parray)  # Reset the display image to the cleared pheromone array
         self.agent_markers.set_data(pos=self.agent[:, :2], size=3, face_color=(1, 1, 1, 1))  # Reset agent visuals
-
-        # Restart the simulation timer if needed
-        # self.timer.start()
-
-    # print("Simulation restarted")
 
     def on_draw(self, event):
         """
@@ -96,7 +114,7 @@ class SimulationGUI(app.Canvas):
         self.image.set_data(self.parray)
 
         self.agent[:, [0, 1]] = self.agent[:, [1, 0]]
-        self.agent_markers.set_data(pos=self.agent[:, :2], size=4)
+        self.agent_markers.set_data(pos=self.agent[:, :2], size=1)
         self.agent[:, [1, 0]] = self.agent[:, [0, 1]]
 
     # positions = [(self.agnet[:, 1],self.agnet[:, 0]) for agenten in agenten]
@@ -111,6 +129,11 @@ class SimulationGUI(app.Canvas):
         self.parray, self.agent = simulation.main(self.parray, self.agent)
         self.image.set_data(self.parray)
         self.view.scene.update()
+
+    def closeEvent(self, event):
+        self.timer.stop()  # Stop the timer
+        event.accept()  # Accept the window close event
+        self.qt_app.quit()  # Quit the Qt application
 
 
 if __name__ == "__main__":
