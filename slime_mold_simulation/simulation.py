@@ -171,6 +171,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     agents[:, 2] += (
         (current_rotta_speed * randomSteerStrength - 0.5) * angle_difference * current_sen_angle * current_time_step
     )
+
 #old rotate function
 """
 def rotate_towards_sensor(
@@ -198,10 +199,8 @@ def rotate_towards_sensor(
 
         agents[i, 2] += ((ROTATION_SPEED * angle_difference) * current_speed) + np.random.randint(0, 1)
         # print(agents[i, 2])
-"""
-
     return agents
-
+"""
 
 def main(parray, agnet):
 
