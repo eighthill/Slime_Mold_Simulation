@@ -6,7 +6,7 @@ class SlimeConfig:
     WIDTH = 1000
     HEIGHT = 1000
     DECAY = 0.97
-    DIFFUSION_COEFFICENT = 0.75
+    DIFFUSION_COEFFICENT = 0.5
 
     # Agentparameters
     AGENT_NUMBER = 10000

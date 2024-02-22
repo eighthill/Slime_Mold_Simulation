@@ -132,6 +132,10 @@ class SimulationGUI(app.Canvas):
         self.image.set_data(self.parray)
         self.view.scene.update()
 
+    def closeEvent(self, event):
+        self.timer.stop()  # Stop the timer
+        event.accept()     # Accept the window close event
+        self.qt_app.quit()  # Quit the Qt application
 
 if __name__ == "__main__":
     # Main Program
