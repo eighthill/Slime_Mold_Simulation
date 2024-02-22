@@ -1,5 +1,5 @@
 import numpy as np
-#from numba import jit
+# from numba import jit
 from scipy.ndimage import gaussian_filter
 from slime_mold_simulation.config import SlimeConfig
 
@@ -42,7 +42,9 @@ class Agent:
         x = center_x + radius * np.cos(angle)
 
         # Calculate heading towards the center with noise
-        heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(-5, 5, current_agent_number)
+        heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(
+            -5, 5, current_agent_number
+        )
 
         self.agenten = np.column_stack((y, x, heading))
 
@@ -55,7 +57,7 @@ def diffuse(p_array):
     return gaussian_filter(p_array, sigma=current_diff)
 
 
-#@jit
+# @jit
 # Applying a fading to the array, so that the pheromones within the array decay
 def decay(p_array):
     current_decay = SlimeConfig.DECAY
@@ -63,7 +65,7 @@ def decay(p_array):
     return p_array * current_decay
 
 
-#@jit
+# @jit
 # Update possible angles
 def get_sensors(agents, SENSOR_ANGLE=SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER):
     # Prepare anlges for each of agents sensores / no randomenes on angles wtf
@@ -115,16 +117,20 @@ def reflect_boundary(agents):
     mask_right = agents[:, 1] > WIDTH - 1
 
     # vertical boundary
-    agents[mask_top | mask_bottom, 0] = np.clip(agents[mask_top | mask_bottom, 0], 0, HEIGHT - 1)
+    agents[mask_top | mask_bottom, 0] = np.clip(
+        agents[mask_top | mask_bottom, 0], 0, HEIGHT - 1
+    )
     agents[mask_top | mask_bottom, 2] = 2 * np.pi - agents[mask_top | mask_bottom, 2]
 
     # horizontal boundary
-    agents[mask_left | mask_right, 1] = np.clip(agents[mask_left | mask_right, 1], 0, WIDTH - 1)
+    agents[mask_left | mask_right, 1] = np.clip(
+        agents[mask_left | mask_right, 1], 0, WIDTH - 1
+    )
     agents[mask_left | mask_right, 2] = np.pi - agents[mask_left | mask_right, 2]
     return agents
 
 
-#@jit
+# @jit
 def move(agents, parray, SPEED=SPEED):
     current_speed = SlimeConfig.SPEED
     agents[:, 0] = agents[:, 0] + current_speed * np.sin(agents[:, 2])
@@ -142,14 +148,18 @@ def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
     return p_array
 
 
-#@jit
+# @jit
 def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     # Assuming SENSOR_ANGLE, AGENT_NUMBER, ROTATION_SPEED are globally defined or passed as parameters
     current_agent_number = SlimeConfig.AGENT_NUMBER
     current_rotta_speed = SlimeConfig.ROTATION_SPEED
     current_sen_angle = SlimeConfig.SENSOR_ANGLE
     current_time_step = SlimeConfig.TIMESTEP
-    angle_left, angle_main, angle_right = sensors_angles.T  # Transpose for easy unpacking
+    (
+        angle_left,
+        angle_main,
+        angle_right,
+    ) = sensors_angles.T  # Transpose for easy unpacking
 
     # Calculate pheromone differences
     pheromone_diff_left = sensor_values[:, 0] >= sensor_values[:, 1]
@@ -160,7 +170,9 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     rotate_right = pheromone_diff_right & (sensor_values[:, 2] > sensor_values[:, 0])
 
     # Calculate target angle based on rotation direction
-    target_angle = np.where(rotate_left, angle_left, np.where(rotate_right, angle_right, agents[:, 2]))
+    target_angle = np.where(
+        rotate_left, angle_left, np.where(rotate_right, angle_right, agents[:, 2])
+    )
 
     # Calculate random steering strength
     randomSteerStrength = np.random.rand(current_agent_number)
@@ -168,13 +180,16 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     # Adjust agents' angles
     angle_difference = target_angle - agents[:, 2]
     adjusted_angle = agents[:, 2] + (
-        (current_rotta_speed * randomSteerStrength - 0.5) * angle_difference * current_sen_angle * current_time_step
+        (current_rotta_speed * randomSteerStrength - 0.5)
+        * angle_difference
+        * current_sen_angle
+        * current_time_step
     )
-    
+
     # Normalize angles to range [0, 2π]
     normalized_angle = np.mod(adjusted_angle, 2 * np.pi)
     agents[:, 2] = normalized_angle
-    
+
     return agents
 
 

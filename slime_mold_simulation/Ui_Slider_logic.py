@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QDoubleSpinBox, QLabel, QPushButton, QSlider, QSpinBox, QVBoxLayout, QWidget
-
 from config import SlimeConfig
+from PyQt5.QtWidgets import (QDoubleSpinBox, QLabel, QPushButton, QSlider,
+                             QSpinBox, QVBoxLayout, QWidget)
 
 
 class SliderLogic:
@@ -12,12 +12,24 @@ class SliderLogic:
         self.agent_count_spinbox = self.create_spinbox_int(
             1, 1000000, SlimeConfig.AGENT_NUMBER, self.gui.update_agent_count
         )
-        self.agent_speed_spinbox = self.create_spinbox_int(1, 10, SlimeConfig.SPEED, self.gui.update_agent_speed)
-        self.sen_dis_spinbox = self.create_spinbox_int(1, 50, SlimeConfig.SENSOR_DISTANCE, self.gui.update_sen_dis)
-        self.sen_angle_spinbox = self.create_spinbox_int(1, 75, SlimeConfig.SENSOR_ANGLE, self.gui.update_sen_angle)
-        self.time_step_spinbox = self.create_spinbox_float(0.01, 2, SlimeConfig.TIMESTEP, self.gui.update_time_step)
-        self.decay_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DECAY, self.gui.update_decay)
-        self.diff_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DIFFUSION_COEFFICENT, self.gui.update_diff)
+        self.agent_speed_spinbox = self.create_spinbox_int(
+            1, 10, SlimeConfig.SPEED, self.gui.update_agent_speed
+        )
+        self.sen_dis_spinbox = self.create_spinbox_int(
+            1, 50, SlimeConfig.SENSOR_DISTANCE, self.gui.update_sen_dis
+        )
+        self.sen_angle_spinbox = self.create_spinbox_int(
+            1, 75, SlimeConfig.SENSOR_ANGLE, self.gui.update_sen_angle
+        )
+        self.time_step_spinbox = self.create_spinbox_float(
+            0.01, 2, SlimeConfig.TIMESTEP, self.gui.update_time_step
+        )
+        self.decay_spinbox = self.create_spinbox_float(
+            0.1, 1.0, SlimeConfig.DECAY, self.gui.update_decay
+        )
+        self.diff_spinbox = self.create_spinbox_float(
+            0.1, 1.0, SlimeConfig.DIFFUSION_COEFFICENT, self.gui.update_diff
+        )
         self.rotta_speed_spinbox = self.create_spinbox_float(
             0.1, 1.0, SlimeConfig.ROTATION_SPEED, self.gui.update_rotta_speed
         )
