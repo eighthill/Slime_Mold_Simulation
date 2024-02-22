@@ -52,6 +52,7 @@ class SimulationGUI(app.Canvas):
         self.slider_logic.sen_dis_spinbox.valueChanged.connect(self.update_sen_dis)
         self.slider_logic.rotta_speed_spinbox.valueChanged.connect(self.update_rotta_speed)
         self.slider_logic.sen_angle_spinbox.valueChanged.connect(self.update_sen_angle)
+        self.slider_logic.time_step_spinbox.valueChanged.connect(self.update_time_step)
 
     def update_agent_speed(self):
         new_speed = self.slider_logic.agent_speed_spinbox.value()
@@ -84,6 +85,10 @@ class SimulationGUI(app.Canvas):
     def update_sen_angle(self):
         new_sen_angle = self.slider_logic.sen_angle_spinbox.value()
         SlimeConfig.set_sen_angle(new_sen_angle)
+        
+    def update_time_step(self):
+        new_time_setp = self.slider_logic.time_step_spinbox.value()
+        SlimeConfig.set_time_step(new_time_setp)
 
     def restart_simulation(self):
         # Reset the Pheromone Array

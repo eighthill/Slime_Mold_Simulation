@@ -14,7 +14,7 @@ class SlimeConfig:
     SENSOR_DISTANCE = 8
     ROTATION_SPEED = 0.2  # max. 1 otherwise error!
     SPAWN_RADIUS = 350
-    SENSOR_ANGLE = 25
+    SENSOR_ANGLE = 30
     TIMESTEP = 0.0166
 
     @classmethod
@@ -44,3 +44,7 @@ class SlimeConfig:
     @classmethod
     def set_sen_angle(cls, new_sen_angle):
         cls.SENSOR_ANGLE = new_sen_angle
+        
+    @classmethod
+    def set_time_step(cls, new_time_setp):
+        cls.TIMESTEP = new_time_setp
