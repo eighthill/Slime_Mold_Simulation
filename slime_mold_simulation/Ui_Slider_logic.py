@@ -11,9 +11,11 @@ class SliderLogic:
         # self.agent_size_slider, self.agent_size_widget = self.create_slider(5, 30, 15, self.gui.update_agent_size, "Agent Size")
         self.agent_count_spinbox = self.create_spinbox_int(1, 1000000, SlimeConfig.AGENT_NUMBER, self.gui.update_agent_count)
         self.agent_speed_spinbox = self.create_spinbox_int(1, 10, SlimeConfig.SPEED, self.gui.update_agent_speed)
+        self.sen_dis_spinbox = self.create_spinbox_int(1, 50, SlimeConfig.SENSOR_DISTANCE, self.gui.update_sen_dis)
+        self.sen_angle_spinbox = self.create_spinbox_int(1, 75, SlimeConfig.SENSOR_ANGLE, self.gui.update_sen_angle)
         self.decay_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DECAY, self.gui.update_decay)
         self.diff_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DIFFUSION_COEFFICENT, self.gui.update_diff)
-        
+        self.rotta_speed_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.ROTATION_SPEED, self.gui.update_rotta_speed)
         
         # Create sliders for simulation parameters
         # self.fading_slider, self.fading_widget = self.create_slider(1, 100, 1, self.gui.update_fading, "Fading")
@@ -58,6 +60,7 @@ class SliderLogic:
         spinbox.setMinimum(min_value)
         spinbox.setMaximum(max_value)
         spinbox.setValue(default_value)
+        spinbox.setSingleStep(1)
         spinbox.valueChanged.connect(callback)
         return spinbox
     
@@ -83,8 +86,12 @@ class SliderLogic:
         layout.addWidget(self.decay_spinbox)
         layout.addWidget(QLabel("Diffusion Coefficient"))
         layout.addWidget(self.diff_spinbox)
-        # layout.addWidget(QLabel("Pheromone Value"))
-        # layout.addWidget(self.pheromone_value_slider)
+        layout.addWidget(QLabel("Sensor Distance"))
+        layout.addWidget(self.sen_dis_spinbox)
+        layout.addWidget(QLabel("Rotation Speed"))
+        layout.addWidget(self.rotta_speed_spinbox)
+        layout.addWidget(QLabel("Sensor Angle"))
+        layout.addWidget(self.sen_angle_spinbox)
         layout.addWidget(self.restart_button)
         widget.setLayout(layout)
         widget.setMinimumSize(200,100)
