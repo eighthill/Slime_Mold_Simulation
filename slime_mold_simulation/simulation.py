@@ -3,7 +3,7 @@ import numpy as np
 # from numba import jit
 from scipy.ndimage import gaussian_filter
 
-from slime_mold_simulation.config import SlimeConfig
+from config import SlimeConfig
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
@@ -156,7 +156,6 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     current_sen_angle = SlimeConfig.SENSOR_ANGLE
     current_time_step = SlimeConfig.TIMESTEP
     angle_left, angle_right = sensors_angles[:, 0], sensors_angles[:, 2]  # Transpose for easy unpacking
-
 
     # Calculate pheromone differences
     # print(sensor_values[:, 0])
