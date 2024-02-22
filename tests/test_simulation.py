@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from slime_mold_simulation import simulation
 from slime_mold_simulation.config import SlimeConfig
