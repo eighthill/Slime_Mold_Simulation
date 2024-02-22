@@ -7,8 +7,8 @@ DECAY = 0.97
 DIFFUSION_COEFFICENT = 0.5
 
 
-AGENT_NUMBER = 100000
-SPEED = 1
+AGENT_NUMBER = 10000
+SPEED = 3
 SENSOR_DISTANCE = 3
 ROTATION_SPEED = 0.2
 # the angles are calculated with radian (0 = 0° and 2*pi = 360°) in the simulation Code so the given angle shoulr be between 0 and 2pi.
