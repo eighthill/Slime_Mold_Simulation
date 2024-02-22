@@ -32,11 +32,17 @@ class Agent:
         heading = np.random.uniform(0, 2 * np.pi, current_agent_number)
         center_y, center_x = SlimeConfig.HEIGHT / 2, SlimeConfig.WIDTH / 2
 
-        y = center_y + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.sin(np.random.uniform(0, 2 * np.pi, current_agent_number))
-        x = center_x + np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS * np.cos(np.random.uniform(0, 2 * np.pi, current_agent_number))
+        # Random angles for circular distribution
+        angle = np.random.uniform(0, 2 * np.pi, current_agent_number)
+        
+        # Varying radius for each agent to create an offset within a circular area
+        radius = np.sqrt(np.random.uniform(0, 1, current_agent_number)) * SPAWN_RADIUS
+
+        y = center_y + radius * np.sin(angle)
+        x = center_x + radius * np.cos(angle)
 
         # Calculate heading towards the center with noise
-        heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(-3, 3, current_agent_number)
+        heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(-5, 5, current_agent_number)
 
         self.agenten = np.column_stack((y, x, heading))
 
