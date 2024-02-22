@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from slime_mold_simulation import simulation
 from slime_mold_simulation.config import SlimeConfig
 
@@ -19,22 +20,14 @@ SPAWN_RADIUS = SlimeConfig.SPAWN_RADIUS
 
 def test_PheromoneArray_init():
     p_array = simulation.PheromoneArray()
-    assert (
-        p_array.width == WIDTH
-    ), f"Expected p_array.width to be {WIDTH}, but got {p_array.width}"
-    assert (
-        p_array.height == HEIGHT
-    ), f"Expected p_array.height to be {HEIGHT}, but got {p_array.height}"
-    assert np.all(
-        p_array.p_array == 0
-    ), "Expected the pheromone array to be initialized with all zeros"
+    assert p_array.width == WIDTH, f"Expected p_array.width to be {WIDTH}, but got {p_array.width}"
+    assert p_array.height == HEIGHT, f"Expected p_array.height to be {HEIGHT}, but got {p_array.height}"
+    assert np.all(p_array.p_array == 0), "Expected the pheromone array to be initialized with all zeros"
 
 
 def test_agent_init():
     agent = simulation.Agent()
-    assert isinstance(
-        agent.agenten, np.ndarray
-    ), "Expected agent.agenten to be an instance of np.ndarray"
+    assert isinstance(agent.agenten, np.ndarray), "Expected agent.agenten to be an instance of np.ndarray"
     assert agent.agenten.shape == (
         AGENT_NUMBER,
         3,
@@ -61,9 +54,7 @@ def test_get_sensors():
     agents = np.random.rand(AGENT_NUMBER, 3)
     sensors, sensors_angles = simulation.get_sensors(agents)
     assert isinstance(sensors, list), "Expected 'sensors' to be a list, but it is not."
-    assert isinstance(
-        sensors_angles, np.ndarray
-    ), "Expected 'sensors_angles' to be a numpy ndarray, but it is not."
+    assert isinstance(sensors_angles, np.ndarray), "Expected 'sensors_angles' to be a numpy ndarray, but it is not."
     assert sensors_angles.shape == (
         AGENT_NUMBER,
         3,
@@ -79,18 +70,10 @@ def test_get_pheromone_value_at():
         AGENT_NUMBER,
         len(sensors),
     ), f"Expected shape ({AGENT_NUMBER}, {len(sensors)}), got {sensor_values.shape}"
-    assert np.all(
-        sensor_values[:, 0] == 1
-    ), "Sensor on pheromone should detect value 1 for all agents"
-    assert np.all(
-        sensor_values[:, 1] == 0
-    ), "Sensor not on pheromone should detect value 0 for all agents"
-    assert np.all(
-        sensor_values[:, 2] == 0
-    ), "Sensor not on pheromone should detect value 0 for all agents"
-    assert np.all(
-        sensor_values[:, 3] == 0
-    ), "Sensor not on pheromone should detect value 0 for all agents"
+    assert np.all(sensor_values[:, 0] == 1), "Sensor on pheromone should detect value 1 for all agents"
+    assert np.all(sensor_values[:, 1] == 0), "Sensor not on pheromone should detect value 0 for all agents"
+    assert np.all(sensor_values[:, 2] == 0), "Sensor not on pheromone should detect value 0 for all agents"
+    assert np.all(sensor_values[:, 3] == 0), "Sensor not on pheromone should detect value 0 for all agents"
 
 
 def test_reflect_boundary():
@@ -133,24 +116,16 @@ def test_deposit_pheromone():
     agents = np.array([[1, 1], [HEIGHT - 1, WIDTH - 1]])
     p_array_deposited = simulation.deposit_pheromone(p_array, agents)
     assert p_array_deposited[1, 1] == 1, "Pheromone not deposited correctly at (1, 1)"
-    assert (
-        p_array_deposited[HEIGHT - 1, WIDTH - 1] == 1
-    ), "Pheromone not deposited correctly at the edge"
+    assert p_array_deposited[HEIGHT - 1, WIDTH - 1] == 1, "Pheromone not deposited correctly at the edge"
 
 
 def test_rotate_towards_sensor():
     agents = np.random.rand(AGENT_NUMBER, 3)
     sensor_values = np.random.rand(AGENT_NUMBER, len(agents))
     sensors_angles = np.random.rand(AGENT_NUMBER, 3)
-    agents_rotated = simulation.rotate_towards_sensor(
-        agents, sensor_values, sensors_angles, SENSOR_ANGLE
-    )
-    assert np.all(
-        agents_rotated[:, 2] >= 0
-    ), "Expected all rotated agents' direction angles to be >= 0 radians."
-    assert np.all(
-        agents_rotated[:, 2] < 2 * np.pi
-    ), "Expected all rotated agents' direction angles to be < 2π radians."
+    agents_rotated = simulation.rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE)
+    assert np.all(agents_rotated[:, 2] >= 0), "Expected all rotated agents' direction angles to be >= 0 radians."
+    assert np.all(agents_rotated[:, 2] < 2 * np.pi), "Expected all rotated agents' direction angles to be < 2π radians."
 
 
 def test_main():
@@ -169,6 +144,4 @@ def test_main():
     assert np.all(
         agents[:, 1] < WIDTH
     ), f"Expected all agents' y positions to be < {WIDTH}, ensuring they're within the horizontal boundaries."
-    assert np.all(
-        p_array >= 0
-    ), "Expected all values in p_array to be >= 0, indicating non-negative pheromone levels."
+    assert np.all(p_array >= 0), "Expected all values in p_array to be >= 0, indicating non-negative pheromone levels."
