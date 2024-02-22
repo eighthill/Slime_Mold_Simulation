@@ -1,6 +1,6 @@
 import numpy as np
 
-# from numba import jit
+# from numba import jit 
 from scipy.ndimage import gaussian_filter
 
 from world_cfg import *
