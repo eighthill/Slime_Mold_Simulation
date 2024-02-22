@@ -42,7 +42,7 @@ class Agent:
         y = center_y + radius * np.sin(angle)
         x = center_x + radius * np.cos(angle)
 
-        #Spawn the agents in a square area
+        # Spawn the agents in a square area
         y = np.random.uniform(HEIGHT * 0.4, HEIGHT * 0.6, current_agent_number)
         x = np.random.uniform(WIDTH * 0.4, WIDTH * 0.6, current_agent_number)
 
@@ -154,10 +154,10 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     current_rotta_speed = SlimeConfig.ROTATION_SPEED
     current_sen_angle = SlimeConfig.SENSOR_ANGLE
     current_time_step = SlimeConfig.TIMESTEP
-    angle_left, angle_main, angle_right = sensors_angles[:, 0], sensors_angles[:, 1], sensors_angles[:, 2]  # Transpose for easy unpacking
+    angle_left, angle_right = sensors_angles[:, 0], sensors_angles[:, 2]  # Transpose for easy unpacking
 
     # Calculate pheromone differences
-    #print(sensor_values[:, 0])
+    # print(sensor_values[:, 0])
     pheromone_diff_left = sensor_values[:, 0] >= sensor_values[:, 1]
     pheromone_diff_right = sensor_values[:, 2] >= sensor_values[:, 1]
 
@@ -168,10 +168,10 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
 
     # Calculate target angle based on rotation direction
     target_angle = np.where(
-            rotate_random,
-            np.where(np.random.rand(current_agent_number) < 0.5, angle_left, angle_right),
-            np.where(rotate_left, angle_left, np.where(rotate_right, angle_right, agents[:, 2]))
-        )
+        rotate_random,
+        np.where(np.random.rand(current_agent_number) < 0.5, angle_left, angle_right),
+        np.where(rotate_left, angle_left, np.where(rotate_right, angle_right, agents[:, 2])),
+    )
 
     # Calculate random steering strength
     randomSteerStrength = np.random.rand(current_agent_number)
@@ -181,7 +181,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     adjusted_angle = agents[:, 2] + (
         (current_rotta_speed * randomSteerStrength - 0.5) * angle_difference * current_sen_angle * current_time_step
     )
-    
+
     # Normalize angles to range [0, 2π]
     normalized_angle = np.mod(adjusted_angle, 2 * np.pi)
     agents[:, 2] = normalized_angle
