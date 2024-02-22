@@ -173,6 +173,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     )
     return agents
 
+
 def main(parray, agnet):
 
     sensors, sensors_angles = get_sensors(agnet)
