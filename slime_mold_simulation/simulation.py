@@ -166,7 +166,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     
     # Adjust agents' angles
     angle_difference = target_angle - agents[:, 2]
-    agents[:, 2] += (current_rotta_speed * randomSteerStrength - 0.5) * current_time_step * angle_difference
+    agents[:, 2] += (current_rotta_speed * randomSteerStrength - 0.5)  * angle_difference * current_sen_angle * current_time_step
     
     return agents
 
