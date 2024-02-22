@@ -5,8 +5,6 @@ import pytest
 
 from slime_mold_simulation.my_module import hello
 
-# from slime_mold_simulation.simulation import get_sensors
-
 
 def test_hello():
     assert hello("Alice") == "Hello Alice!"
