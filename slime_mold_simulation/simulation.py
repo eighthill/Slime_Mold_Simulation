@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 
-# from numba import jit
+from numba import jit # noqa: E402
 from scipy.ndimage import gaussian_filter
 
 project_root = Path(__file__).resolve().parent.parent  # noqa: E402
@@ -33,6 +33,7 @@ class PheromoneArray:
 
 # Class creates an array "agenten" with informations about the agents. where each row represents an agent.
 # colum 0 = y coordinate, colum 1 = x coordinate and colum 2 = the angle in which the agents is heading to.
+
 class Agent:
     def __init__(self):
         current_agent_number = SlimeConfig.AGENT_NUMBER
@@ -59,6 +60,7 @@ class Agent:
 
 
 # Applying a gaussian filter to the array, so that the pheromones within the array diffuse
+@jit# noqa: E402
 def diffuse(p_array):
     current_diff = SlimeConfig.DIFFUSION_COEFFICENT
 
@@ -66,7 +68,7 @@ def diffuse(p_array):
     return gaussian_filter(p_array, sigma=current_diff)
 
 
-# @jit
+@jit# noqa: E402
 # Applying a fading to the array, so that the pheromones within the array decay
 def decay(p_array):
     current_decay = SlimeConfig.DECAY
@@ -74,7 +76,7 @@ def decay(p_array):
     return p_array * current_decay
 
 
-# @jit
+@jit# noqa: E402
 # Update possible angles
 def get_sensors(agents, SENSOR_ANGLE=SENSOR_ANGLE, AGENT_NUMBER=AGENT_NUMBER):
     # Prepare anlges for each of agents sensores / no randomenes on angles wtf
@@ -118,7 +120,7 @@ def get_pheromone_value_at(p_array, sensors, AGENT_NUMBER=AGENT_NUMBER):
     return sensor_values
 
 
-# @jit
+@jit# noqa: E402
 def reflect_boundary(agents):
     mask_top = agents[:, 0] < 0
     mask_bottom = agents[:, 0] > HEIGHT - 1
@@ -135,7 +137,7 @@ def reflect_boundary(agents):
     return agents
 
 
-# @jit
+@jit# noqa: E402
 def move(agents, parray, SPEED=SPEED):
     current_speed = SlimeConfig.SPEED
     agents[:, 0] = agents[:, 0] + current_speed * np.sin(agents[:, 2])
@@ -143,7 +145,7 @@ def move(agents, parray, SPEED=SPEED):
     agents = reflect_boundary(agents)
     return agents
 
-
+@jit# noqa: E402
 def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
     # Round coordinates to the nearest integers and clip to array bounds
     y_idx = np.clip(np.round(agents[:, 0]).astype(int), 0, HEIGHT - 1)
@@ -153,7 +155,7 @@ def deposit_pheromone(p_array, agents, HEIGHT=HEIGHT, WIDTH=WIDTH):
     return p_array
 
 
-# @jit
+@jit# noqa: E402
 def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     # Assuming SENSOR_ANGLE, AGENT_NUMBER, ROTATION_SPEED are globally defined or passed as parameters
     current_agent_number = SlimeConfig.AGENT_NUMBER
