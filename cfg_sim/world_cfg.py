@@ -1,24 +1,24 @@
 class SlimeConfig:
     """Configuration class for global simulation parameters."""
-    
+
     # Canvas Dimension
     WIDTH = 1600
     HEIGHT = 900
-    
+
     # Pheromone behavior parameters
-    DECAY = 0.9 # Rate at which pheromones decay over time
-    DIFFUSION_COEFFICENT = 0.85 # Rate of pheromone spread
+    DECAY = 0.9  # Rate at which pheromones decay over time
+    DIFFUSION_COEFFICENT = 0.85  # Rate of pheromone spread
 
     # Agent behavior parameters
-    AGENT_NUMBER = 50000 # Initial number of agents
-    SPEED = 1 # Movement speed of agents
-    SENSOR_DISTANCE = 8 # Distance of the agents sensors
+    AGENT_NUMBER = 50000  # Initial number of agents
+    SPEED = 1  # Movement speed of agents
+    SENSOR_DISTANCE = 8  # Distance of the agents sensors
     ROTATION_SPEED = 0.2  # Rotation speed of agents (max 1 to avoid errors)
-    SPAWN_RADIUS = 350 # Radius for initial agent spawning
-    SENSOR_ANGLE = 30 # Angle between the forward direction and sensors
+    SPAWN_RADIUS = 350  # Radius for initial agent spawning
+    SENSOR_ANGLE = 30  # Angle between the forward direction and sensors
 
     # Simulation update rate
-    TIMESTEP = 0.0166 # Currently used for angle rotation, was planned as simulation update rate
+    TIMESTEP = 0.0166  # Currently used for angle rotation, was planned as simulation update rate
 
     @classmethod
     def set_speed(cls, new_speed):

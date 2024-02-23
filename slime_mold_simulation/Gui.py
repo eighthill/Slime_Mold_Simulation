@@ -3,19 +3,18 @@ from pathlib import Path
 
 import numpy as np
 from PyQt5.QtWidgets import QApplication
-from vispy import app, scene
-
 from Ui_Slider_logic import SliderLogic  # noqa: E402
+from vispy import app, scene
 
 project_root = Path(__file__).resolve().parent.parent  # noqa: E402
 sys.path.append(str(project_root))  # noqa: E402
-from cfg_sim.world_cfg import SlimeConfig  # noqa: E402
-
 import simulation  # noqa: E402
+from cfg_sim.world_cfg import SlimeConfig  # noqa: E402
 
 
 class SimulationGUI(app.Canvas):
     """Graphical User Interface for the Slime Simulation."""
+
     def __init__(self):
         """
         Initializes the GUI, sets up the canvas, a timer for periodic updates,
@@ -48,7 +47,9 @@ class SimulationGUI(app.Canvas):
         # Create a markers visual to represent agents as pixels
         self.agent_markers = scene.visuals.Markers(parent=self.view.scene)
         # Create an image visual representing the pheromone array
-        self.image = scene.visuals.Image(self.parray, cmap="inferno", parent=self.view.scene)
+        self.image = scene.visuals.Image(
+            self.parray, cmap="inferno", parent=self.view.scene
+        )
         # self.view.scene._add_child(self.agents_scatter)
 
         # Initialize the slider logic
@@ -57,12 +58,18 @@ class SimulationGUI(app.Canvas):
         # Show the slider widget
         self.slider_logic.slider_widget.show()
 
-        self.slider_logic.agent_count_spinbox.valueChanged.connect(self.update_agent_count)
-        self.slider_logic.agent_speed_spinbox.valueChanged.connect(self.update_agent_speed)
+        self.slider_logic.agent_count_spinbox.valueChanged.connect(
+            self.update_agent_count
+        )
+        self.slider_logic.agent_speed_spinbox.valueChanged.connect(
+            self.update_agent_speed
+        )
         self.slider_logic.decay_spinbox.valueChanged.connect(self.update_decay)
         self.slider_logic.diff_spinbox.valueChanged.connect(self.update_diff)
         self.slider_logic.sen_dis_spinbox.valueChanged.connect(self.update_sen_dis)
-        self.slider_logic.rota_speed_spinbox.valueChanged.connect(self.update_rota_speed)
+        self.slider_logic.rota_speed_spinbox.valueChanged.connect(
+            self.update_rota_speed
+        )
         self.slider_logic.sen_angle_spinbox.valueChanged.connect(self.update_sen_angle)
         self.slider_logic.time_step_spinbox.valueChanged.connect(self.update_time_step)
 
@@ -109,7 +116,6 @@ class SimulationGUI(app.Canvas):
         new_time_step = self.slider_logic.time_step_spinbox.value()
         SlimeConfig.set_time_step(new_time_step)
 
-
     def restart_simulation(self):
         """
         Resets the simulation to its initial state, including reinitializing the agent
@@ -122,8 +128,12 @@ class SimulationGUI(app.Canvas):
         self.agent = self.agenten.agenten  # Reset agent positions
 
         # Reset the visuals
-        self.image.set_data(self.parray)  # Reset the display image to the cleared pheromone array
-        self.agent_markers.set_data(pos=self.agent[:, :2], size=3, face_color=(1, 1, 1, 1))  # Reset agent visuals
+        self.image.set_data(
+            self.parray
+        )  # Reset the display image to the cleared pheromone array
+        self.agent_markers.set_data(
+            pos=self.agent[:, :2], size=3, face_color=(1, 1, 1, 1)
+        )  # Reset agent visuals
 
     def on_draw(self, event):
         """
