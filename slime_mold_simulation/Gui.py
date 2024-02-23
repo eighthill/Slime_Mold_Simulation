@@ -27,6 +27,7 @@ class SimulationGUI(app.Canvas):
         app.Canvas.__init__(
             self,
         )
+
         self.qt_app = QApplication([])
         # Set up a timer for periodic updates
         self.timer = app.Timer(connect=self.on_timer, start=True)
