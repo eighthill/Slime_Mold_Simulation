@@ -9,11 +9,11 @@ from cfg_sim.world_cfg import SlimeConfig  # noqa: E402
 
 
 class SliderLogic:
+    """Handles the logic for UI sliders and input controls in the GUI."""
     def __init__(self, gui_instance):
-        self.gui = gui_instance
+        self.gui = gui_instance # Reference to the GUI instance for callbacks
 
-        # Create sliders for agent-related parameters
-        # self.agent_size_slider, self.agent_size_widget = self.create_slider(5, 30, 15, self.gui.update_agent_size, "Agent Size")
+        # Create and configure spinboxes for simulation parameters
         self.agent_count_spinbox = self.create_spinbox_int(
             1, 1000000, SlimeConfig.AGENT_NUMBER, self.gui.update_agent_count
         )
@@ -23,8 +23,8 @@ class SliderLogic:
         self.time_step_spinbox = self.create_spinbox_float(0.01, 5, SlimeConfig.TIMESTEP, self.gui.update_time_step)
         self.decay_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DECAY, self.gui.update_decay)
         self.diff_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DIFFUSION_COEFFICENT, self.gui.update_diff)
-        self.rotta_speed_spinbox = self.create_spinbox_float(
-            0.1, 1.0, SlimeConfig.ROTATION_SPEED, self.gui.update_rotta_speed
+        self.rota_speed_spinbox = self.create_spinbox_float(
+            0.1, 1.0, SlimeConfig.ROTATION_SPEED, self.gui.update_rota_speed
         )
 
         # Create sliders for simulation parameters
@@ -32,14 +32,15 @@ class SliderLogic:
         # self.diffusion_coefficient_slider, self.diffusion_coefficient_widget = self.create_slider(1, 100, 1, self.gui.update_diffusion_coefficient, "Diffusion Coefficient")
         # self.pheromone_value_slider, self.pheromone_value_widget = self.create_slider(1, 100, 1, self.gui.update_pheromone_value, "Pheromone Value")
 
-        # Create a button to restart the simulation
+        # Initialize the restart simulation button
         self.restart_button = QPushButton("Restart Simulation")
         self.restart_button.clicked.connect(self.gui.restart_simulation)
 
-        # Create a widget for all the sliders and the restart button
+        # Aggregate all sliders and the button into a single widget
         self.slider_widget = self.create_slider_widget()
 
     def create_slider(self, min_value, max_value, default_value, callback, label_text):
+        """Creates a slider with a label and connects it to a callback function."""
         slider = QSlider()
         slider.setMinimum(min_value)
         slider.setMaximum(max_value)
@@ -66,6 +67,7 @@ class SliderLogic:
         return slider, widget
 
     def create_spinbox_int(self, min_value, max_value, default_value, callback):
+        """Creates a QSpinBox for integer values with a connected callback."""
         spinbox = QSpinBox()
         spinbox.setMinimum(min_value)
         spinbox.setMaximum(max_value)
@@ -75,6 +77,7 @@ class SliderLogic:
         return spinbox
 
     def create_spinbox_float(self, min_value, max_value, default_value, callback):
+        """Creates a QDoubleSpinBox for float values with a connected callback."""
         spinbox = QDoubleSpinBox()
         spinbox.setMinimum(min_value)
         spinbox.setMaximum(max_value)
@@ -84,6 +87,7 @@ class SliderLogic:
         return spinbox
 
     def create_slider_widget(self):
+        """Assembles and returns a widget containing all sliders and the restart button."""
         widget = QWidget()
         layout = QVBoxLayout(widget)
         # layout.addWidget(QLabel("Agent Size"))
@@ -99,7 +103,7 @@ class SliderLogic:
         layout.addWidget(QLabel("Sensor Distance"))
         layout.addWidget(self.sen_dis_spinbox)
         layout.addWidget(QLabel("Rotation Speed"))
-        layout.addWidget(self.rotta_speed_spinbox)
+        layout.addWidget(self.rota_speed_spinbox)
         layout.addWidget(QLabel("Sensor Angle"))
         layout.addWidget(self.sen_angle_spinbox)
         layout.addWidget(QLabel("Random Factor"))
