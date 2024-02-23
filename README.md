@@ -42,9 +42,10 @@ Sensor distance: 10
 Rotation speed: 0,3
 Sensor Angle: 26
 Randome factor: 0,1
+**Visual:**
 
-Visual:
-https://cdn.discordapp.com/attachments/1030079280794837013/1210413959669088287/VisPy_canvas_2024-02-23_02-53-23.gif?ex=65ea78d8&is=65d803d8&hm=8a2c68f374aed096f460e02555950ff5c3d01fde0d2df46a2f3f670ae04a1611&
+![Example1](https://github.com/eighthill/Slime_Mold_Simulation/assets/119038872/675e7ce8-b8cf-4324-aa63-c4d5eda35392)
+
 ---
 Agent speed: 4
 Agent count: 50000
@@ -54,9 +55,10 @@ Sensor distance: 15
 Rotation speed: 0,2
 Sensor Angle: 5
 Randome factor: 0,02
+**Visual:**
 
-Visual:
-https://cdn.discordapp.com/attachments/1030079280794837013/1210413258574659704/VisPy-canvas-2024-02-23-03-03-13.gif?ex=65ea7831&is=65d80331&hm=f0d814ccef7314b73289f43a201a948ab850005b378af82ca6c2d7676c2dd3e69&
+![Example2](https://github.com/eighthill/Slime_Mold_Simulation/assets/119038872/e77cc699-de6e-4f8f-a96f-68de18fb39a5)
+
 ---
 
 # For Developer 
@@ -66,7 +68,7 @@ The documentation is especially for developers who are interested in getting a b
 First of all, we decided to structure everything as well as possible. This means that the simulation was not written in one file, but the logic of the simulation is in one file (simulation.py), the Gui (Gui.py), Config (config.py) and the sliders (Ui_Slider_logic.py) are each in separate files so that they can be better separated.
 
 ### Code structure as a diagram
-![Picture of Code Structure](https://cdn.discordapp.com/attachments/1179079479230992425/1209953090120323102/image.png?ex=65e8cba0&is=65d656a0&hm=3acc8596537df45ce254a2d39ce9f6d1e8a483d1644d9f55a7083c556e95e730&)
+![diagramofcode](https://github.com/eighthill/Slime_Mold_Simulation/assets/119038872/aab67259-33a8-45d6-8494-29f8598855db)
 
 
 ### Simulation
@@ -82,6 +84,7 @@ So let's look specifically at our logic, that's the heart of the program where e
 - **`deposit_pheromone` Function:** Agents deposit pheromones into the environment at their current location.
 - **`rotate_towards_sensor` Function:** Adjusts agent heading based on detected pheromone levels, encouraging movement towards stronger pheromone concentrations.
 - **`main` Function:** Orchestrates the simulation steps, including sensor reading, rotation, movement, pheromone deposition, diffusion, and decay.
+
 
 ### Config
 We have also separated the parameters into a config so that everything is more dynamic and easier to understand. 
