@@ -1,6 +1,11 @@
+import sys
+from pathlib import Path
+
 from PyQt5.QtWidgets import QDoubleSpinBox, QLabel, QPushButton, QSlider, QSpinBox, QVBoxLayout, QWidget
 
-from config import SlimeConfig
+project_root = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_root))  # noqa: E402
+from cfg_sim.world_cfg import SlimeConfig  # noqa: E402
 
 
 class SliderLogic:
@@ -14,8 +19,8 @@ class SliderLogic:
         )
         self.agent_speed_spinbox = self.create_spinbox_int(1, 10, SlimeConfig.SPEED, self.gui.update_agent_speed)
         self.sen_dis_spinbox = self.create_spinbox_int(1, 50, SlimeConfig.SENSOR_DISTANCE, self.gui.update_sen_dis)
-        self.sen_angle_spinbox = self.create_spinbox_int(1, 75, SlimeConfig.SENSOR_ANGLE, self.gui.update_sen_angle)
-        self.time_step_spinbox = self.create_spinbox_float(0.01, 2, SlimeConfig.TIMESTEP, self.gui.update_time_step)
+        self.sen_angle_spinbox = self.create_spinbox_int(1, 72, SlimeConfig.SENSOR_ANGLE, self.gui.update_sen_angle)
+        self.time_step_spinbox = self.create_spinbox_float(0.01, 5, SlimeConfig.TIMESTEP, self.gui.update_time_step)
         self.decay_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DECAY, self.gui.update_decay)
         self.diff_spinbox = self.create_spinbox_float(0.1, 1.0, SlimeConfig.DIFFUSION_COEFFICENT, self.gui.update_diff)
         self.rotta_speed_spinbox = self.create_spinbox_float(

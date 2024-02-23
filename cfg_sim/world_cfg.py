@@ -1,22 +1,20 @@
 # This is the Configutaion file with all global parameters
-
-
 class SlimeConfig:
     # Simulationparameters
-
-    WIDTH = 1280
-    HEIGHT = 1080
-    DECAY = 0.95
-    DIFFUSION_COEFFICENT = 0.95
+    WIDTH = 1600
+    HEIGHT = 900
+    DECAY = 0.9
+    DIFFUSION_COEFFICENT = 0.85
 
     # Agentparameters
-    AGENT_NUMBER = 45000
-    SPEED = 5
-    SENSOR_DISTANCE = 15
-    ROTATION_SPEED = 0.20  # max. 1 otherwise error!
-    SPAWN_RADIUS = 450
-    SENSOR_ANGLE = 50
-    TIMESTEP = 3.15
+    AGENT_NUMBER = 50000
+    SPEED = 1
+    SENSOR_DISTANCE = 8
+    ROTATION_SPEED = 0.2  # max. 1 otherwise error!
+    SPAWN_RADIUS = 350
+    SENSOR_ANGLE = 30
+
+    TIMESTEP = 0.0166
 
     @classmethod
     def set_speed(cls, new_speed):

@@ -1,10 +1,17 @@
+import sys
+from pathlib import Path
+
 import numpy as np
 from PyQt5.QtWidgets import QApplication
 from vispy import app, scene
 
-import simulation
-from config import SlimeConfig
-from Ui_Slider_logic import SliderLogic
+from Ui_Slider_logic import SliderLogic  # noqa: E402
+
+project_root = Path(__file__).resolve().parent.parent  # noqa: E402
+sys.path.append(str(project_root))  # noqa: E402
+from cfg_sim.world_cfg import SlimeConfig  # noqa: E402
+
+import simulation  # noqa: E402
 
 
 class SimulationGUI(app.Canvas):

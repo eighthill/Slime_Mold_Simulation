@@ -1,9 +1,17 @@
+import sys
+from pathlib import Path
+
 import numpy as np
 
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from cfg_sim.world_cfg import SlimeConfig
+
 from slime_mold_simulation import simulation
-from slime_mold_simulation.config import SlimeConfig
 
 # from slime_mold_simulation.simulation import WIDTH, HEIGHT, AGENT_NUMBER, SENSOR_ANGLE
+# Adjust the path to ensure the root of the project is in PYTHONPATH
+
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
