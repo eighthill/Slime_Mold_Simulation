@@ -42,8 +42,7 @@ Sensor distance: 10
 Rotation speed: 0,3
 Sensor Angle: 26
 Randome factor: 0,1
-
-[https://cdn.discordapp.com/attachments/1030079280794837013/1210413959669088287/VisPy_canvas_2024-02-23_02-53-23.gif?ex=65ea78d8&is=65d803d8&hm=8a2c68f374aed096f460e02555950ff5c3d01fde0d2df46a2f3f670ae04a1611&]
+!([url_to_your_gif](https://cdn.discordapp.com/attachments/1030079280794837013/1210413959669088287/VisPy_canvas_2024-02-23_02-53-23.gif?ex=65ea78d8&is=65d803d8&hm=8a2c68f374aed096f460e02555950ff5c3d01fde0d2df46a2f3f670ae04a1611&))
 ---
 Agent speed: 4
 Agent count: 50000
@@ -53,8 +52,7 @@ Sensor distance: 15
 Rotation speed: 0,2
 Sensor Angle: 5
 Randome factor: 0,02
-
-[https://cdn.discordapp.com/attachments/1030079280794837013/1210413258574659704/VisPy-canvas-2024-02-23-03-03-13.gif?ex=65ea7831&is=65d80331&hm=f0d814ccef7314b73289f43a201a948ab850005b378af82ca6c2d7676c2dd3e6&]
+!([https://cdn.discordapp.com/attachments/1030079280794837013/1210413258574659704/VisPy-canvas-2024-02-23-03-03-13.gif?ex=65ea7831&is=65d80331&hm=f0d814ccef7314b73289f43a201a948ab850005b378af82ca6c2d7676c2dd3e69&])
 ---
 
 # For Developer 
