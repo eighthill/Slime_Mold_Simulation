@@ -113,5 +113,10 @@ We have a class here `SliderLogic` Class:
 - **`create_spinbox`:** Generates a spinbox for numerical input, such as agent count, with specified minimum, maximum, and default values, also linked to a callback function for immediate application in the simulation.
 - **`create_slider_widget`**: Assembles the slider and spinbox widgets into a single UI component, organizing them vertically along with the restart button for a cohesive user interface.
 
+## Runtime analysis
+The February 2024 Final Version boasts a constant runtime complexity, a stark departure from Version 0's linear increase. Regardless of agent numbers, the Final Version consistently outperforms its predecessor. Despite initial compilation overhead, the NUMBA-optimized Final Version showcases superior performance, underscoring its enhanced efficiency and scalability.
+More about that can be read in Issue 68 by now.
+
+
 ## Feedback 
 Thank you for your attention so far, now you have gained an understanding of how our program works. We wish you a lot of fun trying out parameters which result in beautiful patterns, you are welcome to send us pictures, short videos of how your settings.  We would be very happy to receive feedback. If you have any suggestions for improvement or criticism, please feel free to contact us. We are looking forward to improve the simulation :)
