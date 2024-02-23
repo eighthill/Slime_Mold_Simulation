@@ -3,9 +3,14 @@ from PyQt5.QtWidgets import QApplication
 from vispy import app, scene
 
 import simulation
-from world_cfg import *
-from Ui_Slider_logic import SliderLogic
+from slime_mold_simulation.cfg_sim.world_cfg import SlimeConfig
+from Ui_Slider_logic import *
 
+import sys
+from pathlib import Path 
+
+projectroot = Path(__file__).resolve().parent.parent
+sys.path.append(str(projectroot))
 
 class SimulationGUI(app.Canvas):
     def __init__(self):

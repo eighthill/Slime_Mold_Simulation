@@ -2,7 +2,7 @@ import numpy as np
 
 
 from slime_mold_simulation import simulation
-from slime_mold_simulation.world_cfg import SlimeConfig
+from slime_mold_simulation.cfg_sim.world_cfg import SlimeConfig
 
 # from slime_mold_simulation.simulation import WIDTH, HEIGHT, AGENT_NUMBER, SENSOR_ANGLE
 

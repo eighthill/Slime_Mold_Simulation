@@ -2,8 +2,14 @@ import numpy as np
 
 # from numba import jit 
 from scipy.ndimage import gaussian_filter
+import sys
+from pathlib import Path 
 
-from world_cfg import *
+projectroot = Path(__file__).resolve().parent.parent
+sys.path.append(str(projectroot))
+
+from cfg_sim.world_cfg import *
+
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
@@ -44,8 +50,8 @@ class Agent:
         x = center_x + radius * np.cos(angle)
 
         # Spawn the agents in a square area
-        y = np.random.uniform(HEIGHT * 0.4, HEIGHT * 0.6, current_agent_number)
-        x = np.random.uniform(WIDTH * 0.4, WIDTH * 0.6, current_agent_number)
+        # y = np.random.uniform(HEIGHT * 0.4, HEIGHT * 0.6, current_agent_number)
+        # x = np.random.uniform(WIDTH * 0.4, WIDTH * 0.6, current_agent_number)
 
         # Calculate heading towards the center with noise
         heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(-5, 5, current_agent_number)
