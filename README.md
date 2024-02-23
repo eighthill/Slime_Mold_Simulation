@@ -43,7 +43,7 @@ Rotation speed: 0,3
 Sensor Angle: 26
 Randome factor: 0,1
 
-![Picture of Code Structure](https://discord.com/channels/@me/1179079479230992425/1210404236492275813)
+[![Watch the video](https://discord.com/channels/@me/1179079479230992425/1210404236492275813)
 ---
 Agent speed: 4
 Agent count: 50000
@@ -54,7 +54,7 @@ Rotation speed: 0,2
 Sensor Angle: 5
 Randome factor: 0,02
 
-![Picture of Code Structure](https://discord.com/channels/@me/1179079479230992425/1210406563349799013)
+[![Watch the video](https://discord.com/channels/@me/1179079479230992425/1210406563349799013)
 ---
 
 # For Developer 
