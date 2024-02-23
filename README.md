@@ -6,10 +6,10 @@ This document provides guidance on how to get the slime mold simulation program 
 
 ## Installation
 
-Before you begin, ensure you have Python installed on your computer. This program requires Python 3.x and several dependencies, including Vispy, a library for interactive scientific visualization.
+Before you begin, ensure you have Python installed on your computer. This program requires at least Python 3.8 and several dependencies, including Vispy, a library for interactive scientific visualization.
 
 ## Steps for Installation: 
-1. Install Pyhton 3.x from the [offical Pyhton website](https://www.python.org/downloads/).
+1. Install Pyhton 3.8 or newer from the [offical Pyhton website](https://www.python.org/downloads/).
 2. Download the Program: Ensure you have all Files in a Folder. [click here to download](https://github.com/eighthill/Slime_Mold_Simulation/archive/refs/heads/main.zip)
 3. Install Dependencies: Open your terminal or command prompt and navigate to the program's directory. Install the required Python libraries.
 - `pip install vispy`
@@ -21,12 +21,41 @@ Before you begin, ensure you have Python installed on your computer. This progra
 After you have made all the installations, you can start the simulation program.
 1. Open Terminal/Command Prompt: Navigate to the folder via
    - `cd ~/.../Silme_Mold_Simulation`
-3. Run the Program: Execute the following command.
+2. Run the Program: Execute the following command.
    - `python Gui.py`
   This will launch the graphical user interface
 
 ## What you can do in the program
-Our Program creates a virtual environment where slime mold agents and interact. These agents simulate the behavior of real slime moulds by moving to areas with higher concentrations of a virtual substance (pheromones) in the environment. As they move, they leave a trail (pheromones) that can attract other agents. The simulation includes processes that show how these pheromones spread, diffuse and fade over time, and how the agents decide where to go based on the pheromones they detect. This shows intelligent behavior that can be traced back to the real unicellulars from the real world. By leaving the pheromones behind, the agents move towards the pheromones and follow the trail, creating patterns/pathways.
+Our Program creates a virtual environment where our slime / mold agents interact with each other. These agents simulate the behavior of real mold by moving to areas with higher concentrations of a virtual substance (pheromones) in the environment. As the agents move, they leave a trail (pheromones) that can attract other agents. The simulation includes processes that show how these pheromones diffuse and fade over time, and how the agents decide where to go based on the pheromones they detect. This shows intelligent behavior that can be traced back to the real unicellulars from the real world. The agents creat intersting patterns/pathways. Depending on the parameters you can visualize very different behivours.
+
+## Using manual
+The simulation can get unstable really easy. Especially the Sensor Angle and Randome factor can brake the agents so they stop moving!
+We have collected some parameters which can help out in the beginning. Set the values for each simulation and restart the simulation for simillar results.
+
+Example parameters:
+---
+Agent speed: 2
+Agent count: 50000
+Decay: 0,9
+Diffusion coefficent: 0,95
+Sensor distance: 10
+Rotation speed: 0,3
+Sensor Angle: 26
+Randome factor: 0,1
+
+![Picture of Code Structure](https://discord.com/channels/@me/1179079479230992425/1210404236492275813)
+---
+Agent speed: 4
+Agent count: 50000
+Decay: 0,97
+Diffusion coefficent: 0,97
+Sensor distance: 15
+Rotation speed: 0,2
+Sensor Angle: 5
+Randome factor: 0,02
+
+![Picture of Code Structure](https://discord.com/channels/@me/1179079479230992425/1210406563349799013)
+---
 
 # For Developer 
 ## Developer Documentation
@@ -83,4 +112,5 @@ We have a class here `SliderLogic` Class:
 - **`create_slider_widget`**: Assembles the slider and spinbox widgets into a single UI component, organizing them vertically along with the restart button for a cohesive user interface.
 
 ## Feedback 
-thank you for your attention so far, now you have gained an understanding of how our program works, we wish you a lot of fun trying out and discovering new beautiful parameters which result in beautiful patterns, you are welcome to send us pictures, short videos of how it looks like with you.  We would be very happy to receive feedback. If you have any suggestions for improvement or criticism, please feel free to do so. We are still new in the business so we are looking forward to all your opinions :)
+Thank you for your attention so far, now you have gained an understanding of how our program works. We wish you a lot of fun trying out parameters which result in beautiful patterns, you are welcome to send us pictures, short videos of how your settings.  We would be very happy to receive feedback. If you have any suggestions for improvement or criticism, please feel free to contact us. We are looking forward to improve the simulation :)
+
