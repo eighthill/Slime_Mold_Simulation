@@ -31,6 +31,8 @@ jobs:
       - name: Show pip list
         run: |
           pip list
+      - name: Run Black (check formatting)
+        run: black --check 
       - name: Run isort (check import sorting)
         run: isort --check-only 
       - name: Run linter (ruff)
