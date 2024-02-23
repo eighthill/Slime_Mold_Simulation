@@ -66,5 +66,6 @@ line_length = "120"
 
 [tool.pylint]  # If you opt to use pylint
 # Pylint configuration options
-
+[tool.setuptools]
+py-modules = ['cfg_sim', 'slime_mold_simulation']
 

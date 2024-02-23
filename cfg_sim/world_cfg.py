@@ -1,6 +1,4 @@
 # This is the Configutaion file with all global parameters
-
-
 class SlimeConfig:
     # Simulationparameters
     WIDTH = 1600
