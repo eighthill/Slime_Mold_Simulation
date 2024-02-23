@@ -28,6 +28,8 @@ After you have made all the installations, you can start the simulation program.
 ## What you can do in the program
 Our Program creates a virtual environment where our slime / mold agents interact with each other. These agents simulate the behavior of real mold by moving to areas with higher concentrations of a virtual substance (pheromones) in the environment. As the agents move, they leave a trail (pheromones) that can attract other agents. The simulation includes processes that show how these pheromones diffuse and fade over time, and how the agents decide where to go based on the pheromones they detect. This shows intelligent behavior that can be traced back to the real unicellulars from the real world. The agents creat intersting patterns/pathways. Depending on the parameters you can visualize very different behivours.
 
+The agents are visualized as small black dots, while the pheromone trail has a purple to yellow color. Yellow = high pheromone values / purple = low pheromone values
+
 ## Using manual
 The simulation can get unstable really easy. Especially the Sensor Angle and Randome factor can brake the agents so they stop moving!
 We have collected some parameters which can help out in the beginning. Set the values for each simulation and restart the simulation for simillar results.
