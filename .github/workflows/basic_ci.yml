@@ -32,11 +32,11 @@ jobs:
         run: |
           pip list
       - name: Run Black (check formatting)
-        run: black --check 
+        run: black --check .
       - name: Run isort (check import sorting)
-        run: isort --check-only 
+        run: isort --check-only .
       - name: Run linter (ruff)
         run: |
-          ruff check 
+          ruff check .
       - name: Run tests
         run: pytest
