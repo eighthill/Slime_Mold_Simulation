@@ -1,5 +1,6 @@
 import numpy as np
 
+
 # from numba import jit 
 from scipy.ndimage import gaussian_filter
 import sys
@@ -9,6 +10,7 @@ project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
 from cfg_sim.world_cfg import *
+
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
@@ -160,7 +162,9 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     current_rotta_speed = SlimeConfig.ROTATION_SPEED
     current_sen_angle = SlimeConfig.SENSOR_ANGLE
     current_time_step = SlimeConfig.TIMESTEP
+
     angle_left, angle_right = sensors_angles[:, 0], sensors_angles[:, 2]  # Transpose for easy unpacking
+
 
     # Calculate pheromone differences
     # print(sensor_values[:, 0])
@@ -173,11 +177,13 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     rotate_random = np.logical_and(pheromone_diff_left, pheromone_diff_right)
 
     # Calculate target angle based on rotation direction
+
     target_angle = np.where(
         rotate_random,
         np.where(np.random.rand(current_agent_number) < 0.5, angle_left, angle_right),
         np.where(rotate_left, angle_left, np.where(rotate_right, angle_right, agents[:, 2])),
     )
+
 
     # Calculate random steering strength
     randomSteerStrength = np.random.rand(current_agent_number)
