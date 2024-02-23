@@ -98,7 +98,7 @@ class SimulationGUI(app.Canvas):
     # Update function for simulation parameters based on UI control changes
     def update_rota_speed(self):
         new_rota_speed = self.slider_logic.rota_speed_spinbox.value()
-        SlimeConfig.set_rotta_speed(new_rota_speed)
+        SlimeConfig.set_rota_speed(new_rota_speed)
 
     # Update function for simulation parameters based on UI control changes
     def update_sen_angle(self):
