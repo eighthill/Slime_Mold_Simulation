@@ -3,6 +3,7 @@
 
 class SlimeConfig:
     # Simulationparameters
+
     WIDTH = 1280
     HEIGHT = 1080
     DECAY = 0.95

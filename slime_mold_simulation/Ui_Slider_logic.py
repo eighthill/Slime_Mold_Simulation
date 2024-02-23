@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
+
 from PyQt5.QtWidgets import QDoubleSpinBox, QLabel, QPushButton, QSlider, QSpinBox, QVBoxLayout, QWidget
+
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))  # noqa: E402
 from cfg_sim.world_cfg import SlimeConfig  # noqa: E402

@@ -2,15 +2,13 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from cfg_sim.world_cfg import SlimeConfig
 
 # from numba import jit
 from scipy.ndimage import gaussian_filter
 
-project_root = Path(__file__).resolve().parent.parent
-sys.path.append(str(project_root))
-
-
+project_root = Path(__file__).resolve().parent.parent  # noqa: E402
+sys.path.append(str(project_root))  # noqa: E402
+from cfg_sim.world_cfg import SlimeConfig  # noqa: E402
 
 WIDTH = SlimeConfig.WIDTH
 HEIGHT = SlimeConfig.HEIGHT
@@ -51,8 +49,8 @@ class Agent:
         x = center_x + radius * np.cos(angle)
 
         # Spawn the agents in a square area
-        #y = np.random.uniform(HEIGHT * 0.4, HEIGHT * 0.6, current_agent_number)
-        #x = np.random.uniform(WIDTH * 0.4, WIDTH * 0.6, current_agent_number)
+        # y = np.random.uniform(HEIGHT * 0.4, HEIGHT * 0.6, current_agent_number)
+        # x = np.random.uniform(WIDTH * 0.4, WIDTH * 0.6, current_agent_number)
 
         # Calculate heading towards the center with noise
         heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(-5, 5, current_agent_number)
@@ -162,6 +160,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     current_rotta_speed = SlimeConfig.ROTATION_SPEED
     current_sen_angle = SlimeConfig.SENSOR_ANGLE
     current_time_step = SlimeConfig.TIMESTEP
+
     angle_left, angle_right = sensors_angles[:, 0], sensors_angles[:, 2]  # Transpose for easy unpacking
 
     # Calculate pheromone differences
@@ -175,6 +174,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     rotate_random = np.logical_and(pheromone_diff_left, pheromone_diff_right)
 
     # Calculate target angle based on rotation direction
+
     target_angle = np.where(
         rotate_random,
         np.where(np.random.rand(current_agent_number) < 0.5, angle_left, angle_right),
