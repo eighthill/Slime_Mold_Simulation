@@ -133,7 +133,9 @@ def test_deposit_pheromone():
     assert p_array_deposited[1, 1] == 1, "Pheromone not deposited correctly at (1, 1)"
     assert p_array_deposited[HEIGHT - 1, WIDTH - 1] == 1, "Pheromone not deposited correctly at the edge"
 
-"""# Test agent rotation towards sensed pheromone concentration
+
+"""
+# Test agent rotation towards sensed pheromone concentration
 def test_rotate_towards_sensor():
     agents = np.random.rand(AGENT_NUMBER, 3)  # Agents with initial orientations
     sensor_values = np.random.rand(AGENT_NUMBER, len(agents))
@@ -143,4 +145,4 @@ def test_rotate_towards_sensor():
     assert np.all(agents_rotated[:, 2] >= 0), "Expected all rotated agents' direction angles to be >= 0 radians."
     assert np.all(agents_rotated[:, 2] < 2 * np.pi), "Expected all rotated agents' direction angles to be < 2π radians."
 
-""""
+"""
