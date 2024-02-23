@@ -34,7 +34,6 @@ class PheromoneArray:
         self.p_array = np.zeros((HEIGHT, WIDTH))
 
 
-
 # Class creates an array "agenten" with informations about the agents. where each row represents an agent.
 # colum 0 = y coordinate, colum 1 = x coordinate and colum 2 = the angle in which the agents is heading to.
 class Agent:
@@ -59,9 +58,7 @@ class Agent:
         # x = np.random.uniform(WIDTH * 0.4, WIDTH * 0.6, current_agent_number)
 
         # Calculate heading towards the center with noise
-        heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(
-            -5, 5, current_agent_number
-        )
+        heading = np.arctan2(center_y - y, center_x - x) + np.random.uniform(-5, 5, current_agent_number)
 
         self.agenten = np.column_stack((y, x, heading))
 
@@ -83,7 +80,6 @@ def decay(p_array):
     current_decay = SlimeConfig.DECAY
     # print(current_decay)
     return p_array * current_decay
-
 
 
 # @jit  # noqa: E402
@@ -140,15 +136,11 @@ def reflect_boundary(agents):
     mask_right = agents[:, 1] > WIDTH - 1
 
     # vertical boundary
-    agents[mask_top | mask_bottom, 0] = np.clip(
-        agents[mask_top | mask_bottom, 0], 0, HEIGHT - 1
-    )
+    agents[mask_top | mask_bottom, 0] = np.clip(agents[mask_top | mask_bottom, 0], 0, HEIGHT - 1)
     agents[mask_top | mask_bottom, 2] = 2 * np.pi - agents[mask_top | mask_bottom, 2]
 
     # horizontal boundary
-    agents[mask_left | mask_right, 1] = np.clip(
-        agents[mask_left | mask_right, 1], 0, WIDTH - 1
-    )
+    agents[mask_left | mask_right, 1] = np.clip(agents[mask_left | mask_right, 1], 0, WIDTH - 1)
     agents[mask_left | mask_right, 2] = np.pi - agents[mask_left | mask_right, 2]
     return agents
 
@@ -201,9 +193,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     target_angle = np.where(
         rotate_random,
         np.where(np.random.rand(current_agent_number) < 0.5, angle_left, angle_right),
-        np.where(
-            rotate_left, angle_left, np.where(rotate_right, angle_right, agents[:, 2])
-        ),
+        np.where(rotate_left, angle_left, np.where(rotate_right, angle_right, agents[:, 2])),
     )
 
     # Calculate random steering strength
@@ -212,10 +202,7 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     # Adjust agents' angles
     angle_difference = target_angle - agents[:, 2]
     adjusted_angle = agents[:, 2] + (
-        (current_rota_speed * randomSteerStrength - 0.5)
-        * angle_difference
-        * current_sen_angle
-        * current_time_step
+        (current_rota_speed * randomSteerStrength - 0.5) * angle_difference * current_sen_angle * current_time_step
     )
 
     # Normalize angles to range [0, 2π]
