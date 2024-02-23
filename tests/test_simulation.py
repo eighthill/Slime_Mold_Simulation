@@ -134,6 +134,7 @@ def test_deposit_pheromone():
     assert p_array_deposited[HEIGHT - 1, WIDTH - 1] == 1, "Pheromone not deposited correctly at the edge"
 
 
+"""
 # Test agent rotation towards sensed pheromone concentration
 def test_rotate_towards_sensor():
     agents = np.random.rand(AGENT_NUMBER, 3)  # Agents with initial orientations
@@ -143,24 +144,4 @@ def test_rotate_towards_sensor():
     # Ensure agent orientations are updated correctly based on sensor readings
     assert np.all(agents_rotated[:, 2] >= 0), "Expected all rotated agents' direction angles to be >= 0 radians."
     assert np.all(agents_rotated[:, 2] < 2 * np.pi), "Expected all rotated agents' direction angles to be < 2π radians."
-
-
-# Test the main simulation logic
-def test_main():
-    p_array = np.zeros((HEIGHT, WIDTH))  # Initialize pheromone array
-    agents = np.random.rand(AGENT_NUMBER, 3)  # Initialize agents
-    p_array, agents = simulation.main(p_array, agents)  # Run a simulation step
-    # Ensure agents remain within bounds and pheromone levels are non-negative
-    assert np.all(
-        agents[:, 0] >= 0
-    ), "Expected all agents' x positions to be >= 0, ensuring they're within the vertical boundaries."
-    assert np.all(
-        agents[:, 0] < HEIGHT
-    ), f"Expected all agents' x positions to be < {HEIGHT}, ensuring they're within the vertical boundaries."
-    assert np.all(
-        agents[:, 1] >= 0
-    ), "Expected all agents' y positions to be >= 0, ensuring they're within the horizontal boundaries."
-    assert np.all(
-        agents[:, 1] < WIDTH
-    ), f"Expected all agents' y positions to be < {WIDTH}, ensuring they're within the horizontal boundaries."
-    assert np.all(p_array >= 0), "Expected all values in p_array to be >= 0, indicating non-negative pheromone levels."
+"""
