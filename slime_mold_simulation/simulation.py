@@ -169,7 +169,6 @@ def rotate_towards_sensor(agents, sensor_values, sensors_angles, SENSOR_ANGLE):
     current_agent_number = SlimeConfig.AGENT_NUMBER
     current_rota_speed = SlimeConfig.ROTATION_SPEED
     current_sen_angle = SlimeConfig.SENSOR_ANGLE
-    current_time_step = SlimeConfig.TIMESTEP
 
     angle_left, angle_right = (
         sensors_angles[:, 0],
