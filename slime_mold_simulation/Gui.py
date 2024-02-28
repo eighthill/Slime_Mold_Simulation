@@ -65,7 +65,7 @@ class SimulationGUI(app.Canvas):
         self.slider_logic.sen_dis_spinbox.valueChanged.connect(self.update_sen_dis)
         self.slider_logic.rota_speed_spinbox.valueChanged.connect(self.update_rota_speed)
         self.slider_logic.sen_angle_spinbox.valueChanged.connect(self.update_sen_angle)
-        self.slider_logic.time_step_spinbox.valueChanged.connect(self.update_time_step)
+        # self.slider_logic.time_step_spinbox.valueChanged.connect(self.update_time_step)
 
     # Update function for simulation parameters based on UI control changes
     def update_agent_speed(self):
