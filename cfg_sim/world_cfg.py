@@ -15,7 +15,7 @@ class SlimeConfig:
     SENSOR_DISTANCE = 8  # Distance of the agents sensors
     ROTATION_SPEED = 0.2  # Rotation speed of agents (max 1 to avoid errors)
     SPAWN_RADIUS = 350  # Radius for initial agent spawning
-    SENSOR_ANGLE = 30  # Angle between the forward direction and sensors
+    SENSOR_ANGLE = 31  # Angle between the forward direction and sensors
 
     # Simulation update rate
     TIMESTEP = 0.0166  # Currently used for angle rotation, was planned as simulation update rate
